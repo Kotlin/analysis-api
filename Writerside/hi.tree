@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="hi" name="Analysis API Documentation" start-page="Index.md">
+    <toc-element topic="Index.md"/>
+    <toc-element topic="Fundamentals.md"/>
+    <toc-element topic="Symbols.md">
+        <toc-element topic="KaSymbol.md">
+        </toc-element>
+        <toc-element topic="KaDeclarationSymbol.md">
+        </toc-element>
+        <toc-element topic="KaClassifierSymbol.md">
+            <toc-element topic="KaClassLikeSymbol.md">
+                <toc-element topic="KaClassSymbol.md">
+                    <toc-element topic="KaNamedClassSymbol.md"/>
+                    <toc-element topic="KaAnonymousObjectSymbol.md"/>
+                </toc-element>
+                <toc-element topic="KaTypeAliasSymbol.md"/>
+            </toc-element>
+            <toc-element topic="KaTypeParameterSymbol.md"/>
+        </toc-element>
+        <toc-element topic="KaCallableSymbol.md">
+            <toc-element topic="KaFunctionSymbol.md">
+                <toc-element topic="KaNamedFunctionSymbol.md"/>
+                <toc-element topic="KaAnonymousFunctionSymbol.md"/>
+                <toc-element topic="KaConstructorSymbol.md"/>
+                <toc-element topic="KaPropertyAccessorSymbol.md"/>
+            </toc-element>
+            <toc-element topic="KaVariableSymbol.md">
+                <toc-element topic="KaPropertySymbol.md"/>
+                <toc-element topic="KaValueParameterSymbol.md"/>
+                <toc-element topic="KaLocalVariableSymbol.md"/>
+                <toc-element topic="KaBackingFieldSymbol.md"/>
+                <toc-element topic="KaEnumEntrySymbol.md"/>
+            </toc-element>
+        </toc-element>
+    </toc-element>
+    <toc-element topic="Scopes.md"/>
+    <toc-element topic="Types.md">
+        <toc-element topic="KaType.md">
+            <toc-element topic="KaClassType.md">
+                <toc-element topic="KaUsualClassType.md"/>
+                <toc-element topic="KaFunctionType.md"/>
+            </toc-element>
+            <toc-element topic="KaTypeParameterType.md"/>
+            <toc-element topic="KaDefinitelyNotNullType.md"/>
+            <toc-element topic="KaIntersectionType.md"/>
+            <toc-element topic="KaCapturedType.md"/>
+            <toc-element topic="KaFlexibleType.md"/>
+            <toc-element topic="KaDynamicType.md"/>
+            <toc-element topic="KaErrorType.md">
+                <toc-element topic="KaClassErrorType.md"/>
+            </toc-element>
+        </toc-element>
+        <toc-element topic="KaTypeProjection.md"/>
+    </toc-element>
+    <toc-element topic="Annotations.md">
+        <toc-element topic="KaAnnotation.md"/>
+        <toc-element topic="KaAnnotationValue.md"/>
+    </toc-element>
+    <toc-element topic="References-And-Calls.md">
+        <toc-element topic="KaCall.md">
+            <toc-element topic="KaCallableMemberCall.md">
+                <toc-element topic="KaFunctionCall.md">
+                    <toc-element topic="KaSimpleFunctionCall.md"/>
+                    <toc-element topic="KaDelegatedConstructorCall.md"/>
+                    <toc-element topic="KaAnnotationCall.md"/>
+                </toc-element>
+                <toc-element topic="KaVariableAccessCall.md">
+                </toc-element>
+                <toc-element topic="KaCompoundVariableAccessCall.md"/>
+                <toc-element topic="KaCompoundArrayAccessCall.md"/>
+            </toc-element>
+        </toc-element>
+        <toc-element topic="Receivers.md"/>
+    </toc-element>
+    <toc-element topic="Other.md">
+        <toc-element topic="Java-Kotlin-Bridging.md"/>
+        <toc-element topic="Diagnostics.md">
+            <toc-element topic="KaDiagnostic.md">
+            </toc-element>
+            <toc-element topic="KaDiagnosticWithPsi.md"/>
+        </toc-element>
+        <toc-element topic="File-Compilation.md"/>
+    </toc-element>
+    <toc-element topic="Guides.md">
+        <toc-element topic="Migration-from-K1.md"/>
+        <toc-element topic="Migrating-Inspections.md"/>
+        <toc-element topic="Migrating-Intentions.md"/>
+        <toc-element topic="Using-Light-Classes.md"/>
+    </toc-element>
+</instance-profile>
