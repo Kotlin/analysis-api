@@ -4,7 +4,7 @@ Represents a call within Kotlin code. It encompasses various types of calls, inc
 accesses, and other invocations. Analysis API provides a hierarchy of `KtCall` subtypes to model different call kinds.
 
 <code-block lang="mermaid">
-graph LR
+graph TB
   KaCall
   KaCall --> KaCallableMemberCall
   KaCallableMemberCall --> KaVariableAccessCall

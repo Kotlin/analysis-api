@@ -6,8 +6,8 @@ plugins and the compiler itself.
 
 ## Symbols vs. PSI
 
-While the PSI represents the concrete syntax in Kotlin code, `KaSymbol` provides access to semantic information of
-declarations. The table below summarizes the key differences:
+While the [PSI](Fundamentals.md#kotlin-psi) represents the concrete syntax in Kotlin code, `KaSymbol` provides access to
+semantic information of declarations. The table below summarizes the key differences:
 
 | **Feature**        | **KtDeclaration**                        | **KaSymbol**                                                      |
 |--------------------|------------------------------------------|-------------------------------------------------------------------|

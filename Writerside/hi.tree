@@ -83,10 +83,5 @@
         </toc-element>
         <toc-element topic="File-Compilation.md"/>
     </toc-element>
-    <toc-element topic="Guides.md">
-        <toc-element topic="Migration-from-K1.md"/>
-        <toc-element topic="Migrating-Inspections.md"/>
-        <toc-element topic="Migrating-Intentions.md"/>
-        <toc-element topic="Using-Light-Classes.md"/>
-    </toc-element>
+    <toc-element topic="Migrating-from-K1.md"/>
 </instance-profile>
