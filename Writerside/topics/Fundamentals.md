@@ -133,5 +133,5 @@ fun processCallTarget(ktContext: KtElement, pointer: KaSymbolPointer<KaCallableS
 ```
 
 <note>
-    In IntelliJ IDEA 2024.3, pointers will become available also for `KaType`s.
+    In IntelliJ IDEA 2024.3, pointers will become available also for <code>KaType</code>s.
 </note>
