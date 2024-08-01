@@ -1,6 +1,6 @@
 # KaAnonymousObjectSymbol
 
-Represents anonymous object symbols, such as:
+Represents an anonymous object declaration, such as:
 
 ```Kotlin
 object : Runnable {

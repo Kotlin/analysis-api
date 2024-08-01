@@ -2,8 +2,8 @@
 
 <note>Experimental API. Subject to changes.</note>
 
-Analysis API enables in-memory compilation of Kotlin files. This allows your tools and plugins to generate and compile
-Kotlin code without writing files to disk or invoking the command-line compiler.
+The Analysis API enables in-memory compilation of Kotlin files. This allows your tools and plugins to generate and
+compile Kotlin code without writing files to disk or invoking the command-line compiler.
 
 ## Usage
 

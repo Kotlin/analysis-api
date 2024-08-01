@@ -8,7 +8,7 @@ A base interface of the symbol hierarchy.
 : A symbol location kind (e.g., top-level or class member).
 
 `val origin: KaSymbolOrigin`
-: A place the symbol comes from (e.g., a source, a library or a compiler plugin).
+: A place the symbol comes from (e.g., a source, a library, or a compiler plugin).
 
 `val psi: PsiElement?`
 : A PSI element corresponding to the declaration. Might be `null` for certain, usually synthetic, origins.
@@ -50,13 +50,13 @@ or `null` if the declaration is not deprecated.
 
 ## `KaSymbolLocation`
 
-The `location` property indicates relation between the declaration represented by a symbol, and its
-container (a file, a class, etc.).
+The `location` property indicates the relation between the declaration represented by a symbol and its container (a
+file, a class, etc.).
 
 | Member      | Description                                                                 |
 |-------------|-----------------------------------------------------------------------------|
 | `TOP_LEVEL` | A declaration placed directly in a file, or in a script.                    |
-| `CLASS`     | A member of some class, object or an interface.                             |
+| `CLASS`     | A member of some class, object, or interface.                               |
 | `PROPERTY`  | A part of some property declaration (e.g., an accessor or a backing field). |
 | `LOCAL`     | A declaration inside some callable declaration body.                        |
 

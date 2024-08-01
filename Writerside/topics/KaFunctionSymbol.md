@@ -1,6 +1,6 @@
 # KaFunctionSymbol
 
-Represents a function-like declaration, including named and anonymous functions, constructors and property accessors.
+Represents a function-like declaration, including named and anonymous functions, constructors, and property accessors.
 
 ## Hierarchy
 

@@ -3,10 +3,10 @@
 For many years, the only practical way to analyze Kotlin code in IntelliJ IDEA and other tools was to use the Kotlin
 compiler internals, an unsafe API not designed for external usage.
 
-Analysis API, on the other hand, offers a much cleaner and robust set of utilities. It exposes almost the same set
+The Analysis API, on the other hand, offers a much cleaner and robust set of utilities. It exposes almost the same set
 of concepts. Thus, if you already have code that depends on the Kotlin compiler, migrating it to the new API should not
 be time-consuming. This migration guide outlines the differences between the APIs and explains how to port the
-descriptor-based resolution logic to Analysis API.
+descriptor-based resolution logic to the Analysis API.
 
 ## The Conceptual Difference
 
@@ -32,11 +32,11 @@ nothing stopping them from being passed around or cached. This is unfortunate be
 entire compiler resolution session, a very heavy tree of objects. As sporadic errors on outdated descriptor usage are
 rare, it becomes easy to inadvertently create a substantial memory leak.
 
-Analysis API significantly simplifies this by offering a single [`analyze {}`](Fundamentals.md#kasession) entry
+The Analysis API significantly simplifies this by offering a single [`analyze {}`](Fundamentals.md#kasession) entry
 point. Inside the analysis block, all declarations are analyzed on-demand, eliminating occasional "descriptor was not
 found for declaration" errors. Further, entities representing declarations and
 types [can only be accessed](Fundamentals.md#kalifetimeowner) from within the owning analysis block. This way,
-Analysis API not only guards against memory leaks but also ensures that all analysis results are consistent.
+The Analysis API not only guards against memory leaks but also ensures that all analysis results are consistent.
 
 ## Analysis Entry Point
 
@@ -57,7 +57,7 @@ fun KtElement.resolveToCall(bodyResolveMode: BodyResolveMode): ResolvedCall<out 
 These are not the only ones available – there are numerous more sophisticated ones,
 including `analyzeWithAllCompilerChecks()`, `analyzeWithContent()`, `analyzeInContext()`, and others.
 
-In contrast, Analysis API offers a single `analyze {}` entry point. Most of the API surface is accessible inside the
+In contrast, the Analysis API offers a single `analyze {}` entry point. Most of the API surface is accessible inside the
 lambda, including the `symbol` extension property that maps a `KtDeclaration` to its symbol:
 
 ```Kotlin
@@ -67,7 +67,7 @@ analyze(declaration) {
 }
 ```
 
-This is not just a syntax difference. Analysis API requires all analysis-related code to be housed in a single
+This is not just a syntax difference. The Analysis API requires all analysis-related code to be housed in a single
 location. You can, of course, extract parts of the logic to separate functions, and even create your set of utilities.
 Nevertheless, you cannot freely mix symbols from unrelated analysis sessions.
 
@@ -80,7 +80,7 @@ section.
 
 ## Declarations
 
-Both the old compiler API and Analysis API are built on top of `PsiElement`, the API in IntelliJ IDEA responsible
+Both the old compiler API and the Analysis API are built on top of `PsiElement`, the API in IntelliJ IDEA responsible
 for creating syntax trees. However, unlike some other language implementations, Kotlin distinctly separates PSI and
 semantic declaration representation. Refer to the [Symbols vs. PSI](Symbols.md#symbols-vs-psi) section for additional
 information.
@@ -94,7 +94,7 @@ val descriptor: DeclarationDescriptor =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 ```
 
-In Analysis API, a concept similar to descriptors is named `KaSymbol`. Just like descriptors, there
+In the Analysis API, a concept similar to descriptors is named `KaSymbol`. Just like descriptors, there
 are `KaClassSymbol`, `KaFunctionSymbol`, and `KaPropertySymbol`.
 
 To get a symbol for a `KtDeclaration`, simply use the `symbol` extension property.
@@ -123,8 +123,8 @@ In the old compiler, `FqName` was often used to store fully-qualified declaratio
 straightforward abstraction, `FqName` cannot differentiate between package and classifier components. For instance,
 in `foo.Bar.Baz`, `Bar` could either be a package or an outer class name. While Kotlin's coding
 conventions [discourage](https://kotlinlang.org/docs/coding-conventions.html#naming-rules) capitalized package names,
-technically it remains possible. Consequently, Analysis API employs a different abstraction for storing qualified names,
-namely `ClassId` for classes and `CallableId` for functions and properties.
+technically it remains possible. Consequently, the Analysis API employs a different abstraction for storing qualified
+names, namely `ClassId` for classes and `CallableId` for functions and properties.
 
 To construct a `ClassId`, merely pass its text representation to `ClassId.fromString()`. The slashes `/` separate
 package components, whereas dots `.` distinguish nested class names.
@@ -156,7 +156,7 @@ graph LR
   ClassifierDescriptor --> TypeAliasDescriptor
 </code-block>
 
-The difference is that in Analysis API, named and anonymous classes have distinct subclasses.
+The difference is that in the Analysis API, named and anonymous classes have distinct subclasses.
 
 <code-block lang="mermaid">
 graph LR
@@ -184,7 +184,7 @@ Checking ordinary class traits
 Getting class supertypes
 : Old API: `classDescriptor.typeConstructor.supertypes`
 : Analysis API: `classSymbol.superTypes`
-: There is no `TypeConstructor` abstraction in Analysis API. Use symbols directly.
+: There is no `TypeConstructor` abstraction in the Analysis API. Use symbols directly.
 
 Getting class declarations
 : Old API: `classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()`
@@ -207,8 +207,8 @@ graph LR
   PropertyAccessorDescriptor --> PropertySetterDescriptor
 </code-block>
 
-In Analysis API, the hierarchy is rather flat. The most significant change is that anonymous function is not an ordinary
-"named" function anymore.
+In the Analysis API, the hierarchy is rather flat. The most significant change is that anonymous function is not an
+ordinary "named" function anymore.
 
 <code-block lang="mermaid">
 graph LR
@@ -253,8 +253,8 @@ graph LR
   VariableDescriptor --> ValueParameterDescriptor
 </code-block>
 
-In Analysis API, backing fields, receiver parameters enum entries became a part of the variable hierarchy. The changes
-reflect evolution of these concepts in the language and the K2 compiler.
+In the Analysis API, backing fields, receiver parameters enum entries became a part of the variable hierarchy.
+The changes reflect evolution of these concepts in the language and the K2 compiler.
 
 <code-block lang="mermaid">
 graph LR
@@ -288,7 +288,7 @@ The old API offered a single `ResolveCall` class that represented all kinds of c
 simple and compound calls). For compound calls, `ResolveCall` itself represents only one of calls,
 while additional data was available in quite obscure places, like `CallTransformer.CallForImplicitInvoke`.
 
-Analysis API makes the distinction between calls explicit, making it harder to forget about more sophisticated
+The Analysis API makes the distinction between calls explicit, making it harder to forget about more sophisticated
 call kinds.
 
 <code-block lang="mermaid">
@@ -304,8 +304,8 @@ graph TB
   KaCall --> KaCompoundArrayAccessCall
 </code-block>
 
-In addition, Analysis API separates successful and error calls. In the IDE, the user edits and refactors code all the
-time, and source files often contain unresolved or ambiguous references. Handling them properly (or skipping them)
+In addition, the Analysis API separates successful and error calls. In the IDE, the user edits and refactors code all
+the time, and source files often contain unresolved or ambiguous references. Handling them properly (or skipping them)
 during static checks is important.
 
 Resolving a reference
@@ -345,7 +345,7 @@ call.partiallyAppliedSymbol.extensionReceiver
 ### Types
 
 The old compiler had a sophisticated hierarchy of `KotlinType`s, including wrapped, deferred and delegating types.
-Analysis API provides much simpler API that actually represents all language types.
+The Analysis API provides much simpler API that actually represents all language types.
 
 <code-block lang="mermaid">
 graph LR
@@ -396,7 +396,7 @@ Checking for annotation presence
 
 ## Example
 
-Below, the same annotation check is implemented with the old compiler API, and with Analysis API.
+Below, the same annotation check is implemented with the old compiler API, and with the Analysis API.
 
 ### Using the old compiler API
 

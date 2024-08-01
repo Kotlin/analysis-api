@@ -8,6 +8,6 @@ You might want to check the [generated documentation website](https://kotl.in/an
 
 ---
 
-Analysis API is a powerful library for analyzing code in Kotlin.
+The Analysis API is a powerful library for analyzing code in Kotlin.
 Made on top of the Kotlin PSI syntax tree, it provides access to various semantic information, including reference targets,
 expression types, declaration scopes, diagnostics, and more.

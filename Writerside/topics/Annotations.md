@@ -1,7 +1,7 @@
 # Annotations
 
-Annotations play a crucial role in Kotlin, providing metadata and influencing code behavior. Analysis API allows you
-to access and analyze annotations applied to both declarations and types.
+Annotations play a crucial role in Kotlin, providing metadata and influencing code behavior.
+The Analysis API allows you to access and analyze annotations applied to both declarations and types.
 
 ## KaAnnotated
 

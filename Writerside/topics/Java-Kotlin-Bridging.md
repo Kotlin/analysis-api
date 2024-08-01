@@ -2,13 +2,13 @@
 
 <note>Experimental API. Subject to changes.</note>
 
-While Analysis API exposes declarations and types from the Kotlin standpoint, it works also with Java source and library
-declarations. The API provides a set of utilities for converting between Kotlin and Java views of declarations.
+While the Analysis API exposes declarations and types from the Kotlin standpoint, it works also with Java source and
+library declarations. The API provides a set of utilities for converting between Kotlin and Java views of declarations.
 
 ## Types
 
 In IntelliJ IDEA, `PsiType` is a representation for Java types. Conceptually, it is similar to [`KaType`](KaType.md).
-Analysis API provides mapping between the two representations.
+The Analysis API provides mapping between the two representations.
 
 `fun PsiType.asKaType(useSitePosition: PsiElement): KaType?`
 : Convert the given Java type to a `KaType`.
@@ -30,7 +30,7 @@ Analysis API provides mapping between the two representations.
 
 ## Symbols
 
-Analysis API can create symbols for Java declarations.
+The Analysis API can create symbols for Java declarations.
 
 `val PsiClass.namedClassSymbol: KaNamedClassSymbol?`
 : Map a Java class to a class symbol. Always `null` for anonymous classes and type parameters (that are also

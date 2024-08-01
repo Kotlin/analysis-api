@@ -4,7 +4,7 @@ Represents an [enum entry](https://kotlinlang.org/docs/enum-classes.html) declar
 
 <note>
 In the Kotlin PSI, a <code>KtEnumEntry</code> is a <code>KtClass</code>, as it was so In the old compiler. 
-In Analysis API, though, similarly to the K2 compiler, it is a <code>KaVariableSymbol</code>.
+In the Analysis API, though, similarly to the K2 compiler, it is a <code>KaVariableSymbol</code>.
 </note>
 
 ## Hierarchy

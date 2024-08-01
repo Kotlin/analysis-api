@@ -1,6 +1,6 @@
 # KaClassLikeSymbol
 
-Represents a class, object, interface or a type alias declaration.
+Represents a class, object, interface, or a type alias declaration.
 
 ## Hierarchy
 

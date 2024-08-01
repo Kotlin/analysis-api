@@ -4,7 +4,7 @@ A scope acts as a container for declarations, including functions, properties, c
 a reference to a name, the compiler searches through a series of scopes to find the corresponding declaration. The order
 and types of scopes considered depend on the context of the reference.
 
-In Analysis API, scopes are visible through the `KaScope` interface. To get a scope, use the
+In the Analysis API, scopes are visible through the `KaScope` interface. To get a scope, use the
 [scope utilities](KaClassSymbol.md#scope-utilities) defined on classes and scripts.
 
 ## Members

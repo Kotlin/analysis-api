@@ -1,7 +1,7 @@
 # Diagnostics
 
-Analysis API allows you to access and analyze compiler diagnostics (errors and warnings) associated with entire files
-or specific elements.
+The Analysis API allows you to access and analyze compiler diagnostics (errors and warnings) associated with entire
+files or specific elements.
 
 ## Diagnostics in a `KtFile`
 
@@ -40,8 +40,6 @@ Note that the returned list of diagnostics does not include diagnostics for nest
 
 `collectDiagnostics` and `diagnostics` return a collection of `KtDiagnosticWithPsi` instances.
 This interface provides access to information about the diagnostic.
-
-
 
 | Member           | Description                                                                   |
 |------------------|-------------------------------------------------------------------------------|

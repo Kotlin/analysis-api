@@ -1,29 +1,30 @@
 # Types
 
-`KaType` is a fundamental concept in the Analysis API, representing types of Kotlin expressions and declarations.
-It provides information about the type structure, nullability and annotations.
+`KaType` is a fundamental concept in the Analysis API, representing types of Kotlin expressions and declarations. It
+provides information about the type structure, nullability, and annotations.
 
 ## KaType Hierarchy
 
 The `KaType` interface serves as the base for specific type kinds:
 
-* [`KaClassType`](KaClassType.md): Represents types of classes, objects and interfaces. This includes both named class types
-  (e.g., `String`, `Int`) and types of anonymous objects. For function types like `(Int) -> String`, there is a
-  [`KaFunctionType`](KaFunctionType.md) subtype.
+* [`KaClassType`](KaClassType.md): Represents types of classes, objects, and interfaces. This includes both named class
+  types (e.g., `String`, `Int`) and types of anonymous objects. For function types like `(Int) -> String`, there is
+  a [`KaFunctionType`](KaFunctionType.md) subtype.
 * [`KaTypeParameterType`](KaTypeParameterType.md): Represents type parameter types, such as `T` in `class Box<T>()`.
-* [`KaCapturedType`](KaCapturedType.md): Represents captured types, which occur when a type parameter is used with an upper bound.
+* [`KaCapturedType`](KaCapturedType.md): Represents [captured types](https://kotlinlang.org/spec/type-system.html#type-capturing).
 * [`KaDefinitelyNotNullType`](KaDefinitelyNotNullType.md): Represents a `T & Any` type.
-* [`KaFlexibleType`](KaFlexibleType.md): Represents types with both a lower and upper bound, such as `String?` or `(Mutable)List<Int>`.
+* [`KaFlexibleType`](KaFlexibleType.md): Represents types with both a lower and upper bound, such as `String?`
+  or `(Mutable)List<Int>`.
 * [`KaIntersectionType`](KaIntersectionType.md): Represents types that are intersections of other types.
-* [`KaDynamicType`](KaDynamicType.md): Represents dynamic types, used for interoperability with dynamically typed languages (e.g.,
-  JavaScript).
+* [`KaDynamicType`](KaDynamicType.md): Represents dynamic types, used for interoperability with dynamically typed
+  languages (e.g., JavaScript).
 * [`KaErrorType`](KaErrorType.md): Represents unresolved types, providing information about the error.
 
 ## Example
 
-The following example demonstrates how to obtain the `KaType` of a `KtExpression` and renders its type:
+The following example demonstrates how to obtain the `KaType` of a `KtExpression` and render its type:
 
-```kotlin
+```Kotlin
 val expression: KtExpression = ...
 
 analyze(expression) {
@@ -69,15 +70,15 @@ symbols to types:
 : The expected type is the type that the expression is expected to have in the context where it appears.
 
 <note>
-Analysis API distinguishes between an expression's type and its expected type, which represent different aspects of
+The Analysis API distinguishes between an expression's type and its expected type, which represent different aspects of
 the Kotlin type system.
 
-The <em>expression type</em> represents the actual type of an expression after it has been resolved. It reflects the result
-of type inference, smart casts and implicit conversions.
+The <em>expression type</em> represents the actual type of an expression after it has been resolved. It reflects the
+result of type inference, smart casts, and implicit conversions.
 
-The <em>expected type</em> represents the type that is expected for an expression at a specific location in the code. This is
-determined by the context in which the expression appears, such as a variable type for its initializer, or a parameter
-type for a function call.
+The <em>expected type</em> represents the type that is expected for an expression at a specific location in the code.
+This is determined by the context in which the expression appears, such as a variable type for its initializer, or a
+parameter type for a function call.
 </note>
 
 `val KtDeclaration.returnType: KaType`
@@ -111,8 +112,8 @@ val type2: KaType = ...
 val areEqual = type1.semanticallyEquals(type2)
 ```
 
-Comparing to `type1 == type2` which only considers simple structural equivalence, `semanticallyEquals()` ensures that
-`type1` can be substituted with `type2`.
+Comparing to `type1 == type2`, which only considers simple structural equivalence, `semanticallyEquals()` ensures
+that `type1` can be substituted with `type2`.
 
 ### Subtyping check
 

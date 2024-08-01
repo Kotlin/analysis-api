@@ -7,7 +7,7 @@ A base class for symbols that represent callable declarations, such as functions
 A sealed class.  
 Inherits from [KaDeclarationSymbol](KaDeclarationSymbol.md).
 
-Notable inheritors: [KaFunctionSymbol](KaFunctionSymbol.md), [KaVariableSymbol](KaVariableSymbol.md). 
+Notable inheritors: [KaFunctionSymbol](KaFunctionSymbol.md), [KaVariableSymbol](KaVariableSymbol.md).
 
 ## Members
 
@@ -15,7 +15,7 @@ Notable inheritors: [KaFunctionSymbol](KaFunctionSymbol.md), [KaVariableSymbol](
 : The fully-qualified name of a declaration, or `null` if the declaration is a local one.
 
 `val returnType: KaType`
-: The declaration's return type. For properties, a type of the property.
+: The declaration's return type. For properties, the type of the property.
 
 `val isExtension: Boolean`
 : `true` if the declaration is an extension function or an extension property.
@@ -37,8 +37,8 @@ overridden declaration for `C.foo`.
 
 `val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>`
 : A sequence of declarations overridden by the given declaration, both directly and indirectly.
-: E.g., if `A.foo` overrides `B.foo`, and `B.foo` overrides `C.foo`, both `A.foo` and `B.foo` will be returned as an
-overridden declaration for `C.foo`.
+: E.g., if `A.foo` overrides `B.foo`, and `B.foo` overrides `C.foo`, both `A.foo` and `B.foo` will be returned as
+overridden declarations for `C.foo`.
 
 `val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol`
 : The original declared symbol for a substitution or intersection override.

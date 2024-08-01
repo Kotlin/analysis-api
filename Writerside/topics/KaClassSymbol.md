@@ -1,6 +1,6 @@
 # KaClassSymbol
 
-Represents a class, object or an interface declaration.
+Represents a class, object, or interface declaration.
 
 ## Use Cases
 

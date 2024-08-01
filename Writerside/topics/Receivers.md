@@ -1,6 +1,6 @@
 # Receivers
 
-Receivers play a vital role in Kotlin, enabling extension functions and member functions. Analysis API
+Receivers play a vital role in Kotlin, enabling extension functions and member functions. The Analysis API
 provides abstractions for different kinds of receivers, allowing you to analyze them in your code.
 
 ## Types of Receivers
@@ -63,7 +63,7 @@ are a few differences.
 
 ## Analysis API Representation
 
-Analysis API represents receivers using the `KaReceiverValue` sealed class. The specific subclasses are:
+The Analysis API represents receivers using the `KaReceiverValue` sealed class. The specific subclasses are:
 
 * **KaExplicitReceiverValue:** Represents an explicit receiver expression, e.g., `foo` in `foo.toString()`;
 * **KaImplicitReceiverValue:** Represents an implicit receiver, such as in `toString()` (without an explicit receiver).
@@ -82,7 +82,7 @@ class MyClass {
 }
 ```
 
-In Analysis API, you can access both receivers using the corresponding properties of `KtCallableMemberCall`:
+In the Analysis API, you can access both receivers using the corresponding properties of `KtCallableMemberCall`:
 
 ```kotlin
 val callInfo = ...

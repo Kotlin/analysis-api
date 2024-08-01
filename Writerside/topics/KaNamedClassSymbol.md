@@ -1,14 +1,14 @@
 # KaNamedClassSymbol
 
-Represents a named class, object or an interface declaration.  
+Represents a named class, object, or interface declaration.
 Basically, covers all class-like declarations, excluding anonymous objects.
 
 ## Use Cases
 
-* **Checking for specific class features.** Use properties like `isData`, `isInner`, and `isCompanion` to
-  determine if the class has specific characteristics.
+* **Checking for specific class features.** Use properties like `isData`, `isInner`, and `isCompanion` to determine if
+  the class has specific characteristics.
 
-Also see use-cases for the [KaClassSymbol](KaClassSymbol.md#use-cases) supertype.
+Also see use cases for the [KaClassSymbol](KaClassSymbol.md#use-cases) supertype.
 
 ## Hierarchy
 
@@ -17,7 +17,7 @@ Inherits from [KaClassSymbol](KaClassSymbol.md).
 ## Members
 
 `val name: Name`
-: The simple declaration name, e.g. `String` for `kotlin.String`.
+: The simple declaration name, e.g., `String` for `kotlin.String`.
 
 `val companionObject: KaNamedClassSymbol?`
 : The nested companion object, or `null` if there is no companion object.
@@ -27,7 +27,7 @@ Inherits from [KaClassSymbol](KaClassSymbol.md).
 : **Experimental API**.
 
 `val isExternal: Boolean`
-: `true` if the declaration has the `external modifier.
+: `true` if the declaration has the `external` modifier.
 
 `val isData: Boolean`
 : `true` if the declaration is a `data class`.
@@ -47,8 +47,8 @@ Inherits from [KaClassSymbol](KaClassSymbol.md).
 ## Type utilities
 
 `val KaNamedClassSymbol.defaultType: KaType`
-: A class type where type parameters are substituted with matching type parameter types, 
-e.g. `List<T>` for the `List` class.
+: A class type where type parameters are substituted with matching type parameter types, e.g., `List<T>` for the `List`
+class.
 
 ## Relation utilities
 

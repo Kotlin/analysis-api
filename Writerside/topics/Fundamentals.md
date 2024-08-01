@@ -4,12 +4,12 @@ This page covers a few fundamental concepts and rules of the Analysis API. Pleas
 
 ## Kotlin PSI
 
-The Kotlin compiler exposes a Kotlin abstract syntax tree, made on top of the
-[PSI](https://plugins.jetbrains.com/docs/intellij/psi.html) API, a part of IntelliJ IDEA. For some languages, such as
-Java, the PSI acts both as a syntax tree, and as a source of semantic information. In Kotlin, though, these concepts
+The Kotlin compiler exposes a Kotlin abstract syntax tree, built on top of
+the [PSI](https://plugins.jetbrains.com/docs/intellij/psi.html) API, a part of IntelliJ IDEA. For some languages, such
+as Java, the PSI acts both as a syntax tree and as a source of semantic information. In Kotlin, though, these concepts
 are clearly separated.
 
-Below there is a simplified tree of the Kotlin PSI hierarchy.
+Below is a simplified tree of the Kotlin PSI hierarchy.
 
 <code-block lang="mermaid">
 graph TD
@@ -28,24 +28,25 @@ graph TD
   KtExpression --> KtBlockExpression
 </code-block>
 
-`KtElement` is a root type of the hierarchy. `KtDeclaration` and `KtExpression` are two notable subtypes of it.
-`KtDeclaration` itself is an expression – so makes it possible to have local classes and functions.
+`KtElement` is the root type of the hierarchy. `KtDeclaration` and `KtExpression` are two notable subtypes of
+it. `KtDeclaration` itself is an expression, which makes it possible to have local classes and functions.
 
-The Kotlin PSI does not have a strict separation between statements and expressions. There is, however, a
-`KtStatementExpression` marker interface that annotates statement-like constructs.
+The Kotlin PSI does not have a strict separation between statements and expressions. There is, however,
+a `KtStatementExpression` marker interface that annotates statement-like constructs.
 
-Analysis API is implemented on top of the Kotlin PSI, mostly as a set of extension functions and properties, providing
-access to semantic information. Such as, to get an expression type, there is a `ktExpression.expressionType` extension
-property. Or, to get a resolved call information, one should use `ktCallExpression.resolveToCall()`.
+The Analysis API is implemented on top of the Kotlin PSI, mostly as a set of extension functions and properties,
+providing access to semantic information. For example, to get an expression type, there is
+a `ktExpression.expressionType` extension property. Or, to get resolved call information, one should
+use `ktCallExpression.resolveToCall()`.
 
 ## KaSession
 
-`KaSession` is the entry point for interacting with Analysis API. It provides access to various components and utilities
-needed for analyzing code in Kotlin.
+`KaSession` is the entry point for interacting with the Analysis API. It provides access to various components and
+utilities needed for analyzing code in Kotlin.
 
-Each `KaSession` is associated with some specific module and provides analysis results from the perspective of that
-module. In other words, a `KaSession` only sees declarations from the owning (use-site) module, and from all
-dependencies of it, both direct and transitive.
+Each `KaSession` is associated with a specific module and provides analysis results from the perspective of that module.
+In other words, a `KaSession` only sees declarations from the owning (use-site) module and from all its dependencies,
+both direct and transitive.
 
 To get a `KaSession`, use the `analyze {}` function, passing a `KtModule` or some `KtElement` from that module:
 
@@ -61,9 +62,9 @@ fun perform(element: KtElement) {
 The `KaSession` is available as an extension receiver within the lambda block. The session is valid only within this
 block, and it **should not** be stored or accessed outside of it.
 
-The `analyze {}` call is only available inside
-[read actions](https://plugins.jetbrains.com/docs/intellij/general-threading-rules.html#read-access). You can use the
-`@RequiresReadLock` annotation to specify that the method must be called from a read action. In latter parts of the
+The `analyze {}` call is only available
+inside [read actions](https://plugins.jetbrains.com/docs/intellij/general-threading-rules.html#read-access). You can use
+the `@RequiresReadLock` annotation to specify that the method must be called from a read action. In later parts of the
 documentation, the annotation is not added for clarity.
 
 ## KaLifetimeOwner
@@ -72,11 +73,11 @@ documentation, the annotation is not added for clarity.
 the `analyze` block in which they were created. All such entities have the `KaLifetimeOwner` supertype.
 
 It is crucial to avoid caching `KaLifetimeOwner`s for an arbitrary time, including storing them in properties of
-long-living classes, or in static context. Doing so will likely lead to severe memory leaks as these entities hold the
+long-living classes or in a static context. Doing so will likely lead to severe memory leaks as these entities hold the
 whole underlying resolution session. Always retrieve and use them within the `analyze` block or pass them as parameters
 to functions that require them.
 
-If you need to extract parts of resolution logic to a separate function, prefer passing the `KaSession` as an
+If you need to extract parts of the resolution logic to a separate function, prefer passing the `KaSession` as an
 extension or ordinary parameter, instead of keeping it in some shared context class.
 
 ```Kotlin
@@ -94,7 +95,7 @@ fun KaSession.check(element: KtElement) { ... }
 fun modify(element: KtElement) { ... }
 ```
 
-Inside the `analyze {} `block, `KaSession` is also available as a `useSiteSession` property:
+Inside the `analyze {}` block, `KaSession` is also available as a `useSiteSession` property:
 
 ```Kotlin
 fun perform(element: KtElement) {
