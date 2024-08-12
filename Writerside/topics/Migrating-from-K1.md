@@ -1,12 +1,16 @@
 # Migrating from K1
 
 For many years, the only practical way to analyze Kotlin code in IntelliJ IDEA and other tools was to use the Kotlin
-compiler internals, an unsafe API not designed for external usage.
+compiler's internals, an unsafe API not designed for external usage.
 
 The Analysis API, on the other hand, offers a much cleaner and robust set of utilities. It exposes almost the same set
 of concepts. Thus, if you already have code that depends on the Kotlin compiler, migrating it to the new API should not
 be time-consuming. This migration guide outlines the differences between the APIs and explains how to port the
 descriptor-based resolution logic to the Analysis API.
+
+Once an IntelliJ plugin has been migrated to the Analysis API, it will need to [declare its compatibility with the K2 
+Kotlin mode](#declaring-compatibility-with-the-k2-kotlin-mode). Otherwise, the plugin will not be loaded when the K2
+mode is active.
 
 ## The Conceptual Difference
 
@@ -423,3 +427,31 @@ fun hasAnnotation(declaration: KtDeclaration): Boolean {
     }
 }
 ```
+
+## Declaring compatibility with the K2 Kotlin mode
+
+The Kotlin IntelliJ plugin assumes that a dependent third-party plugin *does not* support K2 Kotlin out of the box. Such
+incompatible plugins will not be loaded if the K2 mode is currently enabled.
+
+Once a plugin has been migrated to the Analysis API, a setting should be added to its `plugin.xml` to declare its
+compatibility with the K2 mode. Even if the plugin does not use any of the old K1 analysis functions and no migration to 
+the Analysis API is needed, compatibility with the K2 Kotlin plugin should be declared explicitly nonetheless.
+
+Starting from IntelliJ 2024.2.1 (EAP), the following setting in the `plugin.xml` can be used to declare compatibility 
+with the K2 mode:
+
+```xml
+<extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <supportsKotlinPluginMode supportsK2="true" />
+</extensions>
+```
+
+It is also possible to declare compatibility with *only* the K2 mode:
+
+```xml
+<extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <supportsKotlinPluginMode supportsK1="false" supportsK2="true" />
+</extensions>
+```
+
+Currently, the default setting for `supportsK1` is `true` and for `supportsK2` is `false`.
