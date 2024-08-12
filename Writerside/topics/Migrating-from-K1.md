@@ -437,8 +437,8 @@ Once a plugin has been migrated to the Analysis API, a setting should be added t
 compatibility with the K2 mode. Even if the plugin does not use any of the old K1 analysis functions and no migration to 
 the Analysis API is needed, compatibility with the K2 Kotlin plugin should be declared explicitly nonetheless.
 
-Starting from IntelliJ 2024.2.1 (EAP), the following setting in the `plugin.xml` can be used to declare compatibility 
-with the K2 mode:
+Starting from IntelliJ 2024.2.1 (Preview), the following setting in the `plugin.xml` can be used to declare 
+compatibility with the K2 mode:
 
 ```xml
 <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -455,3 +455,9 @@ It is also possible to declare compatibility with *only* the K2 mode:
 ```
 
 Currently, the default setting for `supportsK1` is `true` and for `supportsK2` is `false`.
+
+A number of third-party plugins may already be enabled in the K2 mode without a `supportsK2` declaration. The IntelliJ 
+Kotlin plugin keeps an [internal whitelist](https://github.com/JetBrains/intellij-community/blob/master/platform/core-impl/resources/pluginsCompatibleWithK2Mode.txt) 
+of plugins which are known to be compatible with the K2 mode as they do not use Kotlin analysis. The authors of these
+plugins should not be surprised if their plugin already works in K2 mode. However, it's still advised to declare K2
+support explicitly.
