@@ -457,7 +457,7 @@ It is also possible to declare compatibility with *only* the K2 mode:
 Currently, the default setting for `supportsK1` is `true` and for `supportsK2` is `false`.
 
 A number of third-party plugins may already be enabled in the K2 mode without a `supportsK2` declaration. The IntelliJ 
-Kotlin plugin keeps an [internal whitelist](https://github.com/JetBrains/intellij-community/blob/master/platform/core-impl/resources/pluginsCompatibleWithK2Mode.txt) 
+Kotlin plugin keeps an [internal list](https://github.com/JetBrains/intellij-community/blob/master/platform/core-impl/resources/pluginsCompatibleWithK2Mode.txt) 
 of plugins which are known to be compatible with the K2 mode as they do not use Kotlin analysis. The authors of these
-plugins should not be surprised if their plugin already works in K2 mode. However, it's still advised to declare K2
+plugins should not be surprised if their plugin already works in the K2 mode. However, it's still advised to declare K2
 support explicitly.
