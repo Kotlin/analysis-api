@@ -456,7 +456,7 @@ It is also possible to declare compatibility with *only* the K2 mode:
 
 Currently, the default setting for `supportsK1` is `true` and for `supportsK2` is `false`.
 
-To test it locally when using the [IntelliJ Platform Gradle Template](https://github.com/JetBrains/intellij-platform-plugin-template), the `platformVersion` in `gradle.properties` should be set to at least `242.21829.15`, which corresponds to `IntelliJ 2024.2.1 (Preview)`.
+To test it locally when using the [IntelliJ Platform Gradle Plugin](https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html), add a [dependency](https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html) on the IntelliJ IDEA Community 2024.2.1 (`intellijIdeaCommunity("2024.2.1")`) or higher.
 
 A number of third-party plugins may already be enabled in the K2 mode without a `supportsK2` declaration. The IntelliJ 
 Kotlin plugin keeps an [internal list](https://github.com/JetBrains/intellij-community/blob/master/platform/core-impl/resources/pluginsCompatibleWithK2Mode.txt) 
