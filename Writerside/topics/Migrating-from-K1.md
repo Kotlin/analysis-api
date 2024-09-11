@@ -9,8 +9,8 @@ be time-consuming. This migration guide outlines the differences between the API
 descriptor-based resolution logic to the Analysis API.
 
 Once an IntelliJ plugin has been migrated to the Analysis API, it will need to [declare its compatibility with the K2 
-Kotlin mode](#declaring-compatibility-with-the-k2-kotlin-mode). Otherwise, the plugin will not be loaded when the K2
-mode is active.
+Kotlin mode](Declaring-K2-Compatibility.md) in the `plugin.xml`.
+Otherwise, the plugin will not be loaded when the K2 mode is active.
 
 ## The Conceptual Difference
 
