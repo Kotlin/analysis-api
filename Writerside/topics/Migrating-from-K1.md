@@ -463,3 +463,31 @@ Kotlin plugin keeps an [internal list](https://github.com/JetBrains/intellij-com
 of plugins which are known to be compatible with the K2 mode as they do not use Kotlin analysis. The authors of these
 plugins should not be surprised if their plugin already works in the K2 mode. However, it's still advised to declare K2
 support explicitly.
+
+## Testing the plugin in K2 mode locally
+
+To test the plugin in K2 mode locally, the `-Didea.kotlin.plugin.use.k2=true` VM option should be passed to the running
+IntelliJ IDEA or test process.
+
+When using [IntelliJ Platform Gradle Plugin](https://github.com/JetBrains/intellij-platform-gradle-plugin), you can
+modify the `build.gradle.kts` build script to enable K2 mode in different Gradle tasks:
+
+For running in a debug IntelliJ IDEA instance:
+
+```kotlin
+tasks.named<RunIdeTask>("runIde") {
+    jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf("-Didea.kotlin.plugin.use.k2=true")
+    }
+}
+```
+
+Or for running tests:
+
+```kotlin
+tasks.test {
+    jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf("-Didea.kotlin.plugin.use.k2=true")
+    }
+}
+```
