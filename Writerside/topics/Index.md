@@ -39,8 +39,14 @@ The Analysis API is not just some external API. It serves as the foundation for 
 for IntelliJ IDEA, including code completion, navigation across declarations, refactorings, inspections, the debugger,
 and many more. By using the Analysis API, you get the same tools as the developers of the Kotlin plugin itself.
 
-The Analysis API mainly targets the K2 Kotlin compiler, but there is also limited support for the legacy 1.0 compiler.
-So the same piece of logic, if implemented on top of the Analysis API, can work both in the K1 and K2 Kotlin modes.
+<tip>
+<emphasis>
+The Analysis API has been available since IntelliJ IDEA 2024.2.
+</emphasis>
+
+The API mainly targets the K2 Kotlin compiler, but there is also limited support for the legacy 1.0 compiler.
+The same piece of logic implemented on top of the Analysis API, works both in the K1 and K2 Kotlin modes.
+</tip>
 
 ## Using in command-line tools
 
