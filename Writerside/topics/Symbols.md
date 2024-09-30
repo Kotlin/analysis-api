@@ -92,7 +92,8 @@ val ktNamedFunction: KtNamedFunction = ...
 
 analyze(ktNamedFunction) {
     val functionSymbol = ktNamedFunction.symbol
-    // Although the PSI element is named 'KtNamedFunction', it can be an anonymous one (the name is 'null')
+    // Although the PSI element is named 'KtNamedFunction',
+    // it can be an anonymous one (the name is 'null')
     if (functionSymbol is KaNamedFunctionSymbol) {
         // Here we have a truly named function
         check(functionSymbol.isOperator)
