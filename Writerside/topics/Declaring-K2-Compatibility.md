@@ -31,5 +31,6 @@ To test it locally when using the [IntelliJ Platform Gradle Plugin](https://plug
 A number of third-party plugins may already be enabled in the K2 mode without a `supportsK2` declaration. The IntelliJ
 Kotlin plugin keeps an [internal list](https://github.com/JetBrains/intellij-community/blob/master/platform/core-impl/resources/pluginsCompatibleWithK2Mode.txt)
 of plugins which are known to be compatible with the K2 mode as they do not use Kotlin analysis. The authors of these
-plugins should not be surprised if their plugin already works in the K2 mode. However, it's still advised to declare K2
-support explicitly.
+plugins should not be surprised if their plugin already works in the K2 mode. However, it's still advised to check and
+declare K2 support explicitly as this list is not future-proof and could potentially contain unsafe plugins due to some
+circumstances.
