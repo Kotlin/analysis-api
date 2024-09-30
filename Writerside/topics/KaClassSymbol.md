@@ -21,7 +21,8 @@ Notable inheritors: [KaNamedClassSymbol](KaNamedClassSymbol.md), [KaAnonymousObj
 : The class kind (ordinary class, interface, enum class, etc.).
 
 `val superTypes: List<KaType>`
-: A complete list of class supertypes up to `Any`.
+: A list of the direct supertypes of the class. If the class has no explicit supertypes, the supertype will be `Any`, or 
+a special supertype such as `Enum` for enum classes.
 
 ## Type utilities
 
