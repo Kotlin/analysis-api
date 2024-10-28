@@ -82,6 +82,7 @@
             <toc-element topic="KaDiagnosticWithPsi.md"/>
         </toc-element>
         <toc-element topic="File-Compilation.md"/>
+        <toc-element topic="Statistics.md"/>
     </toc-element>
     <toc-element topic="Migrating-from-K1.md">
         <toc-element topic="Declaring-K2-Compatibility.md"/>
