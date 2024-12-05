@@ -60,10 +60,10 @@ type because it may be unknown if this type can accept `null`.
 ordinary calls are valid on it.
 
 `fun KaType.upperBoundIfFlexible(): KaType`
-: Returns the upper bound if the given type is a flexible type, and `null` otherwise.
+: Returns the upper bound if the given type is a flexible type, and the given type itself otherwise.
 
 `fun KaType.lowerBoundIfFlexible(): KaType`
-: Returns the lower bound if the given type is a flexible type, and `null` otherwise.
+: Returns the lower bound if the given type is a flexible type, and the given type itself otherwise.
 
 ## Type relation utilities
 
