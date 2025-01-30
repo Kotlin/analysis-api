@@ -6,7 +6,7 @@ like `+=`, `-=`, `++`, or `--`.
 
 ## Hierarchy
 
-Inherits [KaCallableMemberCall](KaCallableMemberCall.md).
+Inherits [KaCall](KaCall.md).
 
 ## Members
 
