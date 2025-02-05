@@ -81,6 +81,7 @@
             </toc-element>
             <toc-element topic="KaDiagnosticWithPsi.md"/>
         </toc-element>
+        <toc-element topic="In-memory-file-analysis.md"/>
         <toc-element topic="File-Compilation.md"/>
         <toc-element topic="Statistics.md"/>
     </toc-element>
