@@ -20,21 +20,23 @@ abbreviated type.
 
 ## Subtypes
 
-The `KtType` interface has several subtypes that represent different kinds of types in Kotlin:
+The `KaType` interface has several subtypes that represent different kinds of types in Kotlin:
 
-* **KtClassType**: Represents a Kotlin class type, encompassing classes, interfaces, objects, and enum classes.
-* **KtFunctionalType**: Represents Kotlin function types, including regular functions, suspend functions, and those with
-  receivers.
-* **KtTypeParameterType**: Represents a type parameter type, such as `T` in the
+* **KaClassType**: Represents a Kotlin class type, encompassing classes, interfaces, objects, and enum classes.
+  * **KaUsualClassType**: Represents a class type that is not a function type.
+  * **KaFunctionType**: Represents Kotlin function types, including regular functions, suspend functions, and those with
+    receivers.
+* **KaTypeParameterType**: Represents a type parameter type, such as `T` in the
   declaration `class Box<T>(val element: T)`.
-* **KtDefinitelyNotNullType**: Represents a type that is known to be non-nullable at a particular point in the program.
-* **KtCapturedType**: Represents a type that is captured during type inference, often occurring when working with
+* **KaDefinitelyNotNullType**: Represents a type that is known to be non-nullable at a particular point in the program.
+* **KaCapturedType**: Represents a type that is captured during type inference, often occurring when working with
   generics and variance.
-* **KtFlexibleType**: Represents a type with flexibility in its bounds, commonly used for platform types or types with
+* **KaFlexibleType**: Represents a type with flexibility in its bounds, commonly used for platform types or types with
   uncertain nullability.
-* **KtIntersectionType**: Represents a type formed by the intersection of multiple types.
-* **KtDynamicType**: Represents the dynamic type in Kotlin, used for interoperability with dynamically-typed languages
+* **KaIntersectionType**: Represents a type formed by the intersection of multiple types.
+* **KaDynamicType**: Represents the dynamic type in Kotlin, used for interoperability with dynamically-typed languages
   or platforms.
+* **KaErrorType**: Represents an unresolved type of some kind.
 
 ## Transformation utilities
 
