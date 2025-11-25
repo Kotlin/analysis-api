@@ -87,7 +87,7 @@
     </toc-element>
     <toc-element topic="Migrating-from-K1.md">
         <toc-element topic="Declaring-K2-Compatibility.md"/>
-        <toc-element topic="Testing-in-K2-Locally.md"/>
+        <toc-element topic="Testing-in-K1-Locally.md"/>
         <toc-element topic="Case-Studies.md"/>
     </toc-element>
 </instance-profile>
