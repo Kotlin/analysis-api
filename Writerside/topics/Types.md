@@ -279,3 +279,24 @@ analyze(ktFile) {
   val definitelyNotNullParameterType = typeCreator.definitelyNotNullType(typeParameterType)
 }
 ```
+
+### Building Intersection Types
+[](KaIntersectionType.md) can be constructed using `typeCreator.intersectionType`
+by building a list of conjuncts via `conjunct` and `conjuncts`:
+```kotlin
+analyze(ktFile) {
+  val intersectionType = typeCreator.intersectionType {
+    conjunct(builtinTypes.throwable)
+    conjuncts(listOf(builtinTypes.int, builtinTypes.any))
+    conjunct {
+      arrayType(builtinTypes.char)
+    }
+    conjunct {
+      dynamicType()
+    }
+  }
+}
+```
+
+**Note:** The result of `typeCreator.intersectionType` is normalized, so it's not always a `KaIntersectionType`.
+However, the resulting type is guaranteed to represent a subtype of all the passed conjuncts.
