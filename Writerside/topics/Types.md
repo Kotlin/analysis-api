@@ -256,3 +256,26 @@ analyze(ktFile) {
 
 **Note:** Similar to class types, you can adjust the nullability of the type parameter type
 by using `isMarkedNullable` within the builder.
+
+### Building Definitely Not Null Types
+[](KaDefinitelyNotNullType.md) can be constructed using `typeCreator.definitelyNotNullType`
+by providing either a `KaCapturedType` or a `KaTypeParameterType`.
+
+**Note:** If the original type was not nullable, `typeCreator.definitelyNotNullType` returns the original type
+as no additional wrapping is required.
+
+#### By a captured type:
+```kotlin
+analyze(ktFile) {
+    val capturedType: KaCapturedType = ...
+    val definitelyNotNullParameterType = typeCreator.definitelyNotNullType(capturedType)
+}
+```
+
+#### By a type parameter type:
+```kotlin
+analyze(ktFile) {
+  val typeParameterType: KaTypeParameterType = ...
+  val definitelyNotNullParameterType = typeCreator.definitelyNotNullType(typeParameterType)
+}
+```
