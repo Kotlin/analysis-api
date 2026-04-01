@@ -264,7 +264,7 @@ by providing either a `KaCapturedType` or a `KaTypeParameterType`.
 **Note:** If the original type was not nullable, `typeCreator.definitelyNotNullType` returns the original type
 as no additional wrapping is required.
 
-#### By a captured type:
+#### By a captured type {id="def-not-null-type-by-a-captured-type"}:
 ```kotlin
 analyze(ktFile) {
     val capturedType: KaCapturedType = ...
@@ -300,3 +300,29 @@ analyze(ktFile) {
 
 **Note:** The result of `typeCreator.intersectionType` is normalized, so it's not always a `KaIntersectionType`.
 However, the resulting type is guaranteed to represent a subtype of all the passed conjuncts.
+
+### Building Captured Types
+[](KaCapturedType.md) can be constructed using `typeCreator.capturedType`
+by providing either a [](KaTypeProjection.md) or another [](KaCapturedType.md):
+
+#### By a captured type: {id="captured-type-by-a-captured-type"}
+```kotlin
+analyze(ktFile) {
+    val capturedType: KaCapturedType = ...
+    val capturedType = typeCreator.capturedType(capturedType) {
+        isMarkedNullable = true
+    }
+}
+```
+
+#### By a type projection
+```kotlin
+analyze(ktFile) {
+    val typeProjection: KaTypeProjection = ...
+    val capturedType = typeCreator.capturedType(typeProjection)
+}
+```
+
+**Note:** If the passed `KaTypeProjection` is a `KaTypeArgumentWithVariance`, its variance cannot be `Variance.INVARIANT`.
+That's because captured types are intended to capture non-invariant projections.
+Otherwise, an exception is thrown.
