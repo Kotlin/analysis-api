@@ -2,7 +2,7 @@
 
 Represents a type parameter type, such as `T` in the declaration `class Box<T>(val element: T)`.
 
-Can be created using [buildTypeParameterType](Types.md#building-type-parameter-types).
+Can be created using [typeCreator.typeParameterType](Types.md#building-type-parameter-types).
 
 ## Hierarchy
 

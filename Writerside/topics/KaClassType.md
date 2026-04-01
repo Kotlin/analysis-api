@@ -2,7 +2,7 @@
 
 Represents a Kotlin generic class type, such as `String`, `List<Int>`, or a function type (like `(String) -> Int`). 
 
-Can be created using [buildClassType](Types.md#building-class-types).
+Can be created using [typeCreator.classType](Types.md#building-class-types).
 
 ## Hierarchy
 

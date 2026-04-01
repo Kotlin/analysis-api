@@ -129,73 +129,101 @@ val isSubtype = subtype.isSubtypeOf(supertype)
 ## Building `KaType`s
 
 The Analysis API provides facilities for constructing `KaType` instances, representing various Kotlin types.
+The entry point for the type building DSL is `typeCreator` accessible directly inside the `analyze` block.
+
+<warning> 
+Type creation endpoints available directly inside the <code>analyze</code> block and starting with 'build' are obsolete and will be deprecated soon.
+This includes:
+ 
+- `buildClassType`
+- `buildArrayType`
+- `buildVarargArrayType`
+- `buildTypeParameterType`
+- `buildStarTypeProjection`
+
+If you are still using them, migrate to the new type creation DSL. The former API lacks a wide set of features and containts some long-standing bugs.
+</warning>
+
 Here's how you can build different types:
 
 ### Building Class Types
 
-To build a class type, use the `buildClassType` function. You can specify the class either by its `ClassId` or using
-a `KaClassLikeSymbol`:
+To build a [](KaClassType.md), use the `typeCreator.classType` function. 
+You can specify the target class either by its `ClassId` or using a [](KaClassLikeSymbol.md):
 
-#### By a class name:
+#### By a class ID:
 
 ```kotlin
 analyze(ktFile) {
-    val intType = buildClassType(DefaultTypeClassIds.INT)
+    val intType = typeCreator.classType(KaStandardTypeClassIds.INT)
 }
 ```
+
+<note>
+If the provided <code>ClassId</code> doesn't resolve to a valid symbol, the <code>typeCreator.classType</code> function will
+return an error type.
+</note>
 
 #### By a class symbol:
 
 ```kotlin
 analyze(ktFile) {
     val listSymbol: KaClassLikeSymbol = ...
-    val listOfStringType = buildClassType(listSymbol) {
-        argument(builtinTypes.STRING)
+    val listOfStringType = typeCreator.classType(listSymbol) {
+        invariantTypeArgument(builtinTypes.string)
     }
 }
 ```
 
-<note>
-If the provided <code>ClassId</code> doesn't resolve to a valid symbol, the <code>buildClassType</code> function will
-return an error type.
-</note>
-
 #### Specifying Type Arguments:
 
-Within the `buildClassType` block, you can specify type arguments using the `argument` function. This function accepts
+Within the `classType` block, you can specify type arguments using the `typeArgument` function. This function accepts
 either a `KaTypeProjection` or a `KaType` and optionally its variance:
 
 ```kotlin
 analyze(ktFile) {
-    val mapType = buildClassType(DefaultTypeClassIds.MAP) {
-        argument(builtinTypes.INT, Variance.IN_VARIANCE)
-        argument(builtinTypes.STRING, Variance.OUT_VARIANCE)
+    val mapType = typeCreator.classType(KaStandardTypeClassIds.MAP) { 
+        typeArgument(Variance.IN_VARIANCE) { 
+            builtinTypes.int
+        }
+        typeArgument(Variance.OUT_VARIANCE, builtinTypes.string)
     }
 }
 ```
 
+There is also `invariantTypeArgument` that allows adding a type argument with `Variance.INVARIANT`.
+If the type expects more type arguments than provided, the remaining ones are filled with `KaStarTypeProjection` (`*`).
+Excessive type arguments are discarded.
+
+<note>
+If you'd like to construct a type with default type arguments, use <code>KaClassifierSymbol.defaultType</code>.
+You can also use <code>KaClassifierSymbol.defaultTypeWithStarProjections</code> as a shortcut for constructing a type with
+all type arguments filled with <code>KaStarTypeProjection</code>.
+</note>
+
 #### Nullability:
 
-You can also set the nullability of the constructed type by modifying the `nullability` property within the builder:
+You can also set the nullability of the constructed type by modifying the `isMarkedNullable` property within the builder:
 
 ```kotlin
 analyze(ktFile) {
-    val nullableStringType = buildClassType(DefaultTypeClassIds.STRING) {
-        nullability = KaTypeNullability.NULLABLE
+    val nullableStringType = typeCreator.classType(KaStandardTypeClassIds.STRING) {
+        isMarkedNullable = true
     }
 }
 ```
 
 ### Building Type Parameter Types
 
-To build a type parameter type, use the `buildTypeParameterType` function. You need to provide the
-corresponding `KaTypeParameterSymbol`:
+To build a [](KaTypeParameterType.md), use the `typeCreator.typeParameterType` function. You need to provide the
+corresponding [](KaTypeParameterSymbol.md):
 
 ```kotlin
 analyze(ktFile) {
     val typeParameterSymbol: KaTypeParameterSymbol = ...
-    val type = buildTypeParameterType(typeParameterSymbol)
+    val type = typeCreator.typeParameterType(typeParameterSymbol)
 }
 ```
 
-**Note:** Similar to class types, you can adjust the nullability of the type parameter type within the builder.
+**Note:** Similar to class types, you can adjust the nullability of the type parameter type
+by using `isMarkedNullable` within the builder.
