@@ -2,6 +2,8 @@
 
 Represents Kotlin function types, such as `(String) -> Int` or `suspend () -> List<Any>`.
 
+Can be created using [typeCreator.functionType](Types.md#building-function-types).
+
 ## Hierarchy
 
 Inherits from [KaClassType](KaClassType.md).
