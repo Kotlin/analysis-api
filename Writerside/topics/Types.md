@@ -326,3 +326,43 @@ analyze(ktFile) {
 **Note:** If the passed `KaTypeProjection` is a `KaTypeArgumentWithVariance`, its variance cannot be `Variance.INVARIANT`.
 That's because captured types are intended to capture non-invariant projections.
 Otherwise, an exception is thrown.
+
+### Building Flexible Types
+[](KaFlexibleType.md) can be constructed using `typeCreator.flexibleType` using three different ways.
+
+If one of the provided bounds is a `KaFlexibleType`, the corresponding bound of this type is taken instead.
+E.g., if the upper bound is a flexible type itself, then its upper bound is taken instead.
+
+If the lower bound is not a subtype of the upper bound, `null` is returned.
+
+If bounds are equal, then it's unnecessary to create a flexible type for them, so this bound type is returned instead.
+
+#### By another flexible type
+```kotlin
+analyze(ktFile) {
+    val anotherFlexibleType: KaFlexibleType = ...
+    val flexibleType = typeCreator.flexibleType(anotherFlexibleType) {
+        lowerBound = builtinTypes.int
+    }
+}
+```
+
+#### By providing bounds manually
+```kotlin
+analyze(ktFile) {
+    val flexibleType = typeCreator.flexibleType(builtinTypes.int, builtinTypes.any)
+}
+```
+
+#### By providing bounds in the builder
+```kotlin
+analyze(ktFile) {
+    val flexibleType = typeCreator.flexibleType {
+        lowerBound = arrayType(builtinTypes.int) {
+            shouldPreferPrimitiveTypes = false
+            isMarkedNullable = true
+        }
+        upperBound = builtinTypes.any
+    }
+}
+```
