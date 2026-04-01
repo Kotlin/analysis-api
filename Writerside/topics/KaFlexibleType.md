@@ -4,6 +4,8 @@ Represents a [flexible type](https://kotlinlang.org/spec/type-system.html#flexib
 (or a so-called [platform type](https://kotlinlang.org/docs/java-interop.html#null-safety-and-platform-types)), a range
 of types from the `lowerBound` to the `upperBound` (both inclusive).
 
+Can be constructed using [typeCreator.flexibleType](Types.md#building-flexible-types).
+
 Also check [nullability utilities](KaType.md#nullability-utilities) in `KaType`.
 
 ## Hierarchy
