@@ -242,6 +242,117 @@ analyze(ktFile) {
 }
 ```
 
+### Building Function Types
+
+[](KaFunctionType.md) can be constructed with `typeCreator.functionType`:
+
+```kotlin
+analyze(ktFile) { 
+    val reflectFuctionType = typeCreator.functionType { 
+        isReflectType = true
+        valueParameter(Name.identifier("first")) {
+            builtinTypes.int
+        }
+        returnType = builtinTypes.string 
+    }
+}
+```
+
+<note>
+<code>KaFunctionType</code> is a <code>KaClassType</code> and can be constructed through <code>typeCreator.classType</code>.
+However, not only is it inconvenient, but it's also unsafe.
+That's because it requires manually providing a function type <code>ClassId</code> which can be affected by
+various aspects like <code>suspend</code> / <code>reflect</code> flags and the number of parameters.
+Additionally, some compiler plugins can register their own function <code>ClassId</code>s for some function annotations 
+(e.g., <code>@Composable</code>). <code>typeCreator.functionType</code> handles all of these cases 
+and constructs a refined <code>ClassId</code> for you.
+</note>
+
+#### Specifying Return Type
+
+The return type is defined by `returnType`. By default, it's set to `Unit`.
+
+```kotlin
+analyze(ktFile) { 
+    val functionReturningAny = typeCreator.functionType {
+        returnType = builtinTypes.any 
+    }
+
+    val functionReturningUnit = typeCreator.functionType()
+}
+```
+
+#### Specifying Parameters
+
+The receiver type parameter can be set using `receiverType`. 
+By default, it's set to `null` which indicates that the function is not an extension one.
+
+```kotlin
+analyze(ktFile) { 
+    val extensionFunctionOnInt = typeCreator.functionType { 
+        receiverType = builtinTypes.int
+    }
+}
+```
+
+Value parameters can be constructed using `valueParameter`.
+The API accepts an optional name and a type for the produced parameter:
+
+```kotlin
+analyze(ktFile) { 
+    val myFunction = typeCreator.functionType { 
+        valueParameter(Name.identifier("first")) {
+            classType(...) {
+                ...
+            }
+        }
+        valueParameter(null, builtinTypes.nullableAny)
+    }
+}
+```
+
+The builder supports experimental [context parameters](https://kotlinlang.org/docs/context-parameters.html) as well.
+They can be added via `contextParameter` which accepts just a type:
+
+```kotlin
+analyze(ktFile) { 
+    val myFunctionWithContextParameters = typeCreator.functionType {
+        contextParameter {
+            classType(...) {
+                ...
+            }
+        }
+        contextParameter(builtinTypes.int)
+    }
+}
+```
+
+**Note:** Kotlin prohibits context parameters in reflection types.
+All context parameters passed to the builder are discarded when `isReflectType` is set to `true`.
+
+#### Creating Suspending and Reflection Function Types
+
+`typeCreator.functionType` allows specifying whether the produces `KaFunctionType` is a 
+[suspending function type](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
+or a [reflection function type](https://kotlinlang.org/docs/reflection.html#function-references).
+This is controlled by `isSuspend` and `isReflectType` respectively, the defaults are set to `false`.
+
+```kotlin
+analyze(ktFile) { 
+    val reflectFunctionType = typeCreator.functionType { 
+        isReflectType = true
+    }
+
+    val suspendingFunctionType = typeCreator.functionType { 
+        isSuspend = true
+    }
+}
+```
+
+**Note:** Kotlin prohibits context parameters in reflection types.
+All context parameters passed to the builder are discarded when `isReflectType` is set to `true`.
+
+
 ### Building Type Parameter Types
 
 To build a [](KaTypeParameterType.md), use the `typeCreator.typeParameterType` function. You need to provide the
