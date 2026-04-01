@@ -366,3 +366,12 @@ analyze(ktFile) {
     }
 }
 ```
+
+### Building Dynamic Types
+[](KaDynamicType.md) can be constructed using `typeCreator.dynamicType`:
+
+```kotlin
+analyze(ktFile) {
+    val dynamicType = typeCreator.dynamicType()
+}
+```
