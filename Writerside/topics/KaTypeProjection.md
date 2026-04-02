@@ -15,10 +15,14 @@ about the type and its variance.
 Represents a [star projection](https://kotlinlang.org/docs/generics.html#star-projections) (`*`) used in type arguments.
 It indicates that the specific type is not important or unknown.
 
+Can be created using [typeCreator.starTypeProjection](Types.md#building-star-projections).
+
 ### `KaTypeArgumentWithVariance`
 
 Represents a type argument with an explicit type and
 [variance](https://kotlinlang.org/docs/generics.html#use-site-variance-type-projections).
+
+Can be created using [typeCreator.typeProjection](Types.md#building-type-projections).
 
 `val type: KaType`
 : The projected type.
