@@ -503,3 +503,35 @@ analyze(ktFile) {
 
 **Note:** At the moment, only annotations without value arguments are supported.
 All annotations requiring arguments are discarded.
+
+### Building Type Projections
+
+#### Building Type Arguments With Variance
+`KaTypeArgumentWithVariance` can be constructed using `typeCreator.typeProjection`
+by providing a `KaType` along with its `Variance`:
+
+```kotlin
+analyze(ktFile) {
+    val intTypeWithOutVariance: KaTypeArgumentWithVariance =
+        typeCreator.typeProjection(Variance.OUT_VARIANCE, builtinTypes.int)
+}
+```
+
+```kotlin
+analyze(ktFile) {
+    val invariantNullableStringTypeArgument: KaTypeArgumentWithVariance =
+        typeCreator.typeProjection(Variance.INVARIANT) {
+            classType(KaStandardTypeClassIds.STRING) {
+                isMarkedNullable = true
+            }
+        }
+}
+```
+
+#### Building Star Projections
+`KaStarTypeProjection` (`*`) can be constructed using `typeCreator.starTypeProjection`:
+```kotlin
+analyze(ktFile) {
+    val starProjection: KaStarTypeProjection = typeCreator.starTypeProjection()
+}
+```
