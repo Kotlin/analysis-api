@@ -486,3 +486,20 @@ analyze(ktFile) {
     val dynamicType = typeCreator.dynamicType()
 }
 ```
+
+### Building Annotated Types
+Each type except for [](KaIntersectionType.md) can be constructed with additional annotations.
+To add annotations to your type, call `annotation` or `annotations` with desired annotation `ClassId`s within the builder.
+```kotlin
+analyze(ktFile) {
+    val myAnnotation: ClassId = ...
+    val myAdditionalAnnotations: Iterable<ClassId> = ... 
+    val dynamicType = typeCreator.dynamicType {
+        annotation(myAnnotation)
+        annotations(myAdditionalAnnotations)
+    }
+}
+```
+
+**Note:** At the moment, only annotations without value arguments are supported.
+All annotations requiring arguments are discarded.
