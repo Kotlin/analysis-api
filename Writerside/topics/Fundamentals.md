@@ -48,7 +48,7 @@ Each `KaSession` is associated with a specific module and provides analysis resu
 In other words, a `KaSession` only sees declarations from the owning (use-site) module and from all its dependencies,
 both direct and transitive.
 
-To get a `KaSession`, use the `analyze {}` function, passing a `KtModule` or some `KtElement` from that module:
+To get a `KaSession`, use the `analyze {}` function, passing a `KaModule` or some `KtElement` from that module:
 
 ```Kotlin
 @RequiresReadLock
@@ -133,5 +133,6 @@ fun processCallTarget(ktContext: KtElement, pointer: KaSymbolPointer<KaCallableS
 ```
 
 <note>
-    In IntelliJ IDEA 2024.3, pointers will become available also for <code>KaType</code>s.
+    You can also create pointers for <code>KaType</code>s with <code>KaType.createPointer()</code> and restore them
+    in an analysis session using <code>KaTypePointer.restore()</code>.
 </note>

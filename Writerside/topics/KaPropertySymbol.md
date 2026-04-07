@@ -43,13 +43,3 @@ Inherits from [KaVariableSymbol](KaVariableSymbol.md).
 
 `val isStatic: Boolean`
 : `true` if the property is static.
-
-## Utilities
-
-`val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?`
-: Deprecation status for the property getter, or `nil` if the getter is not deprecated.
-: **Experimental API**.
-
-`val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?`
-: Deprecation status for the property setter, or `nil` if the getter is not deprecated.
-: **Experimental API**.

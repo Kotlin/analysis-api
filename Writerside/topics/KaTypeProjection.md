@@ -10,7 +10,7 @@ about the type and its variance.
 
 ## Subclasses
 
-### `KtStarTypeProjection`
+### `KaStarTypeProjection`
 
 Represents a [star projection](https://kotlinlang.org/docs/generics.html#star-projections) (`*`) used in type arguments.
 It indicates that the specific type is not important or unknown.

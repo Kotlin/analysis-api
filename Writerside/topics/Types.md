@@ -82,8 +82,8 @@ This is determined by the context in which the expression appears, such as a var
 parameter type for a function call.
 </note>
 
-`val KtDeclaration.returnType: KaType`
-: The return type of the given `KtDeclaration`.
+`val KtDeclarationWithReturnType.returnType: KaType`
+: The return type of the given `KtDeclarationWithReturnType`.
 : Note: For `vararg foo: T` parameter returns full `Array<out T>` type
 (unlike `KaValueParameterSymbol.returnType`, which returns `T`).
 

@@ -29,7 +29,7 @@ fun KaSession.processAnnotations(symbol: KaDeclarationSymbol) {
 }
 ```
 
-`KaAnnotationsList` is not just a list. It can also efficiently check whether an annotation with some `ClassId`
+`KaAnnotationList` is not just a list. It can also efficiently check whether an annotation with some `ClassId`
 is there:
 
 ```Kotlin
@@ -60,4 +60,4 @@ fun KaSession.collectAnnotations(types: List<KaType>): Set<ClassId> {
 ## Use-Site Targets
 
 Annotations on declarations can have use-site targets, specifying where the annotation applies (e.g., property, field,
-or parameter). You can use the `useSiteTarget` property of `KtAnnotation` to access this information.
+or parameter). You can use the `useSiteTarget` property of `KaAnnotation` to access this information.
