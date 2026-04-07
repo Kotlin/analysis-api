@@ -329,7 +329,7 @@ call.valueArguments
 : Analysis API:
 ```Kotlin
 val call = expression.resolveToCall()?.successfulFunctionCallOrNull() ?: return
-call.argumentMapping
+call.valueArgumentMapping
 ```
 
 Getting dispatch and extension receivers

@@ -1,7 +1,7 @@
 # KaCall
 
 Represents a call within Kotlin code. It encompasses various types of calls, including function calls, property
-accesses, and other invocations. The Analysis API provides a hierarchy of `KtCall` subtypes to model different call
+accesses, and other invocations. The Analysis API provides a hierarchy of `KaCall` subtypes to model different call
 kinds.
 
 <code-block lang="mermaid">

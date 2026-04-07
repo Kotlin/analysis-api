@@ -36,9 +36,9 @@ analyze(ktElement) {
 
 Note that the returned list of diagnostics does not include diagnostics for nested `KtElement`s.
 
-## `KtDiagnosticWithPsi`
+## `KaDiagnosticWithPsi`
 
-`collectDiagnostics` and `diagnostics` return a collection of `KtDiagnosticWithPsi` instances.
+`collectDiagnostics` and `diagnostics` return a collection of `KaDiagnosticWithPsi` instances.
 This interface provides access to information about the diagnostic.
 
 | Member           | Description                                                                   |

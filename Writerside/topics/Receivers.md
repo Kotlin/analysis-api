@@ -82,14 +82,14 @@ class MyClass {
 }
 ```
 
-In the Analysis API, you can access both receivers using the corresponding properties of `KtCallableMemberCall`:
+In the Analysis API, you can access both receivers using the corresponding properties of `KaCallableMemberCall`:
 
 ```kotlin
 val callInfo = ...
 when (callInfo) {
-    is KtSuccessCallInfo -> {
+    is KaSuccessCallInfo -> {
         val call = callInfo.call
-        if (call is KtSimpleFunctionCall) {
+        if (call is KaSimpleFunctionCall) {
             val dispatchReceiver = call.partiallyAppliedSymbol.dispatchReceiver
             val extensionReceiver = call.partiallyAppliedSymbol.extensionReceiver
             // Use dispatchReceiver and extensionReceiver

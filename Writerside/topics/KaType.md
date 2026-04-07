@@ -15,9 +15,6 @@ abbreviated type cannot be resolved.
 alias `typealias MyString = String` and its application `MyString`, `String` would be the type alias expansion and `MyString` its
 abbreviated type.
 
-`val nullability: KaTypeNullability`
-: The type nullability: `NULLABLE`, `NON_NULLABLE`, `UNKNOWN` (for flexible types).
-
 ## Subtypes
 
 The `KaType` interface has several subtypes that represent different kinds of types in Kotlin:
@@ -43,12 +40,12 @@ The `KaType` interface has several subtypes that represent different kinds of ty
 `val Iterable<KaType>.commonSupertype: KaType`
 : The common super type of the given collection of [KaType]. The collection must not be empty.
 
-`fun KaType.withNullability(newNullability: KaTypeNullability): KaType`
+`fun KaType.withNullability(isMarkedNullable: Boolean): KaType`
 : Returns the given type with the modified nullability.
 
 ## Nullability utilities
 
-`val KaType.canBeNull: Boolean`
+`val KaType.isNullable: Boolean`
 : `true` if a public value of the given type can potentially be `null`.
 : This means this type is not a subtype of [Any]. However, it does not mean one can assign `null` to a variable of this
 type because it may be unknown if this type can accept `null`.

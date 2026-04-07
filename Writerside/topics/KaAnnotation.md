@@ -10,9 +10,6 @@ Represents an [annotation](https://kotlinlang.org/docs/annotations.html) call, s
 `val constructorSymbol: KaConstructorSymbol?`
 : The called annotation constructor, or `null` if the annotation call is unresolved.
 
-`val hasArguments: Boolean`
-: `true` if the annotation call has one or more arguments.
-
 `val arguments: List<KaNamedAnnotationValue>`
 : A list of arguments passed to the annotation constructor.
 
