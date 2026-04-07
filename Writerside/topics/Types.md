@@ -1,4 +1,5 @@
 # Types
+<show-structure depth="2"/>
 
 `KaType` is a fundamental concept in the Analysis API, representing types of Kotlin expressions and declarations. It
 provides information about the type structure, nullability, and annotations.
