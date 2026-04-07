@@ -213,6 +213,35 @@ analyze(ktFile) {
 }
 ```
 
+### Building Array Types
+
+If you'd like to build an array type, you can still use `typeCreator.classType` with the desired array `ClassId`.
+However, there is a more safe and convenient way to do it using `typeCreator.arrayType`:
+
+```kotlin
+analyze(ktFile) {
+    val elementType: KaType = builtinTypes.int
+    val nullableIntArrayWithOutVariance = typeCreator.arrayType(elementType) { 
+        variance = Variance.OUT_VARIANCE
+        isMarkedNullable = true
+    }
+}
+```
+
+By default, the builder constructs primitive array types when possible.
+E.g., for the `Int` element type, `IntArray` is constructed instead of `Array<Int>`.
+You can override this behavior by setting the `shouldPreferPrimitiveTypes` property within the builder to `false`.
+
+**Note:** There is also a shortcut for constructing `vararg` array types, i.e.,
+the underlying type of `vararg` function parameters with the given type.
+You can use `typeCreator.varargArrayType` for that:
+```kotlin
+analyze(ktFile) {
+    val elementType: KaType = builtinTypes.string
+    val stringBoxedArrayType = typeCreator.varargArrayType(elementType)
+}
+```
+
 ### Building Type Parameter Types
 
 To build a [](KaTypeParameterType.md), use the `typeCreator.typeParameterType` function. You need to provide the
