@@ -90,4 +90,5 @@
         <toc-element topic="Testing-in-K1-Locally.md"/>
         <toc-element topic="Case-Studies.md"/>
     </toc-element>
+    <toc-element topic="TypeCreatorMigrationGuide.md"/>
 </instance-profile>
