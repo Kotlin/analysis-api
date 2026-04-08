@@ -143,6 +143,7 @@ This includes:
 - `buildStarTypeProjection`
 
 If you are still using them, migrate to the new type creation DSL. The former API lacks a wide set of features and containts some long-standing bugs.
+See [](TypeCreatorMigrationGuide.md) for the detailed migration guide.
 </warning>
 
 Here's how you can build different types:
