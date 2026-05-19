@@ -37,7 +37,7 @@ a `KtStatementExpression` marker interface that annotates statement-like constru
 The Analysis API is implemented on top of the Kotlin PSI, mostly as a set of extension functions and properties,
 providing access to semantic information. For example, to get an expression type, there is
 a `ktExpression.expressionType` extension property. Or, to get resolved call information, one should
-use `ktCallExpression.resolveToCall()`.
+use `ktCallExpression.resolveCall()` ([](References-And-Calls.md)).
 
 ## KaSession
 
@@ -112,22 +112,25 @@ If you need to pass a `KaSymbol` to a different analysis session, use `KaSymbolP
 not capture the analysis session, so they can be freely passed around or cached:
 
 ```Kotlin
-fun perform(ktCall: KtCallExpression) {
-    val pointer = resolveCall(ktCall) ?: return
-    processCallTarget(ktCall, pointer)
+fun perform(call: KtCallExpression) {
+    val pointer = resolveSymbolPointer(call) ?: return
+    processCallTarget(call, pointer)
 }
 
-fun resolveCall(ktCall: KtCallExpression): KaSymbolPointer<KaCallableSymbol>? {
-    analyze(ktCall) {
-        val symbol = ktCall.mainReference.resolveToSymbol() as? KaCallableSymbol
-        return symbol?.createPointer() // Create the pointer
-    }
+fun resolveSymbolPointer(
+    call: KtCallExpression,
+): KaSymbolPointer<KaCallableSymbol>? = analyze(call) {
+    val symbol = call.resolveSymbol()
+    symbol?.createPointer() // Create the pointer
 }
 
-fun processCallTarget(ktContext: KtElement, pointer: KaSymbolPointer<KaCallableSymbol>) {
+fun processCallTarget(
+    ktContext: KtElement,
+    pointer: KaSymbolPointer<KaCallableSymbol>,
+) {
     analyze(ktContext) {
         val symbol = pointer.restoreSymbol() ?: return
-        symbol.callableId // Use the restored symbol
+        println(symbol.callableId) // Use the restored symbol
     }
 }
 ```
