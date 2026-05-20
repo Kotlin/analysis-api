@@ -16,8 +16,10 @@ Five user-facing pains motivated the redesign:
 1. **`KtReference` was a PSI/IDE infrastructure leak.** It belongs to IntelliJ infrastructure, yet the Analysis API
    required reaching for `element.mainReference.resolveTo...()`, smuggling a syntax-layer concept into the semantic
    contract.
-2. **Discoverability suffered.** The `.mainReference` hop was easy to miss and gave no type-level hint that resolution
-   was happening at all.
+2. **Discoverability suffered.** To resolve via the Analysis API, you first had to know to
+   call `.mainReference` on a `KtElement` and then invoke `resolveTo...()` on the resulting `KtReference`. Nothing about
+   the API surface advertised this idiom, so callers who did not already know it fell back to the more familiar
+   `PsiReference.resolve()` instead.
 3. **Result types were under-specified.** `resolveToSymbol()` returned `KaSymbol?` everywhere; `resolveToCall()`
    returned a `KaCallInfo?` over a generic `KaCall`. Callers had to `as?`-cast to anything specific.
 4. **`KaPartiallyAppliedSymbol` was a useless wrapper.** Receivers, signature, and type-argument mapping had to be
@@ -25,7 +27,7 @@ Five user-facing pains motivated the redesign:
    expose named sub-call accessors (`variableCall`, `getterCall`, `setterCall`, `operationCall`).
 5. **`KtElement.resolveToCall` accepted any `KtElement`.** Nothing in the type told you whether resolution would
    succeed or what it would return. `KtReference` filled the gap for everything `resolveToCall` could not handle &mdash;
-   so plugins had to maintain two parallel resolution mechanisms.
+   so callers had to maintain two parallel resolution mechanisms.
 
 The new API replaces both `KtReference`-based resolution and `KtElement.resolveToCall` with a single, type-driven
 surface: specialized `resolveSymbol` / `resolveCall` methods on concrete PSI types, plus the marker interfaces
@@ -145,7 +147,7 @@ possible result.
 
 ## What about `KtReference`?
 
-`KtReference` is **not** a `KtResolvable`. It is owned by the IntelliJ reference contract, not the Analysis API.
+Kotlin references have become part of the IntelliJ IDEA Kotlin plugin. The Analysis API no longer uses them.
 
 The extensions `KtReference.resolveToSymbols()` and `KtReference.resolveToSymbol()` remain available as a
 backward-compatibility surface; they are not annotated `@Deprecated` outright, but the modern flow does not pass through
