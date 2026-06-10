@@ -118,6 +118,9 @@ s. The hierarchy is identical; only the names change and `candidate` widens from
 > `KaCallInfo.calls`), use `tryResolveCall()?.calls`. To inspect *all* overload-resolution candidates (the old
 > `resolveToCallCandidates()`), use `collectCallCandidates()`.
 
+> The result of `tryResolveCall` and `resolveToCall` are equivalent in all cases.
+> The only exception is `KtOperationReferenceExpression`, which is `KtResolvable`, not `KtResolvableCall`.
+
 ### Inline access on a `KaSingleCall`
 
 Every `*PartiallyAppliedSymbol` access becomes a direct field on the call.
