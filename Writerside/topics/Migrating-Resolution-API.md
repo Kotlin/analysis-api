@@ -118,8 +118,8 @@ s. The hierarchy is identical; only the names change and `candidate` widens from
 > `KaCallInfo.calls`), use `tryResolveCall()?.calls`. To inspect *all* overload-resolution candidates (the old
 > `resolveToCallCandidates()`), use `collectCallCandidates()`.
 
-> The result of `tryResolveCall` and `resolveToCall` are equivalent in all cases.
-> The only exception is `KtOperationReferenceExpression`, which is `KtResolvable`, not `KtResolvableCall`.
+> The result of `tryResolveCall` and `resolveToCall` are equivalent in all cases (`tryResolveCall` may carry
+> more detailed diagnostics on an error call).
 
 ### Inline access on a `KaSingleCall`
 
@@ -171,7 +171,14 @@ fun resolveToSymbols(element: KtElement): Collection<KaSymbol> {
     // 1. Prefer symbols extracted from a resolved call.
     //    Call resolution is more precise: a constructor call,
     //    for instance, points at the constructor, not the class.
-    val callSymbols = (element as? KtResolvableCall)
+    //
+    //    `KtOperationReferenceExpression` is excluded on purpose. Its call resolution
+    //    forwards to the parent expression and would also surface intermediate reads
+    //    (e.g. the `get` of a compound `a[i] += v`), whereas the legacy
+    //    `resolveToSymbols()` returned only the symbols the operator itself contributes
+    //    (`plus`, `set`). Skipping the call step lets it fall through to
+    //    `tryResolveSymbols()` below, which preserves that behavior.
+    val callSymbols = (element as? KtResolvableCall)?.takeUnless { it is KtOperationReferenceExpression }
         ?.tryResolveCall()
         ?.calls
         ?.flatMap(KaSingleOrMultiCall::symbols)
@@ -198,8 +205,8 @@ possible result.
 | `KtReference.usesContextSensitiveResolution`   | `(element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true`                                                                                                 |
 
 > **A resolved symbol is not always the call target.** For most elements the symbol from `resolveSymbol()` and the
-> symbol behind `resolveCall()` coincide. They can diverge for `KtNameReferenceExpression`: `resolveSymbol` /
-> `resolveSymbols`
+> symbol behind `resolveCall()` coincide. They can diverge for `KtNameReferenceExpression`,
+> `KtOperationReferenceExpression`, and `KtEnumEntrySuperclassReferenceExpression`: `resolveSymbol` / `resolveSymbols`
 > prefer the *exact referenced symbol*, while `resolveCall` may describe the *enclosing call*. Choose the one that
 > matches what you need (see **Common migration patterns** below).
 >

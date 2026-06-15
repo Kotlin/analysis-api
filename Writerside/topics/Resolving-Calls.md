@@ -258,6 +258,12 @@ and `setterCallAttempt`.
 > The new compound call types expose `getterCall` / `setterCall` / `operationCall` directly, so you usually do not need
 > to call `resolveSymbol()` on the operation reference at all. Reach for the parent expression only when you specifically
 > want both reading and writing symbols.
+>
+> `KtOperationReferenceExpression` is itself a `KtResolvableCall`, so `resolveCall()` / `tryResolveCall()` work on it
+> directly and return the *same* call as resolving the parent expression &mdash; reads included. Mind the asymmetry with
+> the symbol side: `resolveCall()` mirrors the parent (here, the full `KaCompoundArrayAccessCall`, `get` included), while
+> `resolveSymbol()` / `resolveSymbols()` stay narrow and yield only the symbols the operator itself contributes (`plus`,
+> `set`).
 
 ### A flat view of the sub-calls
 

@@ -108,6 +108,12 @@ For `MyClass()`, the name reference `MyClass` literally points to the class, so 
 A `KtNameReferenceExpression` can also resolve to a type, not just a callable &mdash; this is why the generic
 return type is `KaSymbol?` rather than `KaCallableSymbol?`.
 
+The same call-vs-symbol asymmetry appears on two other elements. `KtEnumEntrySuperclassReferenceExpression` resolves to
+the superclass (`KaNamedClassSymbol`) on the symbol side, but to the delegated constructor on the call side. And
+`KtOperationReferenceExpression` (for example the `+=` of a compound assignment) yields only the operator's own
+contributed symbols here, while its `resolveCall()` mirrors the parent expression &mdash; see [](Resolving-Calls.md)
+for that detail.
+
 ## Type-side resolution
 
 Symbol resolution is the only resolution flavor that applies to *types*. `KtTypeReference`, `KtUserType`,
