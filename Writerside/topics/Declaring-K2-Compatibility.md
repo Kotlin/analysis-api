@@ -1,5 +1,12 @@
 # Declaring compatibility with K2
 
+<note>
+The instructions below only apply to IntelliJ IDEA <strong>up to 2026.1</strong>.
+
+Starting with IntelliJ IDEA 2026.2, <strong>all plugins are considered compatible with the K2 Kotlin mode</strong>.
+If your plugin only supports newer versions of the IDE, you do not need to add the `<supportsKotlinPluginMode>` tag.
+</note>
+
 The Kotlin IntelliJ plugin assumes that a dependent third-party plugin *does not* support K2 Kotlin out of the box. Such
 incompatible plugins will not be loaded if the K2 mode is currently enabled.
 

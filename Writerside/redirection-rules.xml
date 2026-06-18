@@ -6,4 +6,9 @@
         <accepts>page.html</accepts>
     </rule>
     -->
+    <rule id="264dfb8c">
+        <description>Created after removal of "Testing in K1 Locally" from Kotlin Analysis API Documentation
+        </description>
+        <accepts>Testing-in-K1-Locally.html</accepts>
+    </rule>
 </rules>
