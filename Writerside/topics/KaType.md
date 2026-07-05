@@ -1,6 +1,6 @@
 # KaType
 
-Represents a Kotlin type. It serves as the base interface for various specific type.
+Represents a Kotlin type. It serves as the base interface for various specific types.
 
 ## Hierarchy
 
@@ -55,7 +55,7 @@ type because it may be unknown if this type can accept `null`.
 
 `val KaType.hasFlexibleNullability: Boolean`
 : `true` if the given type is a flexible
-([platform](https://kotlinlang.org/docs/java-interop.html#null-safety-and-platform-types)) type, can both safe and
+([platform](https://kotlinlang.org/docs/java-interop.html#null-safety-and-platform-types)) type, i.e., both safe and
 ordinary calls are valid on it.
 
 `fun KaType.upperBoundIfFlexible(): KaType`
@@ -67,16 +67,16 @@ ordinary calls are valid on it.
 ## Type relation utilities
 
 `fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT): Boolean`
-: Check semantic type equality. Returns `true` if the given type can be used instead of `other`.
+: Checks semantic type equality. Returns `true` if the given type can be used instead of `other`.
 
 `fun KaType.isSubtypeOf(supertype: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT): Boolean`
-: Check if the given type is a subtype of the `supertype`.
+: Checks if the given type is a subtype of the `supertype`.
 
 `fun KaType.isClassType(classId: ClassId): Boolean`
 : `true` if the given type is a class type with the given `ClassId`, or its nullable version.
 
 `fun KaType.hasCommonSubtypeWith(that: KaType): Boolean`
-: Check whether the given type is compatible with the other type. Compatibility means the types can have a common subtype.
+: Checks whether the given type is compatible with the other type. Compatibility means the types can have a common subtype.
 
 `val KaType.directSupertypes: Sequence<KaType>`
 : Direct super types of the given type. For example, for `MutableList<String>` it will be `List<String>` and
@@ -136,8 +136,8 @@ ordinary calls are valid on it.
 ## Scope utilities
 
 `val KaType.scope: KaTypeScope?`
-: Return a `KaTypeScope` for a given type. The type scope includes all members which are declared and callable on a given type.
-: Comparing to a `KaScope`, in the `KaTypeScope` all use-site type parameters are substituted.
+: Returns a `KaTypeScope` for a given type. The type scope includes all members which are declared and callable on a given type.
+: Compared to a `KaScope`, in the `KaTypeScope` all use-site type parameters are substituted.
 : **Experimental API**.
 
 `val KaType.syntheticJavaPropertiesScope: KaTypeScope?`
@@ -171,5 +171,5 @@ example of a non-denotable type.
 : **Experimental API**.
 
 `fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String`
-: Render the given type to a `String`. The particular rendering strategy is defined by the `renderer`.
+: Renders the given type to a `String`. The particular rendering strategy is defined by the `renderer`.
 : **Experimental API**.

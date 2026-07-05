@@ -38,7 +38,7 @@ analyze(ktFile) {
 }
 ```
 
-Here we are trying to contruct a class type for `kotlin.Pair<A, B>`.
+Here we are trying to construct a class type for `kotlin.Pair<A, B>`.
 It requires two type arguments; however, we haven't provided any.
 `buildClassType(pairClassId)` constructs an incorrect type `Pair` that has no type arguments.
 Note that this type is valid from the Analysis API perspective, i.e., it's not `KaErrorType`, however,

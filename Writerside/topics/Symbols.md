@@ -30,7 +30,7 @@ While a `KtCallableDeclaration` can provide the declared type of a function or p
 **resolved type**, which takes into account imports, aliases, and other parts of the lexical context.
 
 In the following function, the PSI can only say that the `text` parameter has some type called `String`, while the
-The Analysis API can check that it indeed is `kotlin.String`, and not something like `my.app.String`.
+the Analysis API can check that it indeed is `kotlin.String`, and not something like `my.app.String`.
 
 ```Kotlin
 fun print(text: String) {}
