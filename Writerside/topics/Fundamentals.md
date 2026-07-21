@@ -48,18 +48,18 @@ Each `KaSession` is associated with a specific module and provides analysis resu
 In other words, a `KaSession` only sees declarations from the owning (use-site) module and from all its dependencies,
 both direct and transitive.
 
-To get a `KaSession`, use the `analyze {}` function, passing a `KaModule` or some `KtElement` from that module:
+To get a `KaSession`, use the `analyze {}` function, passing a `KaModule` or some `PsiElement` from that module:
 
 ```Kotlin
 @RequiresReadLock
-fun perform(element: KtElement) {
+fun perform(element: PsiElement) {
     analyze(element) {
         // Use the 'KaSession' within this block
     }
 }
 ```
 
-The `KaSession` is available as an extension receiver within the lambda block. The session is valid only within this
+The `KaSession` is available as a context parameter within the lambda block. The session is valid only within this
 block, and it **should not** be stored or accessed outside of it.
 
 The `analyze {}` call is only available
@@ -89,8 +89,9 @@ fun perform(element: KtElement) {
     }
 }
 
-// Here we pass the session as a receiver parameter
-fun KaSession.check(element: KtElement) { ... }
+// Here we pass the session as a context parameter
+context(session: KaSession)
+fun check(element: KtElement) { ... }
 
 fun modify(element: KtElement) { ... }
 ```

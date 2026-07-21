@@ -22,7 +22,8 @@ The only property `KaAnnotated` declares is `annotations` of the `KaAnnotationLi
 is implements a `List<KaAnnotation>`, so you can directly iterate over annotations:
 
 ```Kotlin
-fun KaSession.processAnnotations(symbol: KaDeclarationSymbol) {
+context(session: KaSession)
+fun processAnnotations(symbol: KaDeclarationSymbol) {
     for (anno in symbol.annotations) {
         // Process the 'annotation'
     }
@@ -33,7 +34,8 @@ fun KaSession.processAnnotations(symbol: KaDeclarationSymbol) {
 is there:
 
 ```Kotlin
-fun KaSession.hasDeprecatedAnnotation(symbol: KaDeclarationSymbol) {
+context(session: KaSession)
+fun hasDeprecatedAnnotation(symbol: KaDeclarationSymbol) {
     val classId = ClassId.fromString("kotlin/Deprecated")
     return classId in symbol.annotations
 }
@@ -43,7 +45,8 @@ You can also get a list of annotations with a specific `ClassId`. Kotlin allows 
 of them is returned:
 
 ```Kotlin
-fun KaSession.findDeprecatedAnnotation(symbol: KaDeclarationSymbol): KaAnnotation? {
+context(session: KaSession)
+fun findDeprecatedAnnotation(symbol: KaDeclarationSymbol): KaAnnotation? {
     val classId = ClassId.fromString("kotlin/Deprecated")
     return symbol.annotations[classId].firstOrNull()
 }
@@ -52,7 +55,8 @@ fun KaSession.findDeprecatedAnnotation(symbol: KaDeclarationSymbol): KaAnnotatio
 Finally, `KaAnnotationList` exposes a collection of all annotation `ClassId`s:
 
 ```Kotlin
-fun KaSession.collectAnnotations(types: List<KaType>): Set<ClassId> {
+context(session: KaSession)
+fun collectAnnotations(types: List<KaType>): Set<ClassId> {
     return types.flatMapTo(HashSet()) { it.annotations.classIds }
 }
 ```

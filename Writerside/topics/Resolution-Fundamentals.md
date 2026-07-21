@@ -110,7 +110,7 @@ The following is a complete, runnable example using the resolution API on a `KtS
 
 ```Kotlin
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.resolution.successfulCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
