@@ -99,9 +99,12 @@
     <toc-element topic="Other.md">
         <toc-element topic="Java-Kotlin-Bridging.md"/>
         <toc-element topic="Diagnostics.md">
+            <toc-element topic="KaDiagnostics.md"/>
+            <toc-element topic="KaDiagnosticCheckerKind.md"/>
             <toc-element topic="KaDiagnostic.md">
+                <toc-element topic="KaDiagnosticWithPsi.md"/>
             </toc-element>
-            <toc-element topic="KaDiagnosticWithPsi.md"/>
+            <toc-element topic="Legacy-Diagnostics-API.md"/>
         </toc-element>
         <toc-element topic="In-memory-file-analysis.md"/>
         <toc-element topic="File-Compilation.md"/>

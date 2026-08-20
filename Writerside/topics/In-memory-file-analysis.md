@@ -47,9 +47,11 @@ If we analyze the file we created using `analyze {}`, we notice that the `printl
 
 ```kotlin
 analyze(file) {
-    val diagnostics = file.collectDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
     // ["Unresolved reference 'println'."]
-    val messages = diagnostics.map { it.defaultMessage }
+    @OptIn(KaExperimentalApi::class)
+    val messages = file.diagnostics()
+        .map { it.defaultMessage }
+        .toList()
 }
 ```
 
@@ -98,9 +100,11 @@ val contextModule = KaModuleProvider.getModule(project, contextFile, useSiteModu
 file.contextModule = contextModule
 
 analyze(file) {
-    val diagnostics = file.collectDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
     // An empty list
-    val messages = diagnostics.map { it.defaultMessage }
+    @OptIn(KaExperimentalApi::class)
+    val messages = file.diagnostics()
+        .map { it.defaultMessage }
+        .toList()
 }
 ```
 
