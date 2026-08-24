@@ -69,7 +69,7 @@ attempts from multi-call ones (compound / `for` / delegated property).
 | `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
 | `KaErrorCallInfo.diagnostic`                                     | `KaCallResolutionError.diagnostic`                                                                                             |
 | `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                     |
-| `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.calls.singleOrNull { it is T }` / `attempt.successful as? T`, or branch with `attempt.fold(onSuccess, onFailure)`     |
+| `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.single` / `attempt.successful`, narrowed with `.simple` / `.function` / `.variable` / `.constructor`                  |
 
 Multi-call attempts (`KaForLoopCallResolutionAttempt`, `KaDelegatedPropertyCallResolutionAttempt`,
 `KaCompound*CallResolutionAttempt`) expose `call: KaMultiCall?` plus per-step
@@ -109,8 +109,8 @@ s. The hierarchy is identical; only the names change and `candidate` widens from
 | Old call                                                                                                     | New equivalent                                                                                                                                                                             |
 |--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `KtElement.resolveToCall(): KaCallInfo?`                                                                     | `KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?`, but `resolveSuccessfulCall()` is preferred and more convenient in most cases.                                               |
-| `KaCallInfo.{successfulFunctionCallOrNull, successfulVariableAccessCall, successfulConstructorCallOrNull}()` | `attempt.successful as? T`, but in most cases `KaCallResolutionAttempt` is not needed. Call `resolveSuccessfulCall()` directly. An additional cast might be needed depending on your case. |
-| `KaCallInfo.singleCallOrNull<T>()` / `singleFunctionCallOrNull()` / ...                                      | `attempt.calls.singleOrNull { it is T }`.                                                                                                                                                  |
+| `KaCallInfo.{successfulFunctionCallOrNull, successfulVariableAccessCall, successfulConstructorCallOrNull}()` | `attempt.successful?.function` / `?.variable` / `?.constructor`, but in most cases `KaCallResolutionAttempt` is not needed. Call `resolveSuccessfulCall()` directly.                       |
+| `KaCallInfo.singleCallOrNull<T>()` / `singleFunctionCallOrNull()` / ...                                      | `attempt.single`, narrowed with `.simple` / `.function` / `.variable` / `.constructor`.                                                                                                    |
 | `KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>`                                             | `KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>`.                                                                                                                         |
 
 > **`resolveSuccessfulCall()` vs `tryResolveCall()` vs `collectCallCandidates()`.** `resolveSuccessfulCall()` returns
@@ -235,11 +235,11 @@ The recipes below assume the opt-ins from the note at the top of this page are i
 the `single*` ones: the `single*` helpers read `KaCallInfo.calls`, which for an *error* call is the candidate list, so
 they also return the sole candidate of an unresolved call. Classify the old reduction before migrating:
 
-| Old reduction over `KaCallInfo`                                                                   | On success      | On an **error** call                        | New equivalent                                                |
-|---------------------------------------------------------------------------------------------------|-----------------|---------------------------------------------|---------------------------------------------------------------|
-| `successfulFunctionCallOrNull()` / `successfulVariableAccessCall()` / `successfulCallOrNull<T>()` | the call        | `null`                                      | `resolveSuccessfulCall()` (add `as? T` on a generic receiver) |
-| `singleFunctionCallOrNull()` / `singleVariableAccessCall()` / `singleCallOrNull<T>()`             | the call        | the sole candidate of type `T`, else `null` | `tryResolveCall()?.calls?.singleOrNull { it is T } as? T`     |
-| `KaCallInfo.calls`                                                                                | a one-call list | the candidate calls                         | `tryResolveCall()?.calls`                                     |
+| Old reduction over `KaCallInfo`                                                                   | On success      | On an **error** call                        | New equivalent                                                                    |
+|---------------------------------------------------------------------------------------------------|-----------------|---------------------------------------------|-----------------------------------------------------------------------------------|
+| `successfulFunctionCallOrNull()` / `successfulVariableAccessCall()` / `successfulCallOrNull<T>()` | the call        | `null`                                      | `resolveSuccessfulCall()` (add `?.function` / `?.variable` on a generic receiver) |
+| `singleFunctionCallOrNull()` / `singleVariableAccessCall()` / `singleCallOrNull<T>()`             | the call        | the sole candidate of type `T`, else `null` | `tryResolveCall()?.single?.function` (or `?.variable`)                            |
+| `KaCallInfo.calls`                                                                                | a one-call list | the candidate calls                         | `tryResolveCall()?.calls`                                                         |
 
 The common success-only case &mdash; a resolved single function call &mdash; collapses to one call, since
 `resolveSuccessfulCall()` over a `KtCallElement` already returns `KaFunctionCall<*>?`:
@@ -266,8 +266,8 @@ val call = callExpression.resolveToCall()
 
 // New
 val call = callExpression.tryResolveCall()
-    ?.calls
-    ?.singleOrNull { it is KaFunctionCall<*> } as? KaFunctionCall<*>
+    ?.single
+    ?.function
     ?: return
 ```
 
@@ -309,17 +309,17 @@ When the receiver is only statically a `KtExpression` / `KtElement`, cast to the
 val call = expression.resolveToCall()?.successfulFunctionCallOrNull()
 
 // New
-val call = (expression as? KtResolvableCall)?.resolveSuccessfulCall() as? KaFunctionCall<*>
+val call = (expression as? KtResolvableCall)?.resolveSuccessfulCall()?.function
 ```
 
-The same cast covers other call subtypes. Variable access:
+The same cast covers other call shapes. Variable access:
 
 ```Kotlin
 // Old
 val access = expression.resolveToCall()?.successfulVariableAccessCall()
 
 // New
-val access = (expression as? KtResolvableCall)?.resolveSuccessfulCall() as? KaVariableAccessCall
+val access = (expression as? KtResolvableCall)?.resolveSuccessfulCall()?.variable
 ```
 
 A member call resolved through `successfulCallOrNull<KaCallableMemberCall<*, *>>()`:
@@ -331,8 +331,7 @@ val symbol = expression.resolveToCall()
     ?.partiallyAppliedSymbol?.symbol
 
 // New
-val call = (expression as? KtResolvableCall)?.resolveSuccessfulCall() as? KaSimpleCall<*, *>
-val symbol = call?.symbol
+val symbol = (expression as? KtResolvableCall)?.resolveSuccessfulCall()?.simple?.symbol
 ```
 
 **Trap &mdash; iterating candidate calls.** `resolveSuccessfulCall()` is `null` whenever resolution fails, which is
@@ -353,7 +352,7 @@ for (call in call.tryResolveCall()?.calls.orEmpty()) {
 
 When a helper switched over a resolved `KaCall`, widen its parameter to `KaSimpleOrMultiCall` (the type
 `resolveSuccessfulCall()` now returns) and drop the `successfulCallOrNull<KaCall>()` unwrapping at the call site.
-Deprecated subtype casts also disappear: `as? KaSimpleFunctionCall` becomes `as? KaFunctionCall<*>`.
+Deprecated subtype casts also disappear: `as? KaSimpleFunctionCall` becomes the `function` property.
 
 ### `resolveToCallCandidates`
 

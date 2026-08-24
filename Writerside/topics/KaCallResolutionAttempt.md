@@ -103,12 +103,17 @@ For `a[i] += v` and similar. `call` is `KaCompoundArrayAccessCall?`.
 
 ## Helper extensions
 
-Two extension properties cover the common cases without forcing a pattern match.
+Three extension properties cover the common cases without forcing a pattern match.
 
 `val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`
 : A flattened list of resolved/candidate calls. On `KaCallResolutionSuccess` returns the resolved call as a one-element
 list. On `KaCallResolutionError` returns `candidateCalls`. On `KaMultiCallResolutionAttempt` returns the assembled
 multi-call when all sub-attempts succeeded; otherwise returns the combined calls from each sub-attempt.
+
+`val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?`
+: The only call of `calls`, or `null` when the attempt has no calls or more than one. Unlike `successful`, it also
+answers for a *failed* resolution that considered exactly one candidate &mdash; the behavior of the legacy
+`KaCallInfo.singleCallOrNull()`.
 
 `val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?`
 : The resolved call if everything succeeded, otherwise `null`. For a compound attempt this is the assembled
@@ -137,7 +142,7 @@ fun describe(call: KtCallElement): String = analyze(call) {
 
     attempt.fold(
         onSuccess = { call ->
-            val name = (call as? KaSimpleCall<*, *>)?.symbol?.name
+            val name = call.simple?.symbol?.name
             "Resolved: $name"
         },
         onFailure = { errors ->

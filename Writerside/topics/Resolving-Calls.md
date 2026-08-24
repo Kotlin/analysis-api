@@ -76,6 +76,14 @@ The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
 The type system tells you which branch you are on. Many specializations narrow the return further &mdash; for instance
 `KtForExpression.resolveSuccessfulCall(): KaForLoopCall?` already commits to the multi-call branch.
 
+When you hold the broad `KaSimpleOrMultiCall` and want one particular shape, the `simple` / `function` / `variable` /
+`constructor` properties do the check for you instead of an `as?` cast &mdash; see [](KaSimpleOrMultiCall.md):
+
+```Kotlin
+val function: KaFunctionCall<*>? =
+    (element as? KtResolvableCall)?.resolveSuccessfulCall()?.function
+```
+
 > `KaCall` and `KaCallableMemberCall` are the *legacy* base types of the resolution API. New code should rely on
 > `KaSimpleOrMultiCall` / `KaSimpleCall` / `KaMultiCall`. See [](Legacy-Resolution-API.md).
 
@@ -283,8 +291,10 @@ a `KaCallResolutionAttempt` &mdash; see [](KaCallResolutionAttempt.md) for the f
 
 ```Kotlin
 val attempt = callElement.tryResolveCall() ?: return
-// single resolved call, or null
+// the resolved call, or null if resolution failed
 val resolved = attempt.successful
+// also the sole candidate of a failed call
+val candidate = attempt.single
 // success: one call; error: candidate calls
 val everything = attempt.calls
 ```
