@@ -31,7 +31,7 @@ The sealed root. Two branches: `KaSimpleSymbolResolutionAttempt` and `KaCompound
 
 ### `KaSimpleSymbolResolutionAttempt`
 
-A resolution attempt for a single conceptual target. One of:
+A resolution attempt for a simple &mdash; non-compound &mdash; target. One of:
 
 `KaSymbolResolutionSuccess`
 : Resolution succeeded. Exposes `symbols: List<KaSymbol>` &mdash; one entry for unambiguous resolution, several for
@@ -51,7 +51,7 @@ entries. When every sub-attempt succeeds, the result is `KaSymbolResolutionSucce
 
 > A non-compound failure surfaces as `KaSymbolResolutionError` directly &mdash; `KaCompoundSymbolResolutionError` only
 > appears when the call is genuinely compound and at least two sub-attempts are involved (a mix of success and failure,
-> or all failures). For a plain single-call failure, expect `KaSymbolResolutionError`.
+> or all failures). For a simple-call failure, expect `KaSymbolResolutionError`.
 
 ## Helper extensions
 

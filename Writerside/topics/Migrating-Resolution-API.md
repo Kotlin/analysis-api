@@ -57,7 +57,7 @@ val call: KaSimpleOrMultiCall? =
 ### Result wrapper: `KaCallInfo` &rarr; `KaCallResolutionAttempt`
 
 `resolveToCall()` returned a `KaCallInfo`; `tryResolveCall()` returns a `KaCallResolutionAttempt`. The hierarchies line
-up one-to-one, but the new one carries `KaSimpleCall<*, *>` payloads instead of bare `KaCall`, and splits single-call
+up one-to-one, but the new one carries `KaSimpleCall<*, *>` payloads instead of bare `KaCall`, and splits simple-call
 attempts from multi-call ones (compound / `for` / delegated property).
 
 | Old (`KaCallInfo`)                                               | New (`KaCallResolutionAttempt`)                                                                                                |

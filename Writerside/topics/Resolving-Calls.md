@@ -66,8 +66,9 @@ For the rich form, use `tryResolveCall()` and the [](KaCallResolutionAttempt.md)
 
 The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
 
-* [](KaSimpleCall.md) describes a single resolved callable applied at this site. This is what you get for
-  ordinary function calls, property accesses, callable references, annotation entries, supertype calls, and so on.
+* [](KaSimpleCall.md) describes a simple call &mdash; a single resolved callable applied at this site. This is what
+  you get for ordinary function calls, property accesses, callable references, annotation entries, supertype calls,
+  and so on.
 * [](KaMultiCall.md) describes a compound or desugared call that involves several sub-calls. This is what
   you get for `for` loops, delegated properties, compound assignments (`+=`, `++`, `--`), and compound array access
   (`a[i] += v`).

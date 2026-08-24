@@ -23,7 +23,7 @@ graph TB
   KaMultiCallResolutionAttempt --> KaCompoundArrayAccessCallResolutionAttempt
 </code-block>
 
-## Single-call attempts
+## Simple-call attempts
 
 ### `KaSimpleCallResolutionAttempt`
 
@@ -33,7 +33,7 @@ Sealed: either `KaCallResolutionSuccess` or `KaCallResolutionError`. Both `KaCal
 ### `KaCallResolutionSuccess`
 
 `val call: KaSimpleCall<*, *>`
-: The resolved single call.
+: The resolved simple call.
 
 ### `KaCallResolutionError`
 
@@ -123,7 +123,7 @@ fun <T> KaCallResolutionAttempt.fold(
 ): T
 ```
 
-`onSuccess` is called with the resolved call when the attempt is a successful single call or a fully successful
+`onSuccess` is called with the resolved call when the attempt is a successful simple call or a fully successful
 multi-call. `onFailure` is called with the list of failed sub-attempts otherwise (a one-element list for a
 `KaCallResolutionError`, the multi-call's `attempts` for a partially-failed compound).
 

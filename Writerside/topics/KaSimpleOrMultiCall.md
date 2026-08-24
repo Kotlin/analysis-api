@@ -3,7 +3,7 @@
 `KaSimpleOrMultiCall` is the sealed return type of `resolveCall()`. The type system splits resolved calls into two
 shapes:
 
-* [](KaSimpleCall.md) &mdash; a single resolved callable applied at this site. Most everyday call sites
+* [](KaSimpleCall.md) &mdash; a simple call: a single resolved callable applied at this site. Most everyday call sites
   (function invocations, property accesses, callable references, annotation entries, supertype calls) return this.
 * [](KaMultiCall.md) &mdash; a compound or desugared expression that resolves to several sub-calls. This is
   what `for` loops, delegated properties, compound assignments (`+=`, `++`, `--`), and compound array access
@@ -23,7 +23,7 @@ graph TB
 Two extension properties give a uniform view across both branches:
 
 `val KaSimpleOrMultiCall.calls: List<KaSimpleCall<*, *>>`
-: The flattened list of single calls. Returns `listOf(this)` for a `KaSimpleCall`; returns `KaMultiCall.calls` for a
+: The flattened list of simple calls. Returns `listOf(this)` for a `KaSimpleCall`; returns `KaMultiCall.calls` for a
 `KaMultiCall`.
 
 `val KaSimpleOrMultiCall.symbols: List<KaSymbol>`

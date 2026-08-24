@@ -1,11 +1,15 @@
 # KaSimpleCall
 
-`KaSimpleCall<S, C>` represents a single resolved callable applied at a call site. It is one branch of
-[](KaSimpleOrMultiCall.md); the other branch, [](KaMultiCall.md), describes compound and
-desugared expressions.
+`KaSimpleCall<S, C>` represents a simple &mdash; non-compound &mdash; call: a single resolved callable applied at
+a call site. It is one branch of [](KaSimpleOrMultiCall.md); the other branch, [](KaMultiCall.md), describes compound
+and desugared expressions.
 
 `KaSimpleCall` replaces the legacy `KaCallableMemberCall` as the conceptual base for "one resolved callable at this
 site". All accessors are inline &mdash; there is no `partiallyAppliedSymbol` wrapper to drill through.
+
+> Do not confuse `KaSimpleCall` with the deprecated `KaSimpleFunctionCall` / `KaSimpleVariableAccessCall` of the
+> [legacy hierarchy](Legacy-Resolution-API.md). Those two are being removed in favor of `KaFunctionCall<*>` and
+> `KaVariableAccessCall` &mdash; which are themselves `KaSimpleCall`s.
 
 ## Hierarchy
 
