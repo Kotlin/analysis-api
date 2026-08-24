@@ -65,5 +65,5 @@ single candidate of type `T`.
 | `KaErrorCallInfo.candidateCalls`       | `KaCallResolutionError.candidateCalls`.                                                                       |
 | `KaErrorCallInfo.diagnostic`           | `KaCallResolutionError.diagnostic`.                                                                           |
 | `KaCallInfo.calls`                     | `KaCallResolutionAttempt.calls` extension.                                                                    |
-| `KaCallInfo.successfulCallOrNull<T>()` | `KaCallResolutionAttempt.successfulCall as? T`.                                                               |
+| `KaCallInfo.successfulCallOrNull<T>()` | `KaCallResolutionAttempt.successful as? T`.                                                                   |
 | `KaCallInfo.singleCallOrNull<T>()`     | `attempt.calls.singleOrNull { it is T }`.                                                                     |

@@ -110,7 +110,7 @@ Two extension properties cover the common cases without forcing a pattern match.
 list. On `KaCallResolutionError` returns `candidateCalls`. On `KaMultiCallResolutionAttempt` returns the assembled
 multi-call when all sub-attempts succeeded; otherwise returns the combined calls from each sub-attempt.
 
-`val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?`
+`val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?`
 : The resolved call if everything succeeded, otherwise `null`. For a compound attempt this is the assembled
 `KaMultiCall` only when **every** sub-attempt resolved.
 

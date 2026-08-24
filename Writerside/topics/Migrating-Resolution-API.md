@@ -64,12 +64,12 @@ attempts from multi-call ones (compound / `for` / delegated property).
 |------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSimpleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                   |
 | `KaSuccessCallInfo`                                              | `KaCallResolutionSuccess`                                                                                                      |
-| `KaSuccessCallInfo.call: KaCall`                                 | `KaCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successfulCall: KaSimpleOrMultiCall?` extension)           |
+| `KaSuccessCallInfo.call: KaCall`                                 | `KaCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successful: KaSimpleOrMultiCall?` extension)               |
 | `KaErrorCallInfo`                                                | `KaCallResolutionError`                                                                                                        |
 | `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
 | `KaErrorCallInfo.diagnostic`                                     | `KaCallResolutionError.diagnostic`                                                                                             |
 | `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                     |
-| `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.calls.singleOrNull { it is T }` / `attempt.successfulCall as? T`, or branch with `attempt.fold(onSuccess, onFailure)` |
+| `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.calls.singleOrNull { it is T }` / `attempt.successful as? T`, or branch with `attempt.fold(onSuccess, onFailure)`     |
 
 Multi-call attempts (`KaForLoopCallResolutionAttempt`, `KaDelegatedPropertyCallResolutionAttempt`,
 `KaCompound*CallResolutionAttempt`) expose `call: KaMultiCall?` plus per-step
@@ -109,7 +109,7 @@ s. The hierarchy is identical; only the names change and `candidate` widens from
 | Old call                                                                                                     | New equivalent                                                                                                                                                                       |
 |--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `KtElement.resolveToCall(): KaCallInfo?`                                                                     | `KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?`, but `resolveCall()` is preferred and more convenient in most cases.                                                   |
-| `KaCallInfo.{successfulFunctionCallOrNull, successfulVariableAccessCall, successfulConstructorCallOrNull}()` | `attempt.successfulCall as? T`, but in most cases `KaCallResolutionAttempt` is not needed. Call `resolveCall()` directly. An additional cast might be needed depending on your case. |
+| `KaCallInfo.{successfulFunctionCallOrNull, successfulVariableAccessCall, successfulConstructorCallOrNull}()` | `attempt.successful as? T`, but in most cases `KaCallResolutionAttempt` is not needed. Call `resolveCall()` directly. An additional cast might be needed depending on your case.     |
 | `KaCallInfo.singleCallOrNull<T>()` / `singleFunctionCallOrNull()` / ...                                      | `attempt.calls.singleOrNull { it is T }`.                                                                                                                                            |
 | `KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>`                                             | `KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>`.                                                                                                                   |
 
@@ -231,7 +231,7 @@ The recipes below assume the opt-ins from the note at the top of this page are i
 ### `resolveToCall`
 
 `resolveCall()` returns only the **successfully resolved** call &mdash; it is defined as
-`tryResolveCall()?.successfulCall`. It is therefore the faithful replacement for the `successful*` reductions, *not*
+`tryResolveCall()?.successful`. It is therefore the faithful replacement for the `successful*` reductions, *not*
 the `single*` ones: the `single*` helpers read `KaCallInfo.calls`, which for an *error* call is the candidate list, so
 they also return the sole candidate of an unresolved call. Classify the old reduction before migrating:
 

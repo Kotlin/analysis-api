@@ -285,7 +285,7 @@ helpers.
 ```Kotlin
 val attempt = callElement.tryResolveCall() ?: return
 // single resolved call, or null
-val resolved = attempt.successfulCall
+val resolved = attempt.successful
 // success: one call; error: candidate calls
 val everything = attempt.calls
 ```
