@@ -14,22 +14,22 @@ For a given resolvable PSI element, prefer the **specialized** form &mdash; an e
 precisely typed return value:
 
 ```Kotlin
-val constructor: KaConstructorSymbol? = annotationEntry.resolveSymbol()
-val function: KaFunctionSymbol? = callElement.resolveSymbol()
-val classifier: KaClassifierSymbol? = typeReference.resolveSymbol()
+val constructor: KaConstructorSymbol? = annotationEntry.resolveSuccessfulSymbol()
+val function: KaFunctionSymbol? = callElement.resolveSuccessfulSymbol()
+val classifier: KaClassifierSymbol? = typeReference.resolveSuccessfulSymbol()
 ```
 
 When the PSI type is unknown, fall back to the generic form on `KtResolvable` via a safe cast:
 
 ```Kotlin
 val symbol: KaSymbol? =
-    (element as? KtResolvable)?.resolveSymbol()
+    (element as? KtResolvable)?.resolveSuccessfulSymbol()
 val symbols: Collection<KaSymbol> =
-    (element as? KtResolvable)?.resolveSymbols().orEmpty()
+    (element as? KtResolvable)?.resolveSuccessfulSymbols().orEmpty()
 ```
 
-`resolveSymbol()` returns the single resolved symbol, or `null` if resolution failed or produced more than one
-candidate. `resolveSymbols()` returns every resolved symbol &mdash; useful when ambiguity is acceptable.
+`resolveSuccessfulSymbol()` returns the single resolved symbol, or `null` if resolution failed or produced more than one
+candidate. `resolveSuccessfulSymbols()` returns every resolved symbol &mdash; useful when ambiguity is acceptable.
 For the richest form (success / error / diagnostic / candidate symbols), use `tryResolveSymbols()` and the
 [](KaSymbolResolutionAttempt.md) hierarchy.
 
@@ -70,14 +70,15 @@ the element can refer to.
 | `KtLabelReferenceExpression`                     | `KaDeclarationSymbol?`        |
 | `KtInstanceExpressionWithLabel`                  | `KaDeclarationSymbol?`        |
 
-`KtUserType` does not have a specialized `resolveSymbol()` extension. It implements `KtResolvable`, so the generic
-form applies &mdash; with the broader return type `KaSymbol?`. See the [Type-side resolution](#type-side-resolution)
-section below for the user-type subtleties (including resolution to a `KaPackageSymbol` for qualified-path prefixes).
+`KtUserType` does not have a specialized `resolveSuccessfulSymbol()` extension. It implements `KtResolvable`, so the
+generic form applies &mdash; with the broader return type `KaSymbol?`. See the
+[Type-side resolution](#type-side-resolution) section below for the user-type subtleties (including resolution to a
+`KaPackageSymbol` for qualified-path prefixes).
 
-A few of these also expose a call counterpart (for example `KtCallElement` &rarr; `resolveCall(): KaFunctionCall<*>?`).
-See [](Resolving-Calls.md) for the call-side specializations.
+A few of these also expose a call counterpart (for example `KtCallElement` &rarr;
+`resolveSuccessfulCall(): KaFunctionCall<*>?`). See [](Resolving-Calls.md) for the call-side specializations.
 
-## `resolveSymbol` shows the literal target
+## `resolveSuccessfulSymbol` shows the literal target
 
 The defining principle of symbol resolution: **the symbol is what the element itself refers to**, not what is *invoked*
 at that site. The clearest illustration is `KtNameReferenceExpression`.
@@ -87,23 +88,23 @@ class MyClass
 object MyObject
 
 val c = MyClass()
-//      ^^^^^^^  resolveSymbol() returns the class `MyClass`
+//      ^^^^^^^  resolveSuccessfulSymbol() returns the class `MyClass`
 
 val o = MyObject
-//      ^^^^^^^^ resolveSymbol() returns the object `MyObject`
+//      ^^^^^^^^ resolveSuccessfulSymbol() returns the object `MyObject`
 ```
 
-For `MyClass()`, the name reference `MyClass` literally points to the class, so `resolveSymbol()` returns a
+For `MyClass()`, the name reference `MyClass` literally points to the class, so `resolveSuccessfulSymbol()` returns a
 `KaClassLikeSymbol` for `MyClass`. The constructor that is actually invoked only shows up in
 [call resolution](Resolving-Calls.md), because invoking a class means calling its constructor.
 
 > The constructor/class split is intentional and documented directly on `KtNameReferenceExpression` as an
 > *Analysis API Resolver Note*:
 >
-> > Unlike other `KtResolvableCall` entry points that provide both `resolveCall` and `resolveSymbol` specializations,
-> > `KtNameReferenceExpression.resolveCall` may return a different `KaSymbol`. For instance, this happens for
-> > constructor references. While `resolveCall` returns a `KaConstructorSymbol`, this method returns the corresponding
-> > `KaClassLikeSymbol`.
+> > Unlike other `KtResolvableCall` entry points that provide both `resolveSuccessfulCall` and
+> > `resolveSuccessfulSymbol` specializations, `KtNameReferenceExpression.resolveSuccessfulCall` may return a different
+> > `KaSymbol`. For instance, this happens for constructor references. While `resolveSuccessfulCall` returns a
+> > `KaConstructorSymbol`, this method returns the corresponding `KaClassLikeSymbol`.
 
 A `KtNameReferenceExpression` can also resolve to a type, not just a callable &mdash; this is why the generic
 return type is `KaSymbol?` rather than `KaCallableSymbol?`.
@@ -111,20 +112,21 @@ return type is `KaSymbol?` rather than `KaCallableSymbol?`.
 The same call-vs-symbol asymmetry appears on two other elements. `KtEnumEntrySuperclassReferenceExpression` resolves to
 the superclass (`KaNamedClassSymbol`) on the symbol side, but to the delegated constructor on the call side. And
 `KtOperationReferenceExpression` (for example the `+=` of a compound assignment) yields only the operator's own
-contributed symbols here, while its `resolveCall()` mirrors the parent expression &mdash; see [](Resolving-Calls.md)
-for that detail.
+contributed symbols here, while its `resolveSuccessfulCall()` mirrors the parent expression &mdash; see
+[](Resolving-Calls.md) for that detail.
 
 ## Type-side resolution
 
 Symbol resolution is the only resolution flavor that applies to *types*. `KtTypeReference`, `KtUserType`,
-`KtNullableType`, `KtFunctionType`, and `KtClassLiteralExpression` all support `resolveSymbol()` but no `resolveCall()`.
-Of these, only `KtUserType` lacks a specialized return type &mdash; it reuses the generic `KtResolvable.resolveSymbol()`.
+`KtNullableType`, `KtFunctionType`, and `KtClassLiteralExpression` all support `resolveSuccessfulSymbol()` but no
+`resolveSuccessfulCall()`. Of these, only `KtUserType` lacks a specialized return type &mdash; it reuses the generic
+`KtResolvable.resolveSuccessfulSymbol()`.
 
 For a well-formed type the result is a `KaClassifierSymbol`. For a `KtFunctionType`, the result is the corresponding
 `FunctionN` / `SuspendFunctionN` class &mdash; the return type is narrowed to `KaClassSymbol?`.
 
-`KtUserType` delegates to its inner simple-name reference, so calling `resolveSymbol()` on a user type returns the
-same symbol as resolving the inner expression. One subtlety, documented as an *Analysis API Resolver Note* on
+`KtUserType` delegates to its inner simple-name reference, so calling `resolveSuccessfulSymbol()` on a user type returns
+the same symbol as resolving the inner expression. One subtlety, documented as an *Analysis API Resolver Note* on
 `KtUserType` itself:
 
 > A `KtUserType` may also resolve to a `KaPackageSymbol` when it appears as the package qualifier of a fully qualified
@@ -141,8 +143,9 @@ When walking type references, expect `KaPackageSymbol` and handle it explicitly.
 
 ## Plain form vs try form
 
-Use `resolveSymbol()` / `resolveSymbols()` when you only care about a valid result and want failed/ambiguous resolutions
-to be silently dropped. This is the right default for inspections that must not produce false positives.
+Use `resolveSuccessfulSymbol()` / `resolveSuccessfulSymbols()` when you only care about a valid result and want
+failed/ambiguous resolutions to be silently dropped. This is the right default for inspections that must not produce
+false positives.
 
 Use `tryResolveSymbols()` when you want everything the compiler considered. The result is a
 `KaSymbolResolutionAttempt` carrying success, error, or compound-error variants &mdash; with diagnostics and candidate

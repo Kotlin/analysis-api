@@ -15,28 +15,28 @@ a precisely typed return value:
 
 ```Kotlin
 val callForFunction: KaFunctionCall<*>? =
-    callElement.resolveCall()
+    callElement.resolveSuccessfulCall()
 
 val callForAnnotation: KaAnnotationCall? =
-    annotationEntry.resolveCall()
+    annotationEntry.resolveSuccessfulCall()
 
 val callForArray: KaFunctionCall<KaNamedFunctionSymbol>? =
-    arrayAccess.resolveCall()
+    arrayAccess.resolveSuccessfulCall()
 
 val callForRef: KaCallableReferenceCall<*, *>? =
-    callableReference.resolveCall()
+    callableReference.resolveSuccessfulCall()
 
-val loop: KaForLoopCall? = forExpression.resolveCall()
+val loop: KaForLoopCall? = forExpression.resolveSuccessfulCall()
 
 val delegate: KaDelegatedPropertyCall? =
-    propertyDelegate.resolveCall()
+    propertyDelegate.resolveSuccessfulCall()
 ```
 
 When the PSI type is unknown, fall back to the generic form on `KtResolvableCall` via a safe cast:
 
 ```Kotlin
 val call: KaSimpleOrMultiCall? =
-    (element as? KtResolvableCall)?.resolveCall()
+    (element as? KtResolvableCall)?.resolveSuccessfulCall()
 ```
 
 For the rich form, use `tryResolveCall()` and the [](KaCallResolutionAttempt.md) hierarchy.
@@ -62,7 +62,7 @@ For the rich form, use `tryResolveCall()` and the [](KaCallResolutionAttempt.md)
 | `KtForExpression`                                | `KaForLoopCall?`                                 |
 | `KtPropertyDelegate`                             | `KaDelegatedPropertyCall?`                       |
 
-## What `resolveCall()` returns
+## What `resolveSuccessfulCall()` returns
 
 The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
 
@@ -74,7 +74,7 @@ The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
   (`a[i] += v`).
 
 The type system tells you which branch you are on. Many specializations narrow the return further &mdash; for instance
-`KtForExpression.resolveCall(): KaForLoopCall?` already commits to the multi-call branch.
+`KtForExpression.resolveSuccessfulCall(): KaForLoopCall?` already commits to the multi-call branch.
 
 > `KaCall` and `KaCallableMemberCall` are the *legacy* base types of the resolution API. New code should rely on
 > `KaSimpleOrMultiCall` / `KaSimpleCall` / `KaMultiCall`. See [](Legacy-Resolution-API.md).
@@ -97,7 +97,7 @@ val typeArgs  = call.typeArgumentsMapping  // inferred + explicit
 Concrete subtypes add their own fields. `KaFunctionCall<S>` adds the argument mappings:
 
 ```Kotlin
-val call: KaFunctionCall<*> = callElement.resolveCall() ?: return
+val call: KaFunctionCall<*> = callElement.resolveSuccessfulCall() ?: return
 val valueArgs   = call.valueArgumentMapping    // value arguments
 val contextArgs = call.contextArgumentMapping  // KEEP-0448 ctx args
 val combined    = call.combinedArgumentMapping // values + ctx
@@ -117,19 +117,19 @@ legacy `KaSimpleFunctionCall.isImplicitInvoke` boolean is deprecated.
 
 ### `KtNameReferenceExpression` on a constructor reference
 
-The call counterpart of a name reference can return a *different* symbol from the symbol counterpart. For
-`MyClass()` the name `MyClass` literally points to the class (`resolveSymbol()` returns the `KaClassLikeSymbol`), but
-the call wraps the constructor that is actually invoked:
+The call counterpart of a name reference can return a *different* symbol from the symbol counterpart. For `MyClass()`
+the name `MyClass` literally points to the class (`resolveSuccessfulSymbol()` returns the `KaClassLikeSymbol`), but the
+call wraps the constructor that is actually invoked:
 
 ```Kotlin
 class MyClass
 val c = MyClass()
-//      ^^^^^^^  resolveCall()   -> KaFunctionCall<...>
-//      ^^^^^^^  resolveSymbol() -> class `MyClass`
+//      ^^^^^^^  resolveSuccessfulCall()   -> KaFunctionCall<...>
+//      ^^^^^^^  resolveSuccessfulSymbol() -> class `MyClass`
 ```
 
-Pick the one that matches your question: *who is invoked here* &rarr; `resolveCall()`; *what does the name literally
-mean* &rarr; `resolveSymbol()`.
+Pick the one that matches your question: *who is invoked here* &rarr; `resolveSuccessfulCall()`; *what does the name
+literally mean* &rarr; `resolveSuccessfulSymbol()`.
 
 ## Compound and desugared calls
 
@@ -148,7 +148,7 @@ for (item in list) {
 A `for` loop desugars into `iterator()`, `hasNext()`, and `next()`. The call is a [](KaForLoopCall.md):
 
 ```Kotlin
-val loop = forExpression.resolveCall() ?: return
+val loop = forExpression.resolveSuccessfulCall() ?: return
 val iter:    KaFunctionCall<KaNamedFunctionSymbol> = loop.iteratorCall
 val hasNext: KaFunctionCall<KaNamedFunctionSymbol> = loop.hasNextCall
 val next:    KaFunctionCall<KaNamedFunctionSymbol> = loop.nextCall
@@ -168,7 +168,7 @@ A delegated property desugars into `getValue()`, optionally `setValue()` (for `v
 The call is a [](KaDelegatedPropertyCall.md):
 
 ```Kotlin
-val delegate = propertyDelegate.resolveCall() ?: return
+val delegate = propertyDelegate.resolveSuccessfulCall() ?: return
 // KaFunctionCall<KaNamedFunctionSymbol>
 val getter  = delegate.valueGetterCall
 // null for `val`
@@ -257,14 +257,14 @@ and `setterCallAttempt`.
 > > or `KtUnaryExpression`).
 >
 > The new compound call types expose `getterCall` / `setterCall` / `operationCall` directly, so you usually do not need
-> to call `resolveSymbol()` on the operation reference at all. Reach for the parent expression only when you specifically
-> want both reading and writing symbols.
+> to call `resolveSuccessfulSymbol()` on the operation reference at all. Reach for the parent expression only when you
+> specifically want both reading and writing symbols.
 >
-> `KtOperationReferenceExpression` is itself a `KtResolvableCall`, so `resolveCall()` / `tryResolveCall()` work on it
-> directly and return the *same* call as resolving the parent expression &mdash; reads included. Mind the asymmetry with
-> the symbol side: `resolveCall()` mirrors the parent (here, the full `KaCompoundArrayAccessCall`, `get` included), while
-> `resolveSymbol()` / `resolveSymbols()` stay narrow and yield only the symbols the operator itself contributes (`plus`,
-> `set`).
+> `KtOperationReferenceExpression` is itself a `KtResolvableCall`, so `resolveSuccessfulCall()` / `tryResolveCall()`
+> work on it directly and return the *same* call as resolving the parent expression &mdash; reads included. Mind the
+> asymmetry with the symbol side: `resolveSuccessfulCall()` mirrors the parent (here, the full
+> `KaCompoundArrayAccessCall`, `get` included), while `resolveSuccessfulSymbol()` / `resolveSuccessfulSymbols()` stay
+> narrow and yield only the symbols the operator itself contributes (`plus`, `set`).
 
 ### A flat view of the sub-calls
 
@@ -277,10 +277,9 @@ val flat: List<KaSimpleCall<*, *>> = (call as KaMultiCall).calls
 
 ## Plain form vs try form
 
-Use `resolveCall()` when you only need a valid result; resolution failure becomes `null`. Use `tryResolveCall()` when
-you want the diagnostic and the candidate calls the compiler considered. The richer form returns a
-`KaCallResolutionAttempt` &mdash; see [](KaCallResolutionAttempt.md) for the full hierarchy and
-helpers.
+Use `resolveSuccessfulCall()` when you only need a valid result; resolution failure becomes `null`. Use
+`tryResolveCall()` when you want the diagnostic and the candidate calls the compiler considered. The richer form returns
+a `KaCallResolutionAttempt` &mdash; see [](KaCallResolutionAttempt.md) for the full hierarchy and helpers.
 
 ```Kotlin
 val attempt = callElement.tryResolveCall() ?: return

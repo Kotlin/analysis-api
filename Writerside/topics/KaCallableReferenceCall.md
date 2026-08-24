@@ -48,6 +48,6 @@ Inherits [](KaSimpleCall.md).
 
 ## When to use it
 
-`KtCallableReferenceExpression.resolveCall()` returns `KaCallableReferenceCall<*, *>?` directly. If you only need the
-referenced declaration, `KtCallableReferenceExpression.resolveSymbol()` returns `KaCallableSymbol?` &mdash; the
-shorter path.
+`KtCallableReferenceExpression.resolveSuccessfulCall()` returns `KaCallableReferenceCall<*, *>?` directly. If you only
+need the referenced declaration, `KtCallableReferenceExpression.resolveSuccessfulSymbol()` returns `KaCallableSymbol?`
+&mdash; the shorter path.

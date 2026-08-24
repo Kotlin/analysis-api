@@ -30,26 +30,26 @@ Five user-facing pains motivated the redesign:
    callers had to maintain two parallel resolution mechanisms.
 
 The new API replaces both `KtReference`-based resolution and `KtElement.resolveToCall` with a single, type-driven
-surface: specialized `resolveSymbol` / `resolveCall` methods on concrete PSI types, plus the marker interfaces
-`KtResolvable` and `KtResolvableCall` for the generic case.
+surface: specialized `resolveSuccessfulSymbol` / `resolveSuccessfulCall` methods on concrete PSI types, plus the marker
+interfaces `KtResolvable` and `KtResolvableCall` for the generic case.
 
 ## Migration rules
 
 Two rules cover almost all sites:
 
 1. **Use the specialized method on the concrete PSI type whenever possible.** If you know the element is a
-   `KtCallElement`, write `callElement.resolveCall()` &mdash; you get back a `KaFunctionCall<*>?` directly. Each
-   specialization narrows the return type, so type checks and casts you used to write disappear.
+   `KtCallElement`, write `callElement.resolveSuccessfulCall()` &mdash; you get back a `KaFunctionCall<*>?`
+   directly. Each specialization narrows the return type, so type checks and casts you used to write disappear.
 2. **When the PSI type is genuinely unknown, narrow with a safe `as?` cast.** To check whether the element implements
    `KtResolvable` or `KtResolvableCall`.
 
 ```Kotlin
 // Specialized form (preferred)
-val call: KaFunctionCall<*>? = callElement.resolveCall()
+val call: KaFunctionCall<*>? = callElement.resolveSuccessfulCall()
 
 // Generic form (only when the element type is unknown)
 val call: KaSimpleOrMultiCall? =
-    (element as? KtResolvableCall)?.resolveCall()
+    (element as? KtResolvableCall)?.resolveSuccessfulCall()
 ```
 
 ## Old &rarr; new matrix
@@ -106,17 +106,17 @@ s. The hierarchy is identical; only the names change and `candidate` widens from
 
 ### Calls
 
-| Old call                                                                                                     | New equivalent                                                                                                                                                                       |
-|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `KtElement.resolveToCall(): KaCallInfo?`                                                                     | `KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?`, but `resolveCall()` is preferred and more convenient in most cases.                                                   |
-| `KaCallInfo.{successfulFunctionCallOrNull, successfulVariableAccessCall, successfulConstructorCallOrNull}()` | `attempt.successful as? T`, but in most cases `KaCallResolutionAttempt` is not needed. Call `resolveCall()` directly. An additional cast might be needed depending on your case.     |
-| `KaCallInfo.singleCallOrNull<T>()` / `singleFunctionCallOrNull()` / ...                                      | `attempt.calls.singleOrNull { it is T }`.                                                                                                                                            |
-| `KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>`                                             | `KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>`.                                                                                                                   |
+| Old call                                                                                                     | New equivalent                                                                                                                                                                             |
+|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `KtElement.resolveToCall(): KaCallInfo?`                                                                     | `KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?`, but `resolveSuccessfulCall()` is preferred and more convenient in most cases.                                               |
+| `KaCallInfo.{successfulFunctionCallOrNull, successfulVariableAccessCall, successfulConstructorCallOrNull}()` | `attempt.successful as? T`, but in most cases `KaCallResolutionAttempt` is not needed. Call `resolveSuccessfulCall()` directly. An additional cast might be needed depending on your case. |
+| `KaCallInfo.singleCallOrNull<T>()` / `singleFunctionCallOrNull()` / ...                                      | `attempt.calls.singleOrNull { it is T }`.                                                                                                                                                  |
+| `KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>`                                             | `KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>`.                                                                                                                         |
 
-> **`resolveCall()` vs `tryResolveCall()` vs `collectCallCandidates()`.** `resolveCall()` returns only the successfully
-> resolved (most-specific) call, or `null`. To inspect the candidate calls of an *unresolved or ambiguous* call (the old
-> `KaCallInfo.calls`), use `tryResolveCall()?.calls`. To inspect *all* overload-resolution candidates (the old
-> `resolveToCallCandidates()`), use `collectCallCandidates()`.
+> **`resolveSuccessfulCall()` vs `tryResolveCall()` vs `collectCallCandidates()`.** `resolveSuccessfulCall()` returns
+> only the successfully resolved (most-specific) call, or `null`. To inspect the candidate calls of an *unresolved or
+> ambiguous* call (the old `KaCallInfo.calls`), use `tryResolveCall()?.calls`. To inspect *all* overload-resolution
+> candidates (the old `resolveToCallCandidates()`), use `collectCallCandidates()`.
 
 > The result of `tryResolveCall` and `resolveToCall` are equivalent in all cases (`tryResolveCall` may carry
 > more detailed diagnostics on an error call).
@@ -197,52 +197,52 @@ fun resolveToSymbols(element: KtElement): Collection<KaSymbol> {
 This pattern is the formal way to migrate a `mainReference.resolveToSymbols()` call site that needs the broadest
 possible result.
 
-| Old call                                       | New equivalent                                                                                                                                                                 |
-|------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `expr.mainReference.resolveToSymbol()`         | `expr.resolveSymbol()` – specialized form on the concrete PSI type. `KtResolvable.resolveSymbol(): KaSymbol?` – generic fallback.                                              |
-| `expr.mainReference.resolveToSymbols()`        | `(expr as? KtResolvable)?.resolveSymbols()` – the generic `KtResolvable.resolveSymbols(): Collection<KaSymbol>` (there is no per-PSI-type specialization for the plural form). |
-| `KtReference.isImplicitReferenceToCompanion()` | `(element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true`                                                                                                 |
-| `KtReference.usesContextSensitiveResolution`   | `(element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true`                                                                                                 |
+| Old call                                       | New equivalent                                                                                                                                                                                     |
+|------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `expr.mainReference.resolveToSymbol()`         | `expr.resolveSuccessfulSymbol()` – specialized form on the concrete PSI type. `KtResolvable.resolveSuccessfulSymbol(): KaSymbol?` – generic fallback.                                              |
+| `expr.mainReference.resolveToSymbols()`        | `(expr as? KtResolvable)?.resolveSuccessfulSymbols()` – the generic `KtResolvable.resolveSuccessfulSymbols(): Collection<KaSymbol>` (there is no per-PSI-type specialization for the plural form). |
+| `KtReference.isImplicitReferenceToCompanion()` | `(element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true`                                                                                                                     |
+| `KtReference.usesContextSensitiveResolution`   | `(element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true`                                                                                                                     |
 
-> **A resolved symbol is not always the call target.** For most elements the symbol from `resolveSymbol()` and the
-> symbol behind `resolveCall()` coincide. They can diverge for `KtNameReferenceExpression`,
-> `KtOperationReferenceExpression`, and `KtEnumEntrySuperclassReferenceExpression`: `resolveSymbol` / `resolveSymbols`
-> prefer the *exact referenced symbol*, while `resolveCall` may describe the *enclosing call*. Choose the one that
-> matches what you need (see **Common migration patterns** below).
+> **A resolved symbol is not always the call target.** For most elements the symbol from
+> `resolveSuccessfulSymbol()` and the symbol behind `resolveSuccessfulCall()` coincide. They can diverge for
+> `KtNameReferenceExpression`, `KtOperationReferenceExpression`, and `KtEnumEntrySuperclassReferenceExpression`:
+> `resolveSuccessfulSymbol` / `resolveSuccessfulSymbols` prefer the *exact referenced symbol*, while
+> `resolveSuccessfulCall` may describe the *enclosing call*. Choose the one that matches what you need (see
+> **Common migration patterns** below).
 >
-> `resolveSymbol()` returns a non-`null` result only for a single, unambiguous, **successfully resolved** target, so on
-> valid code it matches the old `resolveToSymbols().singleOrNull()`. Two warnings. The old
+> `resolveSuccessfulSymbol()` returns a non-`null` result only for a single, unambiguous, **successfully resolved**
+> target, so on valid code it matches the old `resolveToSymbols().singleOrNull()`. Two warnings. The old
 > `resolveToSymbols().firstOrNull()` silently picked one of several *ambiguous* results &mdash; for that breadth
-> migrates
-> to `resolveSymbols()`, not `resolveSymbol()`. And both `resolveSymbol()` and `resolveSymbols()` expose only
-> `successfulSymbols`, whereas the legacy `resolveToSymbols()` also surfaced *candidate* symbols on red code; to keep
-> that best-effort behavior, use `tryResolveSymbols()?.symbols` (the emulation recipe above).
+> migrates to `resolveSuccessfulSymbols()`, not `resolveSuccessfulSymbol()`. And both `resolveSuccessfulSymbol()`
+> and `resolveSuccessfulSymbols()` expose only `successfulSymbols`, whereas the legacy `resolveToSymbols()` also
+> surfaced *candidate* symbols on red code; to keep that best-effort behavior, use `tryResolveSymbols()?.symbols`
+> (the emulation recipe above).
 
 ## Common migration patterns
 
 > **Pick the specialized overload first.** On a concrete PSI type (`KtCallElement`, `KtNameReferenceExpression`,
-> `KtArrayAccessExpression`, ...) the `resolveCall` / `resolveSymbol` overload needs no cast and returns a narrower
-> type.
-> Only when your receiver is statically `KtElement` / `KtExpression` do cast to the marker interface
-> (`as? KtResolvableCall` / `as? KtResolvable`) and use the generic form.
+> `KtArrayAccessExpression`, ...) the `resolveSuccessfulCall` / `resolveSuccessfulSymbol` overload needs no cast and
+> returns a narrower type. Only when your receiver is statically `KtElement` / `KtExpression` do cast to the marker
+> interface (`as? KtResolvableCall` / `as? KtResolvable`) and use the generic form.
 
 The recipes below assume the opt-ins from the note at the top of this page are in scope.
 
 ### `resolveToCall`
 
-`resolveCall()` returns only the **successfully resolved** call &mdash; it is defined as
+`resolveSuccessfulCall()` returns only the **successfully resolved** call &mdash; it is defined as
 `tryResolveCall()?.successful`. It is therefore the faithful replacement for the `successful*` reductions, *not*
 the `single*` ones: the `single*` helpers read `KaCallInfo.calls`, which for an *error* call is the candidate list, so
 they also return the sole candidate of an unresolved call. Classify the old reduction before migrating:
 
-| Old reduction over `KaCallInfo`                                                                   | On success      | On an **error** call                        | New equivalent                                            |
-|---------------------------------------------------------------------------------------------------|-----------------|---------------------------------------------|-----------------------------------------------------------|
-| `successfulFunctionCallOrNull()` / `successfulVariableAccessCall()` / `successfulCallOrNull<T>()` | the call        | `null`                                      | `resolveCall()` (add `as? T` on a generic receiver)       |
-| `singleFunctionCallOrNull()` / `singleVariableAccessCall()` / `singleCallOrNull<T>()`             | the call        | the sole candidate of type `T`, else `null` | `tryResolveCall()?.calls?.singleOrNull { it is T } as? T` |
-| `KaCallInfo.calls`                                                                                | a one-call list | the candidate calls                         | `tryResolveCall()?.calls`                                 |
+| Old reduction over `KaCallInfo`                                                                   | On success      | On an **error** call                        | New equivalent                                                |
+|---------------------------------------------------------------------------------------------------|-----------------|---------------------------------------------|---------------------------------------------------------------|
+| `successfulFunctionCallOrNull()` / `successfulVariableAccessCall()` / `successfulCallOrNull<T>()` | the call        | `null`                                      | `resolveSuccessfulCall()` (add `as? T` on a generic receiver) |
+| `singleFunctionCallOrNull()` / `singleVariableAccessCall()` / `singleCallOrNull<T>()`             | the call        | the sole candidate of type `T`, else `null` | `tryResolveCall()?.calls?.singleOrNull { it is T } as? T`     |
+| `KaCallInfo.calls`                                                                                | a one-call list | the candidate calls                         | `tryResolveCall()?.calls`                                     |
 
 The common success-only case &mdash; a resolved single function call &mdash; collapses to one call, since
-`resolveCall()` over a `KtCallElement` already returns `KaFunctionCall<*>?`:
+`resolveSuccessfulCall()` over a `KtCallElement` already returns `KaFunctionCall<*>?`:
 
 ```Kotlin
 // Old (success-only)
@@ -251,11 +251,11 @@ val call = callExpression.resolveToCall()
     ?: return
 
 // New
-val call = callExpression.resolveCall() ?: return
+val call = callExpression.resolveSuccessfulCall() ?: return
 ```
 
-The candidate-tolerant `singleFunctionCallOrNull()` is **not** equivalent &mdash; `resolveCall()` drops the sole
-candidate of a *failed* call that `singleFunctionCallOrNull()` would have returned. Preserve that behavior with
+The candidate-tolerant `singleFunctionCallOrNull()` is **not** equivalent &mdash; `resolveSuccessfulCall()` drops the
+sole candidate of a *failed* call that `singleFunctionCallOrNull()` would have returned. Preserve that behavior with
 `tryResolveCall()`:
 
 ```Kotlin
@@ -271,12 +271,12 @@ val call = callExpression.tryResolveCall()
     ?: return
 ```
 
-> **Drop red code or match it?** Migrate to `resolveCall()` when an unresolved or ambiguous call should be silently
-> dropped (typical for inspections that must not produce false positives); migrate to `tryResolveCall()` when you want
-> a best-effort match on red code (typical for navigation and find-usages). This is the same distinction as the
+> **Drop red code or match it?** Migrate to `resolveSuccessfulCall()` when an unresolved or ambiguous call should be
+> silently dropped (typical for inspections that must not produce false positives); migrate to `tryResolveCall()` when
+> you want a best-effort match on red code (typical for navigation and find-usages). This is the same distinction as the
 > **iterating candidate calls** trap below.
 
-If you only need the called symbol, skip the call entirely and use the specialized `resolveSymbol()`:
+If you only need the called symbol, skip the call entirely and use the specialized `resolveSuccessfulSymbol()`:
 
 ```Kotlin
 // Old
@@ -286,7 +286,7 @@ val symbol = callExpression.resolveToCall()
     ?: return
 
 // New
-val symbol = callExpression.resolveSymbol() ?: return
+val symbol = callExpression.resolveSuccessfulSymbol() ?: return
 ```
 
 `KaPartiallyAppliedSymbol` is gone, so `partiallyAppliedSymbol.signature` / `.symbol` chains flatten:
@@ -298,8 +298,8 @@ val id = callExpression.resolveToCall()
     ?.partiallyAppliedSymbol?.signature?.callableId
 
 // New
-val id = callExpression.resolveCall()?.symbol?.callableId
-// or:   callExpression.resolveSymbol()?.callableId
+val id = callExpression.resolveSuccessfulCall()?.symbol?.callableId
+// or:   callExpression.resolveSuccessfulSymbol()?.callableId
 ```
 
 When the receiver is only statically a `KtExpression` / `KtElement`, cast to the marker interface and narrow the result:
@@ -309,7 +309,7 @@ When the receiver is only statically a `KtExpression` / `KtElement`, cast to the
 val call = expression.resolveToCall()?.successfulFunctionCallOrNull()
 
 // New
-val call = (expression as? KtResolvableCall)?.resolveCall() as? KaFunctionCall<*>
+val call = (expression as? KtResolvableCall)?.resolveSuccessfulCall() as? KaFunctionCall<*>
 ```
 
 The same cast covers other call subtypes. Variable access:
@@ -319,7 +319,7 @@ The same cast covers other call subtypes. Variable access:
 val access = expression.resolveToCall()?.successfulVariableAccessCall()
 
 // New
-val access = (expression as? KtResolvableCall)?.resolveCall() as? KaVariableAccessCall
+val access = (expression as? KtResolvableCall)?.resolveSuccessfulCall() as? KaVariableAccessCall
 ```
 
 A member call resolved through `successfulCallOrNull<KaCallableMemberCall<*, *>>()`:
@@ -331,12 +331,13 @@ val symbol = expression.resolveToCall()
     ?.partiallyAppliedSymbol?.symbol
 
 // New
-val call = (expression as? KtResolvableCall)?.resolveCall() as? KaSimpleCall<*, *>
+val call = (expression as? KtResolvableCall)?.resolveSuccessfulCall() as? KaSimpleCall<*, *>
 val symbol = call?.symbol
 ```
 
-**Trap &mdash; iterating candidate calls.** `resolveCall()` is `null` whenever resolution fails, which is exactly the
-case a `.calls` loop wants to inspect. Migrate `.calls` to `tryResolveCall()?.calls`, *not* `resolveCall()`:
+**Trap &mdash; iterating candidate calls.** `resolveSuccessfulCall()` is `null` whenever resolution fails, which is
+exactly the case a `.calls` loop wants to inspect. Migrate `.calls` to `tryResolveCall()?.calls`, *not*
+`resolveSuccessfulCall()`:
 
 ```Kotlin
 // Old
@@ -350,9 +351,9 @@ for (call in call.tryResolveCall()?.calls.orEmpty()) {
 }
 ```
 
-When a helper switched over a resolved `KaCall`, widen its parameter to `KaSimpleOrMultiCall` (the type `resolveCall()`
-now returns) and drop the `successfulCallOrNull<KaCall>()` unwrapping at the call site. Deprecated subtype casts also
-disappear: `as? KaSimpleFunctionCall` becomes `as? KaFunctionCall<*>`.
+When a helper switched over a resolved `KaCall`, widen its parameter to `KaSimpleOrMultiCall` (the type
+`resolveSuccessfulCall()` now returns) and drop the `successfulCallOrNull<KaCall>()` unwrapping at the call site.
+Deprecated subtype casts also disappear: `as? KaSimpleFunctionCall` becomes `as? KaFunctionCall<*>`.
 
 ### `resolveToCallCandidates`
 
@@ -386,8 +387,8 @@ val candidates = (expression as? KtResolvableCall)?.collectCallCandidates()
 val first = candidates?.firstOrNull()?.candidate as? KaFunctionCall<*>
 ```
 
-`collectCallCandidates()` returns *all* overload-resolution candidates; `resolveCall()` returns only the single
-most-specific result. Use candidates when you need to reason about ambiguity, the resolved call otherwise.
+`collectCallCandidates()` returns *all* overload-resolution candidates; `resolveSuccessfulCall()` returns only the
+single most-specific result. Use candidates when you need to reason about ambiguity, the resolved call otherwise.
 
 ### `resolveToSymbol`
 
@@ -399,7 +400,7 @@ val symbol = operationReference.mainReference.resolveToSymbol() as? KaFunctionSy
     ?: return
 
 // New
-val symbol = operationReference.resolveSymbol() as? KaFunctionSymbol
+val symbol = operationReference.resolveSuccessfulSymbol() as? KaFunctionSymbol
     ?: return
 ```
 
@@ -412,7 +413,7 @@ val symbol = thisExpression.instanceReference
     .resolveToSymbol()
 
 // New
-val symbol = thisExpression.resolveSymbol()
+val symbol = thisExpression.resolveSuccessfulSymbol()
 ```
 
 When the static type is only `KtExpression`, narrow to `KtResolvable`:
@@ -423,7 +424,7 @@ val symbol = expression.mainReference?.resolveToSymbol() as? KaValueParameterSym
     ?: return
 
 // New
-val symbol = (expression as? KtResolvable)?.resolveSymbol() as? KaValueParameterSymbol
+val symbol = (expression as? KtResolvable)?.resolveSuccessfulSymbol() as? KaValueParameterSymbol
     ?: return
 ```
 
@@ -441,40 +442,42 @@ element**
 >     ?.resolveToSymbol() as? KaConstructorSymbol
 > 
 > // New: resolves the call element -> the constructor itself
-> val symbol = callExpression.resolveSymbol() as? KaConstructorSymbol
+> val symbol = callExpression.resolveSuccessfulSymbol() as? KaConstructorSymbol
 > ```
 >
-> Migrate to the call element when you want the *called* function; keep `(reference as? KtResolvable)?.resolveSymbol()`
-> on the name reference when you want the exact *referenced* symbol.
+> Migrate to the call element when you want the *called* function; keep
+> `(reference as? KtResolvable)?.resolveSuccessfulSymbol()` on the name reference when you want the exact *referenced*
+> symbol.
 
 ### `resolveToSymbols`
 
-`resolveToSymbols()` returned a collection. Both common reductions over it map to the single-result `resolveSymbol()`,
-but with a warning:
+`resolveToSymbols()` returned a collection. Both common reductions over it map to the single-result
+`resolveSuccessfulSymbol()`, but with a warning:
 
 ```Kotlin
 // Old (exact, single target)
 val symbol = element.mainReference.resolveToSymbols().singleOrNull()
 
 // New
-val symbol = element.resolveSymbol()
-// or:       (element as? KtResolvable)?.resolveSymbol()
+val symbol = element.resolveSuccessfulSymbol()
+// or:       (element as? KtResolvable)?.resolveSuccessfulSymbol()
 ```
 
 ```Kotlin
 // Old (tolerated ambiguity, picked one)
 val symbol = element.mainReference.resolveToSymbols().firstOrNull()
 // New (returns null on more than one target!)
-val symbol = element.resolveSymbol()
+val symbol = element.resolveSuccessfulSymbol()
 ```
 
-`resolveSymbol()` is an exact match for `.singleOrNull()` *on valid code* &mdash; both yield a result only for a single,
-unambiguous target. It is *not* a faithful match for `.firstOrNull()`, which silently chose one of several ambiguous
-symbols: `resolveSymbol()` returns `null` when there is more than one target. Note also that `resolveSymbol()`
-and `resolveSymbols()` return only *successful* targets, whereas the old `resolveToSymbols()` also exposed candidate
-symbols on invalid code. If a call site genuinely needs every candidate &mdash; ambiguous or red &mdash; migrate to
-`resolveSymbols()` for ambiguity, or to the emulation recipe above (`tryResolveCall()?.calls` /
-`tryResolveSymbols()?.symbols`) for the full best-effort set, not `resolveSymbol()`.
+`resolveSuccessfulSymbol()` is an exact match for `.singleOrNull()` *on valid code* &mdash; both yield a result only for
+a single, unambiguous target. It is *not* a faithful match for `.firstOrNull()`, which silently chose one of several
+ambiguous symbols: `resolveSuccessfulSymbol()` returns `null` when there is more than one target. Note also that
+`resolveSuccessfulSymbol()` and `resolveSuccessfulSymbols()` return only *successful* targets, whereas the old
+`resolveToSymbols()` also exposed candidate symbols on invalid code. If a call site genuinely needs every candidate
+&mdash; ambiguous or red &mdash; migrate to `resolveSuccessfulSymbols()` for ambiguity, or to the emulation recipe above
+(`tryResolveCall()?.calls` / `tryResolveSymbols()?.symbols`) for the full best-effort set, not
+`resolveSuccessfulSymbol()`.
 
 ## What about `KtReference`?
 
@@ -499,7 +502,7 @@ All entry points described here are annotated `@KaExperimentalApi`. You must opt
 ```Kotlin
 @OptIn(KaExperimentalApi::class)
 fun myUsage(element: KtCallElement) = analyze(element) {
-        element.resolveCall()
+        element.resolveSuccessfulCall()
     }
 ```
 
@@ -509,7 +512,7 @@ the second opt-in &mdash; the markers themselves are annotated `@KtExperimentalA
 ```Kotlin
 @OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
 fun myUsage(element: KtElement) = analyze(element) {
-        (element as? KtResolvableCall)?.resolveCall()
+        (element as? KtResolvableCall)?.resolveSuccessfulCall()
     }
 ```
 

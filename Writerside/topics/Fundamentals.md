@@ -37,7 +37,7 @@ a `KtStatementExpression` marker interface that annotates statement-like constru
 The Analysis API is implemented on top of the Kotlin PSI, mostly as a set of extension functions and properties,
 providing access to semantic information. For example, to get an expression type, there is
 a `ktExpression.expressionType` extension property. Or, to get resolved call information, one should
-use `ktCallExpression.resolveCall()` ([](References-And-Calls.md)).
+use `ktCallExpression.resolveSuccessfulCall()` ([](References-And-Calls.md)).
 
 ## KaSession
 
@@ -121,7 +121,7 @@ fun perform(call: KtCallExpression) {
 fun resolveSymbolPointer(
     call: KtCallExpression,
 ): KaSymbolPointer<KaCallableSymbol>? = analyze(call) {
-    val symbol = call.resolveSymbol()
+    val symbol = call.resolveSuccessfulSymbol()
     symbol?.createPointer() // Create the pointer
 }
 

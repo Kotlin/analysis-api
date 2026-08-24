@@ -19,7 +19,7 @@ while (iterator.hasNext()) {
 }
 ```
 
-`KaForLoopCall` is the assembled multi-call obtained from `KtForExpression.resolveCall(): KaForLoopCall?`. For
+`KaForLoopCall` is the assembled multi-call obtained from `KtForExpression.resolveSuccessfulCall(): KaForLoopCall?`. For
 per-sub-call inspection (including partial failure handling), use the matching attempt type
 `KaForLoopCallResolutionAttempt` documented under [](KaCallResolutionAttempt.md).
 

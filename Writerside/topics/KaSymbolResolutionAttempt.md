@@ -1,9 +1,9 @@
 # KaSymbolResolutionAttempt
 
-`KaSymbolResolutionAttempt` is the rich result type of `tryResolveSymbols()`. Unlike the plain `resolveSymbol()` /
-`resolveSymbols()` &mdash; which collapse failures to `null` &mdash; an attempt always carries everything the compiler
-considered: either the resolved symbols, or a diagnostic together with candidate symbols, or a mix of both for
-compound calls.
+`KaSymbolResolutionAttempt` is the rich result type of `tryResolveSymbols()`. Unlike the plain
+`resolveSuccessfulSymbol()` / `resolveSuccessfulSymbols()` &mdash; which collapse failures to `null` &mdash; an attempt
+always carries everything the compiler considered: either the resolved symbols, or a diagnostic together with candidate
+symbols, or a mix of both for compound calls.
 
 This page documents the sealed hierarchy and the helper extensions. For the high-level "how do I use this?" view, see
 [](Resolving-Symbols.md).

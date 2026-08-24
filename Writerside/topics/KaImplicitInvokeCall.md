@@ -25,7 +25,7 @@ Inherits [](KaFunctionCall.md) (`KaImplicitInvokeCall : KaFunctionCall<KaNamedFu
 `KaImplicitInvokeCall` does not add new members beyond `KaFunctionCall`. The intended use is a type check:
 
 ```Kotlin
-val call: KaFunctionCall<*>? = callElement.resolveCall()
+val call: KaFunctionCall<*>? = callElement.resolveSuccessfulCall()
 if (call is KaImplicitInvokeCall) {
     handleImplicitInvoke(call)
 }

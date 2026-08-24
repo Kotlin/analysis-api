@@ -66,15 +66,16 @@ The canonical entry point is the **specialized form on the concrete PSI type**:
 @OptIn(KaExperimentalApi::class)
 fun perform(expression: KtSimpleNameExpression) {
     analyze(expression) {
-        val symbol: KaSymbol? = expression.resolveSymbol()
+        val symbol: KaSymbol? = expression.resolveSuccessfulSymbol()
         println(symbol?.name)
     }
 }
 ```
 
-Each specialized method returns a precisely typed result &mdash; for instance, `KtAnnotationEntry.resolveSymbol()`
-returns `KaConstructorSymbol?`, and `KtCallElement.resolveCall()` returns `KaFunctionCall<*>?`. Prefer this form whenever
-the PSI type is known: it is shorter, type-safe, and discoverable through IDE completion on the element.
+Each specialized method returns a precisely typed result &mdash; for instance,
+`KtAnnotationEntry.resolveSuccessfulSymbol()` returns `KaConstructorSymbol?`, and
+`KtCallElement.resolveSuccessfulCall()` returns `KaFunctionCall<*>?`. Prefer this form whenever the PSI type is known:
+it is shorter, type-safe, and discoverable through IDE completion on the element.
 
 ### Working with a generic `PsiElement`
 
@@ -84,8 +85,8 @@ When the element type is genuinely unknown (for instance, you only have a `PsiEl
 ```Kotlin
 @OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
 fun perform(element: KtElement) = analyze(element) {
-    val symbol = (element as? KtResolvable)?.resolveSymbol()
-    val call = (element as? KtResolvableCall)?.resolveCall()
+    val symbol = (element as? KtResolvable)?.resolveSuccessfulSymbol()
+    val call = (element as? KtResolvableCall)?.resolveSuccessfulCall()
 }
 ```
 
@@ -93,10 +94,10 @@ fun perform(element: KtElement) = analyze(element) {
 
 Every resolution flavor exists in two forms:
 
-* The **plain** form (`resolveSymbol`, `resolveSymbols`, `resolveCall`) returns the happy-path result &mdash; a symbol or
-  a `KaSimpleOrMultiCall`, or `null` if resolution did not succeed. Use it when you only care about a valid result
-  and want failed/ambiguous resolutions to be silently dropped (typical for inspections that must not produce
-  false positives).
+* The **plain** form (`resolveSuccessfulSymbol`, `resolveSuccessfulSymbols`, `resolveSuccessfulCall`) returns the
+  happy-path result &mdash; a symbol or a `KaSimpleOrMultiCall`, or `null` if resolution did not succeed. Use it when
+  you only care about a valid result and want failed/ambiguous resolutions to be silently dropped (typical for
+  inspections that must not produce false positives).
 * The **try** form (`tryResolveSymbols`, `tryResolveCall`) returns a richer **attempt** &mdash; either a
   **success** with the result, or an **error** carrying a diagnostic and candidate symbols/calls.
   Use it when you want every piece of information the compiler considered, including failed attempts and partial
@@ -120,10 +121,10 @@ fun describe(
   expression: KtSimpleNameExpression, 
 ): String? = analyze(expression) {
     // 1. What does the expression refer to?
-    val target = expression.resolveSymbol() ?: return@analyze null
+    val target = expression.resolveSuccessfulSymbol() ?: return@analyze null
 
     // 2. Was this expression also used as a call site?
-    val call = expression.resolveCall()
+    val call = expression.resolveSuccessfulCall()
 
     buildString {
         append("Target: ")

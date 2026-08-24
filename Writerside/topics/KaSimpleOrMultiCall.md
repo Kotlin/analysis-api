@@ -1,7 +1,7 @@
 # KaSimpleOrMultiCall
 
-`KaSimpleOrMultiCall` is the sealed return type of `resolveCall()`. The type system splits resolved calls into two
-shapes:
+`KaSimpleOrMultiCall` is the sealed return type of `resolveSuccessfulCall()`. The type system splits resolved calls into
+two shapes:
 
 * [](KaSimpleCall.md) &mdash; a simple call: a single resolved callable applied at this site. Most everyday call sites
   (function invocations, property accesses, callable references, annotation entries, supertype calls) return this.
@@ -32,12 +32,12 @@ called and not about the call structure.
 
 ## When the type system narrows the result
 
-Many specialized `resolveCall(...)` methods commit to one branch in their return type:
+Many specialized `resolveSuccessfulCall(...)` methods commit to one branch in their return type:
 
-* `KtForExpression.resolveCall(): KaForLoopCall?` &mdash; always a `KaMultiCall`.
-* `KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall?` &mdash; always a `KaMultiCall`.
-* `KtCallElement.resolveCall(): KaFunctionCall<*>?` &mdash; always a `KaSimpleCall`.
-* `KtAnnotationEntry.resolveCall(): KaAnnotationCall?` &mdash; always a `KaSimpleCall`.
+* `KtForExpression.resolveSuccessfulCall(): KaForLoopCall?` &mdash; always a `KaMultiCall`.
+* `KtPropertyDelegate.resolveSuccessfulCall(): KaDelegatedPropertyCall?` &mdash; always a `KaMultiCall`.
+* `KtCallElement.resolveSuccessfulCall(): KaFunctionCall<*>?` &mdash; always a `KaSimpleCall`.
+* `KtAnnotationEntry.resolveSuccessfulCall(): KaAnnotationCall?` &mdash; always a `KaSimpleCall`.
 
-The generic `KtResolvableCall.resolveCall(): KaSimpleOrMultiCall?` is the broadest return type, useful when the PSI
-type is unknown.
+The generic `KtResolvableCall.resolveSuccessfulCall(): KaSimpleOrMultiCall?` is the broadest return type, useful when
+the PSI type is unknown.

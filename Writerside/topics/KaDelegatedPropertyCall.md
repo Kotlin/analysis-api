@@ -18,7 +18,7 @@ For a `var` property a `setValue()` call is also generated. If the delegate expr
 operator, it is called first.
 
 `KaDelegatedPropertyCall` is the assembled multi-call returned from
-`KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall?`. For per-sub-call inspection (and partial-failure
+`KtPropertyDelegate.resolveSuccessfulCall(): KaDelegatedPropertyCall?`. For per-sub-call inspection (and partial-failure
 handling), use `KaDelegatedPropertyCallResolutionAttempt` documented under
 [](KaCallResolutionAttempt.md).
 

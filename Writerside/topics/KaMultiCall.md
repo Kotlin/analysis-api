@@ -44,5 +44,6 @@ element. The resulting [](KaCallResolutionAttempt.md) is a
 assembled `KaMultiCall` is only available when every sub-attempt succeeded.
 
 > Compound calls cover a "bunch of unrelated compound calls", so the client typically is not expected to handle every
-> possible subtype. Prefer the specialized `resolveCall(...)` on the originating PSI element (e.g.
-> `KtForExpression.resolveCall(): KaForLoopCall?`) when you know exactly which compound case you are dealing with.
+> possible subtype. Prefer the specialized `resolveSuccessfulCall(...)` on the originating PSI element (e.g.
+> `KtForExpression.resolveSuccessfulCall(): KaForLoopCall?`) when you know exactly which compound case you are dealing
+> with.

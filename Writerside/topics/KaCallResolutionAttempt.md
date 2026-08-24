@@ -1,9 +1,9 @@
 # KaCallResolutionAttempt
 
-`KaCallResolutionAttempt` is the rich result type of `tryResolveCall()`. Unlike the plain `resolveCall()` &mdash; which
-collapses failures to `null` &mdash; an attempt always carries everything the compiler considered: either the resolved
-call, or a diagnostic together with candidate calls. For compound calls (for-loops, delegated properties, `+=`, array
-compound), the attempt additionally addresses each sub-call independently, so partial success is observable.
+`KaCallResolutionAttempt` is the rich result type of `tryResolveCall()`. Unlike the plain `resolveSuccessfulCall()`
+&mdash; which collapses failures to `null` &mdash; an attempt always carries everything the compiler considered: either
+the resolved call, or a diagnostic together with candidate calls. For compound calls (for-loops, delegated properties,
+`+=`, array compound), the attempt additionally addresses each sub-call independently, so partial success is observable.
 
 This page documents the sealed hierarchy and helper extensions. For the high-level view, see
 [](Resolving-Calls.md).

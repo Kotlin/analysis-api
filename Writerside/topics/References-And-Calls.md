@@ -7,9 +7,9 @@ The Analysis API answers two independent questions about resolvable Kotlin PSI:
 * **How is this expression executed at this site?** &mdash; the callable selected at the call site, with receivers,
   type arguments, and value arguments. Read [](Resolving-Calls.md).
 
-[](Resolution-Fundamentals.md) introduces both views together, the `KtResolvable` /
-`KtResolvableCall` marker interfaces, and the difference between the "plain" (`resolveSymbol` / `resolveCall`) and
-"try" (`tryResolveSymbols` / `tryResolveCall`) forms.
+[](Resolution-Fundamentals.md) introduces both views together, the `KtResolvable` / `KtResolvableCall` marker
+interfaces, and the difference between the "plain" (`resolveSuccessfulSymbol` / `resolveSuccessfulCall`) and "try"
+(`tryResolveSymbols` / `tryResolveCall`) forms.
 
 If you need every overload the compiler considered at a call site &mdash; including ones it rejected &mdash; see
 [](Resolution-Candidates.md).

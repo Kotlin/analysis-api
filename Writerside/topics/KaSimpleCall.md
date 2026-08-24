@@ -51,7 +51,7 @@ inference error.
 
 ## Concrete subtypes
 
-The concrete return types of the specialized `resolveCall(...)` methods all implement `KaSimpleCall`:
+The concrete return types of the specialized `resolveSuccessfulCall(...)` methods all implement `KaSimpleCall`:
 
 * [](KaFunctionCall.md) and its subtypes ([](KaImplicitInvokeCall.md),
   [](KaAnnotationCall.md), [](KaDelegatedConstructorCall.md)).
