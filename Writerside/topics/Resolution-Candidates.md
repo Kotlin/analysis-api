@@ -17,12 +17,12 @@ val candidates: List<KaCallCandidate> =
     callElement.collectCallCandidates()
 ```
 
-Each `KaCallCandidate` wraps a [](KaSingleOrMultiCall.md) and exposes whether it was selected as a
+Each `KaCallCandidate` wraps a [](KaSimpleOrMultiCall.md) and exposes whether it was selected as a
 final candidate by the compiler:
 
 ```Kotlin
 sealed interface KaCallCandidate {
-    val candidate: KaSingleOrMultiCall
+    val candidate: KaSimpleOrMultiCall
     val isInBestCandidates: Boolean
 }
 ```
@@ -69,7 +69,7 @@ The resolution API exposes lists of calls in three places. They look similar but
 : Every candidate the overload-resolution algorithm considered &mdash; **applicable and inapplicable**, on
 both successful and erroneous code. Reach for this when you want to enumerate *all options*, not just the result.
 
-`KaSingleCall` returned by `KaCallResolutionError.candidateCalls`
+`KaSimpleCall` returned by `KaCallResolutionError.candidateCalls`
 : A subset shown only when resolution **failed**: the candidates the compiler ultimately reported as candidates of an
 error call. Use this to understand the error path; do not use it to enumerate overloads on successful code &mdash;
 on a successful call this list is empty by definition.
@@ -81,6 +81,6 @@ on a successful call this list is empty by definition.
 ## Compound calls
 
 For compound expressions (for-loops, delegated properties, `+=`, array-compound), the candidate's `candidate` field is
-a [](KaMultiCall.md) rather than a `KaSingleCall`. The new compound call types provide named sub-call
+a [](KaMultiCall.md) rather than a `KaSimpleCall`. The new compound call types provide named sub-call
 accessors (`iteratorCall`, `getterCall`, `setterCall`, `operationCall`, and so on), so you can drill into the
 sub-calls of a compound candidate exactly as for the resolved call itself.

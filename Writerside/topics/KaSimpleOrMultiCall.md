@@ -1,0 +1,43 @@
+# KaSimpleOrMultiCall
+
+`KaSimpleOrMultiCall` is the sealed return type of `resolveCall()`. The type system splits resolved calls into two
+shapes:
+
+* [](KaSimpleCall.md) &mdash; a single resolved callable applied at this site. Most everyday call sites
+  (function invocations, property accesses, callable references, annotation entries, supertype calls) return this.
+* [](KaMultiCall.md) &mdash; a compound or desugared expression that resolves to several sub-calls. This is
+  what `for` loops, delegated properties, compound assignments (`+=`, `++`, `--`), and compound array access
+  (`a[i] += v`) return.
+
+## Hierarchy
+
+<code-block lang="mermaid">
+graph TB
+  KaSimpleOrMultiCall
+  KaSimpleOrMultiCall --> KaSimpleCall
+  KaSimpleOrMultiCall --> KaMultiCall
+</code-block>
+
+## Helper extensions
+
+Two extension properties give a uniform view across both branches:
+
+`val KaSimpleOrMultiCall.calls: List<KaSimpleCall<*, *>>`
+: The flattened list of single calls. Returns `listOf(this)` for a `KaSimpleCall`; returns `KaMultiCall.calls` for a
+`KaMultiCall`.
+
+`val KaSimpleOrMultiCall.symbols: List<KaSymbol>`
+: The flattened list of symbols across every contained `KaSimpleCall`. Convenient when you only care about *who* was
+called and not about the call structure.
+
+## When the type system narrows the result
+
+Many specialized `resolveCall(...)` methods commit to one branch in their return type:
+
+* `KtForExpression.resolveCall(): KaForLoopCall?` &mdash; always a `KaMultiCall`.
+* `KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall?` &mdash; always a `KaMultiCall`.
+* `KtCallElement.resolveCall(): KaFunctionCall<*>?` &mdash; always a `KaSimpleCall`.
+* `KtAnnotationEntry.resolveCall(): KaAnnotationCall?` &mdash; always a `KaSimpleCall`.
+
+The generic `KtResolvableCall.resolveCall(): KaSimpleOrMultiCall?` is the broadest return type, useful when the PSI
+type is unknown.

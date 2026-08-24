@@ -17,16 +17,16 @@ A callable reference does **not** actually invoke the callable, so the result is
 no value-argument mapping, no read/write access kind. Only the signature, bound receivers, and type-argument mapping.
 
 `KaCallableReferenceCall` is the cleanest example of the new resolution shape. Unlike most other call types, it
-extends [](KaSingleCall.md) only &mdash; there is no [legacy](Legacy-Resolution-API.md) `KaCallableMemberCall`
+extends [](KaSimpleCall.md) only &mdash; there is no [legacy](Legacy-Resolution-API.md) `KaCallableMemberCall`
 ancestor on this interface.
 
 ## Hierarchy
 
-Inherits [](KaSingleCall.md).
+Inherits [](KaSimpleCall.md).
 
 ## Members
 
-`KaCallableReferenceCall` does not add new members beyond `KaSingleCall`. The relevant accessors are:
+`KaCallableReferenceCall` does not add new members beyond `KaSimpleCall`. The relevant accessors are:
 
 `val signature: C`
 : The substituted signature of the referenced callable.

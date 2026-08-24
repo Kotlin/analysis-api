@@ -35,7 +35,7 @@ val delegate: KaDelegatedPropertyCall? =
 When the PSI type is unknown, fall back to the generic form on `KtResolvableCall` via a safe cast:
 
 ```Kotlin
-val call: KaSingleOrMultiCall? =
+val call: KaSimpleOrMultiCall? =
     (element as? KtResolvableCall)?.resolveCall()
 ```
 
@@ -56,17 +56,17 @@ For the rich form, use `tryResolveCall()` and the [](KaCallResolutionAttempt.md)
 | `KtArrayAccessExpression`                        | `KaFunctionCall<KaNamedFunctionSymbol>?`         |
 | `KtCollectionLiteralExpression`                  | `KaFunctionCall<KaNamedFunctionSymbol>?`         |
 | `KtWhenConditionInRange`                         | `KaFunctionCall<KaNamedFunctionSymbol>?`         |
-| `KtNameReferenceExpression`                      | `KaSingleCall<*, *>?`                            |
-| `KtQualifiedExpression`                          | `KaSingleCall<*, *>?`                            |
-| `KtDestructuringDeclarationEntry`                | `KaSingleCall<*, *>?`                            |
+| `KtNameReferenceExpression`                      | `KaSimpleCall<*, *>?`                            |
+| `KtQualifiedExpression`                          | `KaSimpleCall<*, *>?`                            |
+| `KtDestructuringDeclarationEntry`                | `KaSimpleCall<*, *>?`                            |
 | `KtForExpression`                                | `KaForLoopCall?`                                 |
 | `KtPropertyDelegate`                             | `KaDelegatedPropertyCall?`                       |
 
 ## What `resolveCall()` returns
 
-The result is a `KaSingleOrMultiCall?` &mdash; sealed into two branches:
+The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
 
-* [](KaSingleCall.md) describes a single resolved callable applied at this site. This is what you get for
+* [](KaSimpleCall.md) describes a single resolved callable applied at this site. This is what you get for
   ordinary function calls, property accesses, callable references, annotation entries, supertype calls, and so on.
 * [](KaMultiCall.md) describes a compound or desugared call that involves several sub-calls. This is what
   you get for `for` loops, delegated properties, compound assignments (`+=`, `++`, `--`), and compound array access
@@ -76,15 +76,15 @@ The type system tells you which branch you are on. Many specializations narrow t
 `KtForExpression.resolveCall(): KaForLoopCall?` already commits to the multi-call branch.
 
 > `KaCall` and `KaCallableMemberCall` are the *legacy* base types of the resolution API. New code should rely on
-> `KaSingleOrMultiCall` / `KaSingleCall` / `KaMultiCall`. See [](Legacy-Resolution-API.md).
+> `KaSimpleOrMultiCall` / `KaSimpleCall` / `KaMultiCall`. See [](Legacy-Resolution-API.md).
 
-## Working with a `KaSingleCall`
+## Working with a `KaSimpleCall`
 
-Every `KaSingleCall<S, C>` exposes the call-site context inline &mdash; no `partiallyAppliedSymbol` wrapper to drill
+Every `KaSimpleCall<S, C>` exposes the call-site context inline &mdash; no `partiallyAppliedSymbol` wrapper to drill
 through:
 
 ```Kotlin
-val call: KaSingleCall<*, *> = TODO()
+val call: KaSimpleCall<*, *> = TODO()
 val signature = call.signature             // callable signature
 val symbol    = call.symbol                // signature.symbol
 val dispatch  = call.dispatchReceiver      // member receiver
@@ -108,7 +108,7 @@ assignment. The boolean `call.isContextSensitive` indicates whether
 [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) was used.
 
 [](KaCallableReferenceCall.md) is the cleanest example of the new shape: it extends
-`KaSingleCall<S, C>` only &mdash; no legacy base. A callable reference does not invoke the callable, so there is no
+`KaSimpleCall<S, C>` only &mdash; no legacy base. A callable reference does not invoke the callable, so there is no
 `valueArgumentMapping` and no read/write kind &mdash; only the signature, bound receivers, and type arguments.
 
 Use `call is KaImplicitInvokeCall` to detect implicit `f("...")` invocations on values with a functional type. The
@@ -267,11 +267,11 @@ and `setterCallAttempt`.
 
 ### A flat view of the sub-calls
 
-Every `KaMultiCall` also exposes `calls: List<KaSingleCall<*, *>>`. If you do not care which sub-call is which, this is
+Every `KaMultiCall` also exposes `calls: List<KaSimpleCall<*, *>>`. If you do not care which sub-call is which, this is
 the simplest accessor:
 
 ```Kotlin
-val flat: List<KaSingleCall<*, *>> = (call as KaMultiCall).calls
+val flat: List<KaSimpleCall<*, *>> = (call as KaMultiCall).calls
 ```
 
 ## Plain form vs try form

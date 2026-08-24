@@ -94,7 +94,7 @@ fun perform(element: KtElement) = analyze(element) {
 Every resolution flavor exists in two forms:
 
 * The **plain** form (`resolveSymbol`, `resolveSymbols`, `resolveCall`) returns the happy-path result &mdash; a symbol or
-  a `KaSingleOrMultiCall`, or `null` if resolution did not succeed. Use it when you only care about a valid result
+  a `KaSimpleOrMultiCall`, or `null` if resolution did not succeed. Use it when you only care about a valid result
   and want failed/ambiguous resolutions to be silently dropped (typical for inspections that must not produce
   false positives).
 * The **try** form (`tryResolveSymbols`, `tryResolveCall`) returns a richer **attempt** &mdash; either a
@@ -143,7 +143,7 @@ Subsequent pages keep snippets compact: they assume an `analyze { }` block is in
 
 * [](Resolving-Symbols.md) &mdash; symbol resolution in detail, with the table of specialized methods
   and the `KaSymbolResolutionAttempt` flow.
-* [](Resolving-Calls.md) &mdash; call resolution, the `KaSingleOrMultiCall` hierarchy, and compound calls.
+* [](Resolving-Calls.md) &mdash; call resolution, the `KaSimpleOrMultiCall` hierarchy, and compound calls.
 * [](Resolution-Candidates.md) &mdash; collecting overload candidates regardless of resolution outcome.
 * [](Migrating-Resolution-API.md) &mdash; mapping from the old
   `mainReference` / `resolveToCall` / `KaCallInfo` API to the new one.

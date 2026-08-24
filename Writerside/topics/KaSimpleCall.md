@@ -1,21 +1,21 @@
-# KaSingleCall
+# KaSimpleCall
 
-`KaSingleCall<S, C>` represents a single resolved callable applied at a call site. It is one branch of
-[](KaSingleOrMultiCall.md); the other branch, [](KaMultiCall.md), describes compound and
+`KaSimpleCall<S, C>` represents a single resolved callable applied at a call site. It is one branch of
+[](KaSimpleOrMultiCall.md); the other branch, [](KaMultiCall.md), describes compound and
 desugared expressions.
 
-`KaSingleCall` replaces the legacy `KaCallableMemberCall` as the conceptual base for "one resolved callable at this
+`KaSimpleCall` replaces the legacy `KaCallableMemberCall` as the conceptual base for "one resolved callable at this
 site". All accessors are inline &mdash; there is no `partiallyAppliedSymbol` wrapper to drill through.
 
 ## Hierarchy
 
 <code-block lang="mermaid">
 graph TB
-  KaSingleOrMultiCall
-  KaSingleOrMultiCall --> KaSingleCall
-  KaSingleCall --> KaFunctionCall
-  KaSingleCall --> KaVariableAccessCall
-  KaSingleCall --> KaCallableReferenceCall
+  KaSimpleOrMultiCall
+  KaSimpleOrMultiCall --> KaSimpleCall
+  KaSimpleCall --> KaFunctionCall
+  KaSimpleCall --> KaVariableAccessCall
+  KaSimpleCall --> KaCallableReferenceCall
   KaFunctionCall --> KaImplicitInvokeCall
   KaFunctionCall --> KaAnnotationCall
   KaFunctionCall --> KaDelegatedConstructorCall
@@ -42,18 +42,18 @@ inference error.
 
 ### Helper extension
 
-`val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSingleCall<S, C>.symbol: S`
+`val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSimpleCall<S, C>.symbol: S`
 : Short-cut for `signature.symbol` &mdash; the resolved callable symbol.
 
 ## Concrete subtypes
 
-The concrete return types of the specialized `resolveCall(...)` methods all implement `KaSingleCall`:
+The concrete return types of the specialized `resolveCall(...)` methods all implement `KaSimpleCall`:
 
 * [](KaFunctionCall.md) and its subtypes ([](KaImplicitInvokeCall.md),
   [](KaAnnotationCall.md), [](KaDelegatedConstructorCall.md)).
 * [](KaVariableAccessCall.md) for property and variable accesses.
 * [](KaCallableReferenceCall.md) for callable references &mdash; the cleanest example of the
-  new shape, extending `KaSingleCall<S, C>` only.
+  new shape, extending `KaSimpleCall<S, C>` only.
 
 > The transitional subtypes `KaFunctionCall`, `KaVariableAccessCall`, `KaAnnotationCall`, and
 > `KaDelegatedConstructorCall` still inherit `KaCallableMemberCall` from the [legacy hierarchy](Legacy-Resolution-API.md)

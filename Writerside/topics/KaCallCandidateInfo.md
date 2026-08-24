@@ -48,5 +48,5 @@ type-argument constraint violation).
 | Legacy member                                                                               | Replacement                                                                      |
 |---------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | `KaCallCandidateInfo` / `KaApplicableCallCandidateInfo` / `KaInapplicableCallCandidateInfo` | `KaCallCandidate` / `KaApplicableCallCandidate` / `KaInapplicableCallCandidate`. |
-| `KaCallCandidateInfo.candidate: KaCall`                                                     | `KaCallCandidate.candidate: KaSingleOrMultiCall`.                                |
+| `KaCallCandidateInfo.candidate: KaCall`                                                     | `KaCallCandidate.candidate: KaSimpleOrMultiCall`.                                |
 | `KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>`                            | `KtResolvableCall.collectCallCandidates(): List<KaCallCandidate>`.               |

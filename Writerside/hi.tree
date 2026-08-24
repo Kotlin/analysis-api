@@ -65,8 +65,8 @@
         </toc-element>
         <toc-element topic="Resolving-Calls.md">
             <toc-element topic="KaCallResolutionAttempt.md"/>
-            <toc-element topic="KaSingleOrMultiCall.md">
-                <toc-element topic="KaSingleCall.md">
+            <toc-element topic="KaSimpleOrMultiCall.md">
+                <toc-element topic="KaSimpleCall.md">
                     <toc-element topic="KaFunctionCall.md">
                         <toc-element topic="KaImplicitInvokeCall.md"/>
                         <toc-element topic="KaAnnotationCall.md"/>

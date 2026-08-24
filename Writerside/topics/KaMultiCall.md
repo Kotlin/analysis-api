@@ -1,7 +1,7 @@
 # KaMultiCall
 
 `KaMultiCall` represents a compound or desugared expression that resolves to multiple sub-calls. It is one branch of
-[](KaSingleOrMultiCall.md); the other branch, [](KaSingleCall.md), describes a single
+[](KaSimpleOrMultiCall.md); the other branch, [](KaSimpleCall.md), describes a single
 resolved callable.
 
 A `KaMultiCall` is returned for the four desugared constructs Kotlin lowers into several operator calls:
@@ -18,8 +18,8 @@ A `KaMultiCall` is returned for the four desugared constructs Kotlin lowers into
 
 <code-block lang="mermaid">
 graph TB
-  KaSingleOrMultiCall
-  KaSingleOrMultiCall --> KaMultiCall
+  KaSimpleOrMultiCall
+  KaSimpleOrMultiCall --> KaMultiCall
   KaMultiCall --> KaForLoopCall
   KaMultiCall --> KaDelegatedPropertyCall
   KaMultiCall --> KaCompoundVariableAccessCall
@@ -28,8 +28,8 @@ graph TB
 
 ## Members
 
-`val calls: List<KaSingleCall<*, *>>`
-: The non-empty list of [](KaSingleCall.md)s discovered during resolution &mdash; the flat view of every
+`val calls: List<KaSimpleCall<*, *>>`
+: The non-empty list of [](KaSimpleCall.md)s discovered during resolution &mdash; the flat view of every
 sub-call.
 
 Each concrete subtype additionally exposes **named** sub-call accessors that describe each sub-call's role

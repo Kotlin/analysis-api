@@ -2,7 +2,7 @@
 
 <warning>
 <code>KaCall</code> is the <b>legacy</b> sealed base for the resolution API. New code should rely on
-<a href="KaSingleOrMultiCall.md"/> &rarr; <a href="KaSingleCall.md"/> / <a href="KaMultiCall.md"/>.
+<a href="KaSimpleOrMultiCall.md"/> &rarr; <a href="KaSimpleCall.md"/> / <a href="KaMultiCall.md"/>.
 See <a href="Migrating-Resolution-API.md"/>.
 </warning>
 
@@ -24,4 +24,4 @@ graph TB
 
 The transitional types `KaFunctionCall`, `KaVariableAccessCall`, `KaAnnotationCall`, `KaDelegatedConstructorCall`,
 `KaCompoundVariableAccessCall`, and `KaCompoundArrayAccessCall` still inherit `KaCall` so existing callers keep
-compiling. New code reaches for the same types via [](KaSingleCall.md)/ [](KaMultiCall.md) instead.
+compiling. New code reaches for the same types via [](KaSimpleCall.md)/ [](KaMultiCall.md) instead.

@@ -61,7 +61,7 @@ single candidate of type `T`.
 
 | `KaCallInfo` member                    | New equivalent                                                                                                |
 |----------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `KaSuccessCallInfo.call`               | `KaCallResolutionSuccess.call` (a `KaSingleCall<*, *>`), or `KaMultiCallResolutionAttempt.call` for compound. |
+| `KaSuccessCallInfo.call`               | `KaCallResolutionSuccess.call` (a `KaSimpleCall<*, *>`), or `KaMultiCallResolutionAttempt.call` for compound. |
 | `KaErrorCallInfo.candidateCalls`       | `KaCallResolutionError.candidateCalls`.                                                                       |
 | `KaErrorCallInfo.diagnostic`           | `KaCallResolutionError.diagnostic`.                                                                           |
 | `KaCallInfo.calls`                     | `KaCallResolutionAttempt.calls` extension.                                                                    |

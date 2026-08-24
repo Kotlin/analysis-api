@@ -23,7 +23,7 @@ Five user-facing pains motivated the redesign:
 3. **Result types were under-specified.** `resolveToSymbol()` returned `KaSymbol?` everywhere; `resolveToCall()`
    returned a `KaCallInfo?` over a generic `KaCall`. Callers had to `as?`-cast to anything specific.
 4. **`KaPartiallyAppliedSymbol` was a useless wrapper.** Receivers, signature, and type-argument mapping had to be
-   unwrapped through an extra layer. The new `KaSingleCall` exposes all of this inline; the new compound calls expose
+   unwrapped through an extra layer. The new `KaSimpleCall` exposes all of this inline; the new compound calls expose
    named sub-call accessors (`variableCall`, `getterCall`, `setterCall`, `operationCall`).
 5. **`KtElement.resolveToCall` accepted any `KtElement`.** Nothing in the type told you whether resolution would succeed
    or what it would return. `KtReference` filled the gap for everything `resolveToCall` could not handle &mdash; so
@@ -48,7 +48,7 @@ Two rules cover almost all sites:
 val call: KaFunctionCall<*>? = callElement.resolveCall()
 
 // Generic form (only when the element type is unknown)
-val call: KaSingleOrMultiCall? =
+val call: KaSimpleOrMultiCall? =
     (element as? KtResolvableCall)?.resolveCall()
 ```
 
@@ -57,48 +57,48 @@ val call: KaSingleOrMultiCall? =
 ### Result wrapper: `KaCallInfo` &rarr; `KaCallResolutionAttempt`
 
 `resolveToCall()` returned a `KaCallInfo`; `tryResolveCall()` returns a `KaCallResolutionAttempt`. The hierarchies line
-up one-to-one, but the new one carries `KaSingleCall<*, *>` payloads instead of bare `KaCall`, and splits single-call
+up one-to-one, but the new one carries `KaSimpleCall<*, *>` payloads instead of bare `KaCall`, and splits single-call
 attempts from multi-call ones (compound / `for` / delegated property).
 
 | Old (`KaCallInfo`)                                               | New (`KaCallResolutionAttempt`)                                                                                                |
 |------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSingleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                   |
+| `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSimpleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                   |
 | `KaSuccessCallInfo`                                              | `KaCallResolutionSuccess`                                                                                                      |
-| `KaSuccessCallInfo.call: KaCall`                                 | `KaCallResolutionSuccess.call: KaSingleCall<*, *>` (or the `attempt.successfulCall: KaSingleOrMultiCall?` extension)           |
+| `KaSuccessCallInfo.call: KaCall`                                 | `KaCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successfulCall: KaSimpleOrMultiCall?` extension)           |
 | `KaErrorCallInfo`                                                | `KaCallResolutionError`                                                                                                        |
-| `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaCallResolutionError.candidateCalls: List<KaSingleCall<*, *>>`                                                               |
+| `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
 | `KaErrorCallInfo.diagnostic`                                     | `KaCallResolutionError.diagnostic`                                                                                             |
-| `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSingleOrMultiCall>`                                                                     |
+| `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                     |
 | `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.calls.singleOrNull { it is T }` / `attempt.successfulCall as? T`, or branch with `attempt.fold(onSuccess, onFailure)` |
 
 Multi-call attempts (`KaForLoopCallResolutionAttempt`, `KaDelegatedPropertyCallResolutionAttempt`,
 `KaCompound*CallResolutionAttempt`) expose `call: KaMultiCall?` plus per-step
-`attempts: List<KaSingleCallResolutionAttempt>`; the old `KaCallInfo` had no equivalent &mdash; these calls were
+`attempts: List<KaSimpleCallResolutionAttempt>`; the old `KaCallInfo` had no equivalent &mdash; these calls were
 resolved indirectly.
 
-### Call hierarchy: `KaCall` &rarr; `KaSingleOrMultiCall`
+### Call hierarchy: `KaCall` &rarr; `KaSimpleOrMultiCall`
 
-A successful resolution used to hand back a `KaCall`; now it hands back a `KaSingleOrMultiCall`. `KaFunctionCall` and
-`KaVariableAccessCall` keep their names but are now `KaSingleCall`s (so their data is inline &mdash; see below);
+A successful resolution used to hand back a `KaCall`; now it hands back a `KaSimpleOrMultiCall`. `KaFunctionCall` and
+`KaVariableAccessCall` keep their names but are now `KaSimpleCall`s (so their data is inline &mdash; see below);
 compound, `for`-loop, and delegated-property calls are `KaMultiCall`s.
 
-| Old (`KaCall`)                                                  | New (`KaSingleOrMultiCall`)                                                                    |
+| Old (`KaCall`)                                                  | New (`KaSimpleOrMultiCall`)                                                                    |
 |-----------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| `KaCall`                                                        | `KaSingleOrMultiCall`                                                                          |
-| `KaCallableMemberCall<S, C>`                                    | `KaSingleCall<S, C>` (its `partiallyAppliedSymbol.*` members are now inline &mdash; see below) |
-| `KaCompoundVariableAccessCall` / `KaCompoundArrayAccessCall`    | same names, now `KaMultiCall`s (`.calls: List<KaSingleCall<*, *>>`)                            |
+| `KaCall`                                                        | `KaSimpleOrMultiCall`                                                                          |
+| `KaCallableMemberCall<S, C>`                                    | `KaSimpleCall<S, C>` (its `partiallyAppliedSymbol.*` members are now inline &mdash; see below) |
+| `KaCompoundVariableAccessCall` / `KaCompoundArrayAccessCall`    | same names, now `KaMultiCall`s (`.calls: List<KaSimpleCall<*, *>>`)                            |
 | *(no first-class type)* &mdash; `for`-loop / delegated property | `KaForLoopCall` / `KaDelegatedPropertyCall` (`KaMultiCall`s)                                   |
-| *(no first-class type)* &mdash; callable references             | `KaCallableReferenceCall` (`KaSingleCall`)                                                     |
+| *(no first-class type)* &mdash; callable references             | `KaCallableReferenceCall` (`KaSimpleCall`)                                                     |
 
 ### Candidate hierarchy: `KaCallCandidateInfo` &rarr; `KaCallCandidate`
 
 `collectCallCandidates()` (was `resolveToCallCandidates()`) returns `KaCallCandidate`s instead of `KaCallCandidateInfo`
-s. The hierarchy is identical; only the names change and `candidate` widens from `KaCall` to `KaSingleOrMultiCall`.
+s. The hierarchy is identical; only the names change and `candidate` widens from `KaCall` to `KaSimpleOrMultiCall`.
 
 | Old (`KaCallCandidateInfo`)                  | New (`KaCallCandidate`)                          |
 |----------------------------------------------|--------------------------------------------------|
 | `KaCallCandidateInfo`                        | `KaCallCandidate`                                |
-| `KaCallCandidateInfo.candidate: KaCall`      | `KaCallCandidate.candidate: KaSingleOrMultiCall` |
+| `KaCallCandidateInfo.candidate: KaCall`      | `KaCallCandidate.candidate: KaSimpleOrMultiCall` |
 | `KaCallCandidateInfo.isInBestCandidates`     | `KaCallCandidate.isInBestCandidates` (unchanged) |
 | `KaApplicableCallCandidateInfo`              | `KaApplicableCallCandidate`                      |
 | `KaInapplicableCallCandidateInfo`            | `KaInapplicableCallCandidate`                    |
@@ -121,11 +121,11 @@ s. The hierarchy is identical; only the names change and `candidate` widens from
 > The result of `tryResolveCall` and `resolveToCall` are equivalent in all cases (`tryResolveCall` may carry
 > more detailed diagnostics on an error call).
 
-### Inline access on a `KaSingleCall`
+### Inline access on a `KaSimpleCall`
 
 Every `*PartiallyAppliedSymbol` access becomes a direct field on the call.
 
-| Old call (legacy member on `KaCallableMemberCall`) | New equivalent (inline on `KaSingleCall`) |
+| Old call (legacy member on `KaCallableMemberCall`) | New equivalent (inline on `KaSimpleCall`) |
 |----------------------------------------------------|-------------------------------------------|
 | `call.partiallyAppliedSymbol.signature`            | `call.signature`                          |
 | `call.partiallyAppliedSymbol.symbol`               | `call.symbol`                             |
@@ -181,7 +181,7 @@ fun resolveToSymbols(element: KtElement): Collection<KaSymbol> {
     val callSymbols = (element as? KtResolvableCall)?.takeUnless { it is KtOperationReferenceExpression }
         ?.tryResolveCall()
         ?.calls
-        ?.flatMap(KaSingleOrMultiCall::symbols)
+        ?.flatMap(KaSimpleOrMultiCall::symbols)
         ?.takeUnless(List<KaSymbol>::isEmpty)
 
     if (callSymbols != null) return callSymbols
@@ -331,7 +331,7 @@ val symbol = expression.resolveToCall()
     ?.partiallyAppliedSymbol?.symbol
 
 // New
-val call = (expression as? KtResolvableCall)?.resolveCall() as? KaSingleCall<*, *>
+val call = (expression as? KtResolvableCall)?.resolveCall() as? KaSimpleCall<*, *>
 val symbol = call?.symbol
 ```
 
@@ -350,7 +350,7 @@ for (call in call.tryResolveCall()?.calls.orEmpty()) {
 }
 ```
 
-When a helper switched over a resolved `KaCall`, widen its parameter to `KaSingleOrMultiCall` (the type `resolveCall()`
+When a helper switched over a resolved `KaCall`, widen its parameter to `KaSimpleOrMultiCall` (the type `resolveCall()`
 now returns) and drop the `successfulCallOrNull<KaCall>()` unwrapping at the call site. Deprecated subtype casts also
 disappear: `as? KaSimpleFunctionCall` becomes `as? KaFunctionCall<*>`.
 

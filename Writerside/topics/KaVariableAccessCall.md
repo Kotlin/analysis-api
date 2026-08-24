@@ -5,13 +5,13 @@ writing the value.
 
 ## Hierarchy
 
-Inherits [](KaSingleCall.md). (For historical reasons it also inherits the
+Inherits [](KaSimpleCall.md). (For historical reasons it also inherits the
 [legacy](Legacy-Resolution-API.md) `KaCallableMemberCall`; new code should treat `KaVariableAccessCall` as a
-`KaSingleCall` and use the inline accessors documented there.)
+`KaSimpleCall` and use the inline accessors documented there.)
 
 ## Members
 
-In addition to the [](KaSingleCall.md) members, `KaVariableAccessCall` adds the access kind and a
+In addition to the [](KaSimpleCall.md) members, `KaVariableAccessCall` adds the access kind and a
 context-sensitive-resolution flag.
 
 `val kind: Kind`

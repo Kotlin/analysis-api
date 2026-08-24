@@ -13,9 +13,9 @@ This page documents the sealed hierarchy and the helper extensions. For the high
 <code-block lang="mermaid">
 graph TB
   KaSymbolResolutionAttempt
-  KaSymbolResolutionAttempt --> KaSingleSymbolResolutionAttempt
-  KaSingleSymbolResolutionAttempt --> KaSymbolResolutionSuccess
-  KaSingleSymbolResolutionAttempt --> KaSymbolResolutionError
+  KaSymbolResolutionAttempt --> KaSimpleSymbolResolutionAttempt
+  KaSimpleSymbolResolutionAttempt --> KaSymbolResolutionSuccess
+  KaSimpleSymbolResolutionAttempt --> KaSymbolResolutionError
   KaSymbolResolutionAttempt --> KaCompoundSymbolResolutionError
 </code-block>
 
@@ -23,13 +23,13 @@ graph TB
 
 ### `KaSymbolResolutionAttempt`
 
-The sealed root. Two branches: `KaSingleSymbolResolutionAttempt` and `KaCompoundSymbolResolutionError`.
+The sealed root. Two branches: `KaSimpleSymbolResolutionAttempt` and `KaCompoundSymbolResolutionError`.
 
 > Unlike the call API, the symbol API does **not** model "successful compound resolution" with its own type. When all
 > sub-symbol resolutions in a compound case succeed, the result is just `KaSymbolResolutionSuccess` carrying the merged
 > list of symbols.
 
-### `KaSingleSymbolResolutionAttempt`
+### `KaSimpleSymbolResolutionAttempt`
 
 A resolution attempt for a single conceptual target. One of:
 
@@ -45,7 +45,7 @@ invisible declaration as a candidate). The list may be empty.
 ### `KaCompoundSymbolResolutionError`
 
 Returned only when a compound resolution produced a **mix** of successful and failed sub-attempts (or all sub-attempts
-failed). Exposes `attempts: List<KaSingleSymbolResolutionAttempt>` &mdash; at most one `KaSymbolResolutionSuccess`
+failed). Exposes `attempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one `KaSymbolResolutionSuccess`
 (merging symbols from all successful sub-calls) and at least one `KaSymbolResolutionError`, totaling at least two
 entries. When every sub-attempt succeeds, the result is `KaSymbolResolutionSuccess` instead.
 
@@ -72,12 +72,12 @@ For full control, use the `fold` extension:
 ```Kotlin
 fun <T> KaSymbolResolutionAttempt.fold(
     onSuccess: (List<KaSymbol>) -> T,
-    onFailure: (List<KaSingleSymbolResolutionAttempt>) -> T,
+    onFailure: (List<KaSimpleSymbolResolutionAttempt>) -> T,
 ): T
 ```
 
 `onSuccess` is invoked once with the resolved symbols when all sub-attempts succeeded; `onFailure` is invoked with the
-list of individual `KaSingleSymbolResolutionAttempt`s otherwise &mdash; including the single error case (a one-element
+list of individual `KaSimpleSymbolResolutionAttempt`s otherwise &mdash; including the single error case (a one-element
 list) and the compound mixed case.
 
 ## Example
