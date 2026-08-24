@@ -44,13 +44,16 @@ through the call API.
 Resolvable PSI elements are marked by two interfaces in `org.jetbrains.kotlin.resolution`:
 
 ```Kotlin
-@KtExperimentalApi interface KtResolvable
+@KtExperimentalApi interface KtResolvable : KtElement
 @KtExperimentalApi interface KtResolvableCall : KtResolvable
 ```
 
-`KtResolvable` marks an element that can be resolved to a symbol; `KtResolvableCall` marks an element that can additionally
-be resolved to a call. For example, `KtReferenceExpression : KtResolvable`, and call-bearing elements like `KtCallElement`
-implement `KtResolvableCall` (and therefore `KtResolvable`).
+`KtResolvable` marks an element that can be resolved to a symbol; `KtResolvableCall` marks an element that can
+additionally be resolved to a call. For example, `KtReferenceExpression : KtResolvable`, and call-bearing elements like
+`KtCallElement` implement `KtResolvableCall` (and therefore `KtResolvable`).
+
+Both are `KtElement`s, so a resolvable can be used as PSI without a cast &mdash; and nothing outside the Kotlin PSI can
+implement them.
 
 In practice you rarely use these names directly &mdash; you reach for the *specialized* form on the concrete PSI type.
 
