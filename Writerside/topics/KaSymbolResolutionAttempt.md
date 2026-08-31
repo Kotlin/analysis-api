@@ -64,8 +64,8 @@ error returns the candidate symbols; on a compound error returns the combined sy
 for "best effort" navigation that wants to highlight anything reachable.
 
 `val KaSymbolResolutionAttempt.successfulSymbols: List<KaSymbol>`
-: The resolved symbols if resolution succeeded; empty otherwise. Use this when you want to silently drop failed
-resolutions.
+: The resolved symbols if resolution succeeded; empty otherwise. A successful resolution always has at least one
+symbol, so an empty list always means a failure. Use this when you want to silently drop failed resolutions.
 
 `val KaSymbolResolutionAttempt.isSuccessful: Boolean`
 : Whether the resolution succeeded. Prefer this over a `this is KaSimpleSymbolResolutionSuccess` check, which only
