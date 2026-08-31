@@ -14,8 +14,8 @@ This page documents the sealed hierarchy and the helper extensions. For the high
 graph TB
   KaSymbolResolutionAttempt
   KaSymbolResolutionAttempt --> KaSimpleSymbolResolutionAttempt
-  KaSimpleSymbolResolutionAttempt --> KaSymbolResolutionSuccess
-  KaSimpleSymbolResolutionAttempt --> KaSymbolResolutionError
+  KaSimpleSymbolResolutionAttempt --> KaSimpleSymbolResolutionSuccess
+  KaSimpleSymbolResolutionAttempt --> KaSimpleSymbolResolutionError
   KaSymbolResolutionAttempt --> KaCompoundSymbolResolutionError
 </code-block>
 
@@ -26,18 +26,18 @@ graph TB
 The sealed root. Two branches: `KaSimpleSymbolResolutionAttempt` and `KaCompoundSymbolResolutionError`.
 
 > Unlike the call API, the symbol API does **not** model "successful compound resolution" with its own type. When all
-> sub-symbol resolutions in a compound case succeed, the result is just `KaSymbolResolutionSuccess` carrying the merged
+> sub-symbol resolutions in a compound case succeed, the result is just `KaSimpleSymbolResolutionSuccess` carrying the merged
 > list of symbols.
 
 ### `KaSimpleSymbolResolutionAttempt`
 
 A resolution attempt for a simple &mdash; non-compound &mdash; target. One of:
 
-`KaSymbolResolutionSuccess`
+`KaSimpleSymbolResolutionSuccess`
 : Resolution succeeded. Exposes `symbols: List<KaSymbol>` &mdash; one entry for unambiguous resolution, several for
 ambiguity. The list is always non-empty.
 
-`KaSymbolResolutionError`
+`KaSimpleSymbolResolutionError`
 : Resolution failed. Exposes `diagnostic: KaDiagnostic` describing the reason and `candidateSymbols: List<KaSymbol>`
 &mdash; the symbols the compiler considered before giving up (e.g. an `INVISIBLE_REFERENCE` error still names the
 invisible declaration as a candidate). The list may be empty.
@@ -45,13 +45,13 @@ invisible declaration as a candidate). The list may be empty.
 ### `KaCompoundSymbolResolutionError`
 
 Returned only when a compound resolution produced a **mix** of successful and failed sub-attempts (or all sub-attempts
-failed). Exposes `attempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one `KaSymbolResolutionSuccess`
-(merging symbols from all successful sub-calls) and at least one `KaSymbolResolutionError`, totaling at least two
-entries. When every sub-attempt succeeds, the result is `KaSymbolResolutionSuccess` instead.
+failed). Exposes `attempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one `KaSimpleSymbolResolutionSuccess`
+(merging symbols from all successful sub-calls) and at least one `KaSimpleSymbolResolutionError`, totaling at least two
+entries. When every sub-attempt succeeds, the result is `KaSimpleSymbolResolutionSuccess` instead.
 
-> A non-compound failure surfaces as `KaSymbolResolutionError` directly &mdash; `KaCompoundSymbolResolutionError` only
+> A non-compound failure surfaces as `KaSimpleSymbolResolutionError` directly &mdash; `KaCompoundSymbolResolutionError` only
 > appears when the call is genuinely compound and at least two sub-attempts are involved (a mix of success and failure,
-> or all failures). For a simple-call failure, expect `KaSymbolResolutionError`.
+> or all failures). For a simple-call failure, expect `KaSimpleSymbolResolutionError`.
 
 ## Helper extensions
 

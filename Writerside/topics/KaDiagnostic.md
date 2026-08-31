@@ -4,7 +4,7 @@ A diagnostic message reported by a compiler checker.
 
 Diagnostics come either from [diagnostic collection](Diagnostics.md), which yields the more specific
 [](KaDiagnosticWithPsi.md), or from other parts of the Analysis API which expose the reason of a failure, such as
-`KaCallResolutionError.diagnostic` in [](KaCallResolutionAttempt.md).
+`KaSimpleCallResolutionError.diagnostic` in [](KaCallResolutionAttempt.md).
 
 ## Members
 

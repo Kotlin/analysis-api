@@ -14,8 +14,8 @@ This page documents the sealed hierarchy and helper extensions. For the high-lev
 graph TB
   KaCallResolutionAttempt
   KaCallResolutionAttempt --> KaSimpleCallResolutionAttempt
-  KaSimpleCallResolutionAttempt --> KaCallResolutionSuccess
-  KaSimpleCallResolutionAttempt --> KaCallResolutionError
+  KaSimpleCallResolutionAttempt --> KaSimpleCallResolutionSuccess
+  KaSimpleCallResolutionAttempt --> KaSimpleCallResolutionError
   KaCallResolutionAttempt --> KaMultiCallResolutionAttempt
   KaMultiCallResolutionAttempt --> KaForLoopCallResolutionAttempt
   KaMultiCallResolutionAttempt --> KaDelegatedPropertyCallResolutionAttempt
@@ -27,15 +27,15 @@ graph TB
 
 ### `KaSimpleCallResolutionAttempt`
 
-Sealed: either `KaCallResolutionSuccess` or `KaCallResolutionError`. Both `KaCallResolutionSuccess.call` and
-`KaCallResolutionError.candidateCalls` always contain [](KaSimpleCall.md) instances.
+Sealed: either `KaSimpleCallResolutionSuccess` or `KaSimpleCallResolutionError`. Both `KaSimpleCallResolutionSuccess.call` and
+`KaSimpleCallResolutionError.candidateCalls` always contain [](KaSimpleCall.md) instances.
 
-### `KaCallResolutionSuccess`
+### `KaSimpleCallResolutionSuccess`
 
 `val call: KaSimpleCall<*, *>`
 : The resolved simple call.
 
-### `KaCallResolutionError`
+### `KaSimpleCallResolutionError`
 
 `val diagnostic: KaDiagnostic`
 : The diagnostic associated with the error (e.g. `INVISIBLE_REFERENCE`, `UNRESOLVED_REFERENCE`).
@@ -106,8 +106,8 @@ For `a[i] += v` and similar. `call` is `KaCompoundArrayAccessCall?`.
 Three extension properties cover the common cases without forcing a pattern match.
 
 `val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`
-: A flattened list of resolved/candidate calls. On `KaCallResolutionSuccess` returns the resolved call as a one-element
-list. On `KaCallResolutionError` returns `candidateCalls`. On `KaMultiCallResolutionAttempt` returns the assembled
+: A flattened list of resolved/candidate calls. On `KaSimpleCallResolutionSuccess` returns the resolved call as a one-element
+list. On `KaSimpleCallResolutionError` returns `candidateCalls`. On `KaMultiCallResolutionAttempt` returns the assembled
 multi-call when all sub-attempts succeeded; otherwise returns the combined calls from each sub-attempt.
 
 `val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?`
@@ -130,7 +130,7 @@ fun <T> KaCallResolutionAttempt.fold(
 
 `onSuccess` is called with the resolved call when the attempt is a successful simple call or a fully successful
 multi-call. `onFailure` is called with the list of failed sub-attempts otherwise (a one-element list for a
-`KaCallResolutionError`, the multi-call's `attempts` for a partially-failed compound).
+`KaSimpleCallResolutionError`, the multi-call's `attempts` for a partially-failed compound).
 
 ## Example
 
@@ -147,7 +147,7 @@ fun describe(call: KtCallElement): String = analyze(call) {
         },
         onFailure = { errors ->
             val diagnostics = errors
-                .filterIsInstance<KaCallResolutionError>()
+                .filterIsInstance<KaSimpleCallResolutionError>()
                 .map { it.diagnostic.factoryName }
             
             "Failed: $diagnostics"

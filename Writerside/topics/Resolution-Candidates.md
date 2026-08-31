@@ -69,7 +69,7 @@ The resolution API exposes lists of calls in three places. They look similar but
 : Every candidate the overload-resolution algorithm considered &mdash; **applicable and inapplicable**, on
 both successful and erroneous code. Reach for this when you want to enumerate *all options*, not just the result.
 
-`KaSimpleCall` returned by `KaCallResolutionError.candidateCalls`
+`KaSimpleCall` returned by `KaSimpleCallResolutionError.candidateCalls`
 : A subset shown only when resolution **failed**: the candidates the compiler ultimately reported as candidates of an
 error call. Use this to understand the error path; do not use it to enumerate overloads on successful code &mdash;
 on a successful call this list is empty by definition.

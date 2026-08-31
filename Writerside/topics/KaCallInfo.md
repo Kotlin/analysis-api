@@ -61,9 +61,9 @@ single candidate of type `T`.
 
 | `KaCallInfo` member                    | New equivalent                                                                                                |
 |----------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `KaSuccessCallInfo.call`               | `KaCallResolutionSuccess.call` (a `KaSimpleCall<*, *>`), or `KaMultiCallResolutionAttempt.call` for compound. |
-| `KaErrorCallInfo.candidateCalls`       | `KaCallResolutionError.candidateCalls`.                                                                       |
-| `KaErrorCallInfo.diagnostic`           | `KaCallResolutionError.diagnostic`.                                                                           |
+| `KaSuccessCallInfo.call`               | `KaSimpleCallResolutionSuccess.call` (a `KaSimpleCall<*, *>`), or `KaMultiCallResolutionAttempt.call` for compound. |
+| `KaErrorCallInfo.candidateCalls`       | `KaSimpleCallResolutionError.candidateCalls`.                                                                       |
+| `KaErrorCallInfo.diagnostic`           | `KaSimpleCallResolutionError.diagnostic`.                                                                           |
 | `KaCallInfo.calls`                     | `KaCallResolutionAttempt.calls` extension.                                                                    |
 | `KaCallInfo.successfulCallOrNull<T>()` | `KaCallResolutionAttempt.successful?.function` (or `?.variable` / `?.constructor`).                           |
 | `KaCallInfo.singleCallOrNull<T>()`     | `attempt.single?.function` (or `?.variable` / `?.constructor`).                                               |

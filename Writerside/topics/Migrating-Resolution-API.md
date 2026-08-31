@@ -63,11 +63,11 @@ attempts from multi-call ones (compound / `for` / delegated property).
 | Old (`KaCallInfo`)                                               | New (`KaCallResolutionAttempt`)                                                                                                |
 |------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSimpleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                   |
-| `KaSuccessCallInfo`                                              | `KaCallResolutionSuccess`                                                                                                      |
-| `KaSuccessCallInfo.call: KaCall`                                 | `KaCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successful: KaSimpleOrMultiCall?` extension)               |
-| `KaErrorCallInfo`                                                | `KaCallResolutionError`                                                                                                        |
-| `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
-| `KaErrorCallInfo.diagnostic`                                     | `KaCallResolutionError.diagnostic`                                                                                             |
+| `KaSuccessCallInfo`                                              | `KaSimpleCallResolutionSuccess`                                                                                                      |
+| `KaSuccessCallInfo.call: KaCall`                                 | `KaSimpleCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successful: KaSimpleOrMultiCall?` extension)               |
+| `KaErrorCallInfo`                                                | `KaSimpleCallResolutionError`                                                                                                        |
+| `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaSimpleCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
+| `KaErrorCallInfo.diagnostic`                                     | `KaSimpleCallResolutionError.diagnostic`                                                                                             |
 | `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                     |
 | `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.single` / `attempt.successful`, narrowed with `.simple` / `.function` / `.variable` / `.constructor`                  |
 
