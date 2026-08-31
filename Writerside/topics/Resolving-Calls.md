@@ -293,6 +293,10 @@ a `KaCallResolutionAttempt` &mdash; see [](KaCallResolutionAttempt.md) for the f
 val attempt = callElement.tryResolveCall() ?: return
 // the resolved call, or null if resolution failed
 val resolved = attempt.successful
+// whether the resolution succeeded, for any attempt kind
+val isOk = attempt.isSuccessful
+// the diagnostics of a failure, for any attempt kind
+val diagnostics = attempt.errors.map { it.diagnostic }
 // also the sole candidate of a failed call
 val candidate = attempt.single
 // success: one call; error: candidate calls
