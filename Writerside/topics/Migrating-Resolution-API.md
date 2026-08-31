@@ -56,16 +56,35 @@ val call: KaSimpleOrMultiCall? =
 
 ### Result wrapper: `KaCallInfo` &rarr; `KaCallResolutionAttempt`
 
-`resolveToCall()` returned a `KaCallInfo`; `tryResolveCall()` returns a `KaCallResolutionAttempt`. The hierarchies line
-up one-to-one, but the new one carries `KaSimpleCall<*, *>` payloads instead of bare `KaCall`, and splits simple-call
-attempts from multi-call ones (compound / `for` / delegated property).
+`resolveToCall()` returned a `KaCallInfo`; `tryResolveCall()` returns a `KaCallResolutionAttempt`. The new one carries
+`KaSimpleCall<*, *>` payloads instead of bare `KaCall`, and splits simple-call attempts from multi-call ones
+(compound / `for` / delegated property).
+
+> The hierarchies do **not** line up one-to-one on the failure side. `KaErrorCallInfo` covered every failure, while its
+> counterpart `KaSimpleCallResolutionError` is a leaf under `KaSimpleCallResolutionAttempt`: a failed
+> `KaMultiCallResolutionAttempt` is not an instance of it. So a literal translation of
+> `as? KaErrorCallInfo` / `is KaErrorCallInfo` silently stops reporting failures of compound calls.
+>
+> Use `attempt.isSuccessful` and `attempt.errors`, which answer for every attempt kind:
+>
+> ```Kotlin
+> // Old, total
+> val diagnostic = (info as? KaErrorCallInfo)?.diagnostic
+>
+> // New, NOT total - misses failed compound calls
+> val diagnostic = (attempt as? KaSimpleCallResolutionError)?.diagnostic
+>
+> // New, total
+> val diagnostic = attempt.errors.firstOrNull()?.diagnostic
+> ```
+{style="warning"}
 
 | Old (`KaCallInfo`)                                               | New (`KaCallResolutionAttempt`)                                                                                                |
 |------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSimpleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                   |
 | `KaSuccessCallInfo`                                              | `KaSimpleCallResolutionSuccess`                                                                                                      |
 | `KaSuccessCallInfo.call: KaCall`                                 | `KaSimpleCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successful: KaSimpleOrMultiCall?` extension)               |
-| `KaErrorCallInfo`                                                | `KaSimpleCallResolutionError`                                                                                                        |
+| `KaErrorCallInfo`                                                | `KaSimpleCallResolutionError` for a simple call; a failed `KaMultiCallResolutionAttempt` for a compound one. `attempt.errors` covers both |
 | `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaSimpleCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
 | `KaErrorCallInfo.diagnostic`                                     | `KaSimpleCallResolutionError.diagnostic`                                                                                             |
 | `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                     |
