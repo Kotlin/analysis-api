@@ -112,8 +112,10 @@ multi-call when all sub-attempts succeeded; otherwise returns the combined calls
 
 `val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?`
 : The only call of `calls`, or `null` when the attempt has no calls or more than one. Unlike `successful`, it also
-answers for a *failed* resolution that considered exactly one candidate &mdash; the behavior of the legacy
-`KaCallInfo.singleCallOrNull()`.
+answers for a *failed* resolution &mdash; the behavior of the legacy `KaCallInfo.singleCallOrNull()`. For a failed
+`KaMultiCallResolutionAttempt` that entry may come from any sub-attempt, a resolved sub-call or a candidate of a failed
+one, so it is not necessarily a candidate for the element itself; for a successful one it is the assembled
+`KaMultiCall`, whose `.simple` / `.function` / `.variable` narrowings are `null`.
 
 `val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?`
 : The resolved call if everything succeeded, otherwise `null`. For a compound attempt this is the assembled
