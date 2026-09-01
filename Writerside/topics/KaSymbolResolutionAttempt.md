@@ -55,7 +55,7 @@ entries. When every sub-attempt succeeds, the result is `KaSimpleSymbolResolutio
 
 ## Helper extensions
 
-The sealed hierarchy is exhaustive, but most callers do not need to pattern-match on it. Two extension properties cover
+The sealed hierarchy is exhaustive, but most callers do not need to pattern-match on it. Five extension properties cover
 the common cases:
 
 `val KaSymbolResolutionAttempt.symbols: List<KaSymbol>`
@@ -67,18 +67,31 @@ for "best effort" navigation that wants to highlight anything reachable.
 : The resolved symbols if resolution succeeded; empty otherwise. Use this when you want to silently drop failed
 resolutions.
 
+`val KaSymbolResolutionAttempt.isSuccessful: Boolean`
+: Whether the resolution succeeded. Prefer this over a `this is KaSimpleSymbolResolutionSuccess` check, which only
+covers simple attempts and silently treats every `KaCompoundSymbolResolutionError` as a success.
+
+`val KaSymbolResolutionAttempt.errors: List<KaSimpleSymbolResolutionError>`
+: The errors of the attempt, for every attempt kind: empty on success, a one-element list for a simple error, and the
+failed sub-attempts of a compound error. The list is empty if and only if `isSuccessful` is `true`.
+
+`val KaSymbolResolutionAttempt.simpleAttempts: List<KaSimpleSymbolResolutionAttempt>`
+: The flattened sub-attempts: the attempt itself for a simple one, and `KaCompoundSymbolResolutionError.simpleAttempts`
+for a compound one. Use it when the **successful** sub-attempt of a partially failed compound matters, since `errors`
+drops it.
+
 For full control, use the `fold` extension:
 
 ```Kotlin
 fun <T> KaSymbolResolutionAttempt.fold(
     onSuccess: (List<KaSymbol>) -> T,
-    onFailure: (List<KaSimpleSymbolResolutionAttempt>) -> T,
+    onFailure: (List<KaSimpleSymbolResolutionError>) -> T,
 ): T
 ```
 
 `onSuccess` is invoked once with the resolved symbols when all sub-attempts succeeded; `onFailure` is invoked with the
-list of individual `KaSimpleSymbolResolutionAttempt`s otherwise &mdash; including the single error case (a one-element
-list) and the compound mixed case.
+`errors` otherwise &mdash; including the single error case (a one-element list) and the compound mixed case. A
+successful sub-attempt of a compound error is not passed to `onFailure`; reach it through `simpleAttempts`.
 
 ## Example
 
@@ -97,7 +110,7 @@ fun describe(element: KtElement): String? = analyze(element) {
             "Resolved: $names"
         },
         onFailure = { errors ->
-            "Failed (${errors.size} sub-attempts)"
+            "Failed (${errors.size} errors)"
         },
     )
 }

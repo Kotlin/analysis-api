@@ -103,7 +103,7 @@ For `a[i] += v` and similar. `call` is `KaCompoundArrayAccessCall?`.
 
 ## Helper extensions
 
-Three extension properties cover the common cases without forcing a pattern match.
+Six extension properties cover the common cases without forcing a pattern match.
 
 `val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`
 : A flattened list of resolved/candidate calls. On `KaSimpleCallResolutionSuccess` returns the resolved call as a one-element
@@ -119,18 +119,33 @@ answers for a *failed* resolution that considered exactly one candidate &mdash; 
 : The resolved call if everything succeeded, otherwise `null`. For a compound attempt this is the assembled
 `KaMultiCall` only when **every** sub-attempt resolved.
 
+`val KaCallResolutionAttempt.isSuccessful: Boolean`
+: Whether the resolution succeeded. Prefer this over a `this is KaSimpleCallResolutionSuccess` check, which only covers
+simple attempts and silently treats a failed `KaMultiCallResolutionAttempt` as a success.
+
+`val KaCallResolutionAttempt.errors: List<KaSimpleCallResolutionError>`
+: The errors of the attempt, for every attempt kind: empty on success, a one-element list for a simple error, and the
+failed sub-attempts of a multi-call attempt. The list is empty if and only if `isSuccessful` is `true`, so this is the
+uniform way to get at the diagnostics of a failure.
+
+`val KaCallResolutionAttempt.simpleAttempts: List<KaSimpleCallResolutionAttempt>`
+: The flattened sub-attempts: the attempt itself for a simple one, and `KaMultiCallResolutionAttempt.simpleAttempts`
+for a compound one. Use it when the **successful** sub-calls of a partially failed compound matter, since `errors`
+drops them.
+
 For full control:
 
 ```Kotlin
 fun <T> KaCallResolutionAttempt.fold(
     onSuccess: (KaSimpleOrMultiCall) -> T,
-    onFailure: (List<KaSimpleCallResolutionAttempt>) -> T,
+    onFailure: (List<KaSimpleCallResolutionError>) -> T,
 ): T
 ```
 
 `onSuccess` is called with the resolved call when the attempt is a successful simple call or a fully successful
-multi-call. `onFailure` is called with the list of failed sub-attempts otherwise (a one-element list for a
-`KaSimpleCallResolutionError`, the multi-call's `simpleAttempts` for a partially-failed compound).
+multi-call. `onFailure` is called with the `errors` otherwise (a one-element list for a `KaSimpleCallResolutionError`,
+the failed sub-attempts for a partially-failed compound). The successful sub-attempts of a partially failed compound are
+not passed to `onFailure`; use `simpleAttempts` to reach them.
 
 ## Example
 
@@ -146,10 +161,7 @@ fun describe(call: KtCallElement): String = analyze(call) {
             "Resolved: $name"
         },
         onFailure = { errors ->
-            val diagnostics = errors
-                .filterIsInstance<KaSimpleCallResolutionError>()
-                .map { it.diagnostic.factoryName }
-            
+            val diagnostics = errors.map { it.diagnostic.factoryName }
             "Failed: $diagnostics"
         },
     )
