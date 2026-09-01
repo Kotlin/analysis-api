@@ -45,7 +45,7 @@ invisible declaration as a candidate). The list may be empty.
 ### `KaCompoundSymbolResolutionError`
 
 Returned only when a compound resolution produced a **mix** of successful and failed sub-attempts (or all sub-attempts
-failed). Exposes `attempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one `KaSimpleSymbolResolutionSuccess`
+failed). Exposes `simpleAttempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one `KaSimpleSymbolResolutionSuccess`
 (merging symbols from all successful sub-calls) and at least one `KaSimpleSymbolResolutionError`, totaling at least two
 entries. When every sub-attempt succeeds, the result is `KaSimpleSymbolResolutionSuccess` instead.
 

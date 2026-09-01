@@ -56,7 +56,7 @@ sealed interface KaMultiCallResolutionAttempt :
     // null if any sub-call failed
     val call: KaMultiCall?
     // every sub-call attempt
-    val attempts: List<KaSimpleCallResolutionAttempt>
+    val simpleAttempts: List<KaSimpleCallResolutionAttempt>
 }
 ```
 
@@ -130,7 +130,7 @@ fun <T> KaCallResolutionAttempt.fold(
 
 `onSuccess` is called with the resolved call when the attempt is a successful simple call or a fully successful
 multi-call. `onFailure` is called with the list of failed sub-attempts otherwise (a one-element list for a
-`KaSimpleCallResolutionError`, the multi-call's `attempts` for a partially-failed compound).
+`KaSimpleCallResolutionError`, the multi-call's `simpleAttempts` for a partially-failed compound).
 
 ## Example
 

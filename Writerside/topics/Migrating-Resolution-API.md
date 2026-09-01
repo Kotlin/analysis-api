@@ -73,7 +73,7 @@ attempts from multi-call ones (compound / `for` / delegated property).
 
 Multi-call attempts (`KaForLoopCallResolutionAttempt`, `KaDelegatedPropertyCallResolutionAttempt`,
 `KaCompound*CallResolutionAttempt`) expose `call: KaMultiCall?` plus per-step
-`attempts: List<KaSimpleCallResolutionAttempt>`; the old `KaCallInfo` had no equivalent &mdash; these calls were
+`simpleAttempts: List<KaSimpleCallResolutionAttempt>`; the old `KaCallInfo` had no equivalent &mdash; these calls were
 resolved indirectly.
 
 ### Call hierarchy: `KaCall` &rarr; `KaSimpleOrMultiCall`
