@@ -79,16 +79,16 @@ val call: KaSimpleOrMultiCall? =
 > ```
 {style="warning"}
 
-| Old (`KaCallInfo`)                                               | New (`KaCallResolutionAttempt`)                                                                                                |
-|------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSimpleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                   |
-| `KaSuccessCallInfo`                                              | `KaSimpleCallResolutionSuccess`                                                                                                      |
-| `KaSuccessCallInfo.call: KaCall`                                 | `KaSimpleCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successful: KaSimpleOrMultiCall?` extension)               |
+| Old (`KaCallInfo`)                                               | New (`KaCallResolutionAttempt`)                                                                                                           |
+|------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `KaCallInfo`                                                     | `KaCallResolutionAttempt` (`KaSimpleCallResolutionAttempt` / `KaMultiCallResolutionAttempt`)                                              |
+| `KaSuccessCallInfo`                                              | `KaSimpleCallResolutionSuccess`                                                                                                           |
+| `KaSuccessCallInfo.call: KaCall`                                 | `KaSimpleCallResolutionSuccess.call: KaSimpleCall<*, *>` (or the `attempt.successful: KaSimpleOrMultiCall?` extension)                    |
 | `KaErrorCallInfo`                                                | `KaSimpleCallResolutionError` for a simple call; a failed `KaMultiCallResolutionAttempt` for a compound one. `attempt.errors` covers both |
-| `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaSimpleCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                               |
-| `KaErrorCallInfo.diagnostic`                                     | `KaSimpleCallResolutionError.diagnostic`                                                                                             |
-| `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                     |
-| `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.single` / `attempt.successful`, narrowed with `.simple` / `.function` / `.variable` / `.constructor`                  |
+| `KaErrorCallInfo.candidateCalls: List<KaCall>`                   | `KaSimpleCallResolutionError.candidateCalls: List<KaSimpleCall<*, *>>`                                                                    |
+| `KaErrorCallInfo.diagnostic`                                     | `KaSimpleCallResolutionError.diagnostic`                                                                                                  |
+| `KaCallInfo.calls: List<KaCall>`                                 | `KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`                                                                                |
+| `KaCallInfo.singleCallOrNull<T>()` / `successfulCallOrNull<T>()` | `attempt.single` / `attempt.successful`, narrowed with `.simple` / `.function` / `.variable` / `.constructor`                             |
 
 Multi-call attempts (`KaForLoopCallResolutionAttempt`, `KaDelegatedPropertyCallResolutionAttempt`,
 `KaCompound*CallResolutionAttempt`) expose `call: KaMultiCall?` plus per-step

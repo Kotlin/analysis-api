@@ -27,8 +27,9 @@ graph TB
 
 ### `KaSimpleCallResolutionAttempt`
 
-Sealed: either `KaSimpleCallResolutionSuccess` or `KaSimpleCallResolutionError`. Both `KaSimpleCallResolutionSuccess.call` and
-`KaSimpleCallResolutionError.candidateCalls` always contain [](KaSimpleCall.md) instances.
+Sealed: either `KaSimpleCallResolutionSuccess` or `KaSimpleCallResolutionError`. Both
+`KaSimpleCallResolutionSuccess.call` and `KaSimpleCallResolutionError.candidateCalls` always contain
+[](KaSimpleCall.md) instances.
 
 ### `KaSimpleCallResolutionSuccess`
 
@@ -106,9 +107,9 @@ For `a[i] += v` and similar. `call` is `KaCompoundArrayAccessCall?`.
 Six extension properties cover the common cases without forcing a pattern match.
 
 `val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>`
-: A flattened list of resolved/candidate calls. On `KaSimpleCallResolutionSuccess` returns the resolved call as a one-element
-list. On `KaSimpleCallResolutionError` returns `candidateCalls`. On `KaMultiCallResolutionAttempt` returns the assembled
-multi-call when all sub-attempts succeeded; otherwise returns the combined calls from each sub-attempt.
+: A flattened list of resolved/candidate calls. On `KaSimpleCallResolutionSuccess` returns the resolved call as a
+one-element list. On `KaSimpleCallResolutionError` returns `candidateCalls`. On `KaMultiCallResolutionAttempt` returns
+the assembled multi-call when all sub-attempts succeeded; otherwise returns the combined calls from each sub-attempt.
 
 `val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?`
 : The only call of `calls`, or `null` when the attempt has no calls or more than one. Unlike `successful`, it also

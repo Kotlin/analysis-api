@@ -59,11 +59,11 @@ single candidate of type `T`.
 
 ## Replacement mapping
 
-| `KaCallInfo` member                    | New equivalent                                                                                                |
-|----------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `KaCallInfo` member                    | New equivalent                                                                                                      |
+|----------------------------------------|---------------------------------------------------------------------------------------------------------------------|
 | `KaSuccessCallInfo.call`               | `KaSimpleCallResolutionSuccess.call` (a `KaSimpleCall<*, *>`), or `KaMultiCallResolutionAttempt.call` for compound. |
 | `KaErrorCallInfo.candidateCalls`       | `KaSimpleCallResolutionError.candidateCalls`.                                                                       |
 | `KaErrorCallInfo.diagnostic`           | `KaSimpleCallResolutionError.diagnostic`.                                                                           |
-| `KaCallInfo.calls`                     | `KaCallResolutionAttempt.calls` extension.                                                                    |
-| `KaCallInfo.successfulCallOrNull<T>()` | `KaCallResolutionAttempt.successful?.function` (or `?.variable` / `?.constructor`).                           |
-| `KaCallInfo.singleCallOrNull<T>()`     | `attempt.single?.function` (or `?.variable` / `?.constructor`).                                               |
+| `KaCallInfo.calls`                     | `KaCallResolutionAttempt.calls` extension.                                                                          |
+| `KaCallInfo.successfulCallOrNull<T>()` | `KaCallResolutionAttempt.successful?.function` (or `?.variable` / `?.constructor`).                                 |
+| `KaCallInfo.singleCallOrNull<T>()`     | `attempt.single?.function` (or `?.variable` / `?.constructor`).                                                     |

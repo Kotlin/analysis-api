@@ -26,8 +26,8 @@ graph TB
 The sealed root. Two branches: `KaSimpleSymbolResolutionAttempt` and `KaCompoundSymbolResolutionError`.
 
 > Unlike the call API, the symbol API does **not** model "successful compound resolution" with its own type. When all
-> sub-symbol resolutions in a compound case succeed, the result is just `KaSimpleSymbolResolutionSuccess` carrying the merged
-> list of symbols.
+> sub-symbol resolutions in a compound case succeed, the result is just `KaSimpleSymbolResolutionSuccess` carrying the
+> merged list of symbols.
 
 ### `KaSimpleSymbolResolutionAttempt`
 
@@ -45,13 +45,15 @@ invisible declaration as a candidate). The list may be empty.
 ### `KaCompoundSymbolResolutionError`
 
 Returned only when a compound resolution produced a **mix** of successful and failed sub-attempts (or all sub-attempts
-failed). Exposes `simpleAttempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one `KaSimpleSymbolResolutionSuccess`
-(merging symbols from all successful sub-calls) and at least one `KaSimpleSymbolResolutionError`, totaling at least two
-entries. When every sub-attempt succeeds, the result is `KaSimpleSymbolResolutionSuccess` instead.
+failed). Exposes `simpleAttempts: List<KaSimpleSymbolResolutionAttempt>` &mdash; at most one
+`KaSimpleSymbolResolutionSuccess` (merging symbols from all successful sub-calls) and at least one
+`KaSimpleSymbolResolutionError`, totaling at least two entries. When every sub-attempt succeeds, the result is
+`KaSimpleSymbolResolutionSuccess` instead.
 
-> A non-compound failure surfaces as `KaSimpleSymbolResolutionError` directly &mdash; `KaCompoundSymbolResolutionError` only
-> appears when the call is genuinely compound and at least two sub-attempts are involved (a mix of success and failure,
-> or all failures). For a simple-call failure, expect `KaSimpleSymbolResolutionError`.
+> A non-compound failure surfaces as `KaSimpleSymbolResolutionError` directly &mdash;
+> `KaCompoundSymbolResolutionError` only appears when the call is genuinely compound and at least two sub-attempts are
+> involved (a mix of success and failure, or all failures). For a simple-call failure, expect
+> `KaSimpleSymbolResolutionError`.
 
 ## Helper extensions
 
