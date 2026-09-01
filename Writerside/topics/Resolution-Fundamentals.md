@@ -101,8 +101,10 @@ Every resolution flavor exists in two forms:
   happy-path result &mdash; a symbol or a `KaSimpleOrMultiCall`, or `null` if resolution did not succeed. Use it when
   you only care about a valid result and want failed/ambiguous resolutions to be silently dropped (typical for
   inspections that must not produce false positives).
-* The **try** form (`tryResolveSymbols`, `tryResolveCall`) returns a richer **attempt** &mdash; either a
-  **success** with the result, or an **error** carrying a diagnostic and candidate symbols/calls.
+* The **try** form (`tryResolveSymbols`, `tryResolveCall`) returns a richer **attempt**, or `null` when there is
+  nothing to resolve at all &mdash; for `tryResolveCall`, when the element is not call-shaped or its reference resolves
+  to something non-callable such as a qualifier, an import, or a type. A non-null attempt describes the outcome of an
+  actual resolution: check it with `isSuccessful` or `errors`, not with a type check, which only covers simple attempts.
   Use it when you want every piece of information the compiler considered, including failed attempts and partial
   results (typical for navigation, find-usages, and any tooling that wants to do a best-effort match on red code).
 
