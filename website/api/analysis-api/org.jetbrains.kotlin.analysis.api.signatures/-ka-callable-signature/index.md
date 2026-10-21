@@ -1,0 +1,247 @@
+---
+tags:
+ - jvm
+title: "KaCallableSignature"
+---
+
+# KaCallableSignature
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">sealed </span><span class="kd">interface </span><a href="index.html">KaCallableSignature</a><span class="o"><</span><span class="kd">out </span><a href="index.html">S</a><span class="o"> : </span><a href="../../org.jetbrains.kotlin.analysis.api.symbols/-ka-callable-symbol/index.html">KaCallableSymbol</a><span class="o">></span> : <a href="../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-owner/index.html">KaLifetimeOwner</a>
+</span></code></pre></div>A use-site signature for a [`callable symbol`](../../org.jetbrains.kotlin.analysis.api.symbols/-ka-callable-symbol/index.md). Compared to the symbol, the signature carries additional use-site type information.
+
+The equality of [`KaCallableSignature`](index.md) is derived from its content.
+
+#### Example
+```kotlin
+fun test(l: List<String>) {
+  l.get(1)
+}
+```
+
+The [`callable symbol`](../../org.jetbrains.kotlin.analysis.api.symbols/-ka-callable-symbol/index.md) for `get` has the type `(Int) -> T` where `T` is the type parameter declared in `List`. On the other hand, a [`KaCallableSignature`](index.md) for `l.get` carries the instantiated type information `(Int) -> String`.
+
+#### Inheritors
+
+
+ - [`KaFunctionSignature`](../-ka-function-signature/index.md)
+ - [`KaVariableSignature`](../-ka-variable-signature/index.md)
+
+
+
+</div>
+
+## Properties
+### callableId
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">open </span><span class="kd">val </span><a href="../-ka-variable-signature/index.html#callableid">callableId</a><span class="o">: </span>CallableId<span class="o">?</span>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+The CallableId of the signature, corresponding to the symbol's callable ID.
+
+
+</div>
+
+</div>
+### contextParameters
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">open </span><span class="kd">val </span><a href="../-ka-variable-signature/index.html#contextparameters">contextParameters</a><span class="o">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="o"><</span><a href="../-ka-variable-signature/index.html">KaVariableSignature</a><span class="o"><</span><a href="../../org.jetbrains.kotlin.analysis.api.symbols/-ka-context-parameter-symbol/index.html">KaContextParameterSymbol</a><span class="o">></span><span class="o">></span>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+The use-site-substituted [`context parameters`](../../org.jetbrains.kotlin.analysis.api.symbols/-ka-kotlin-property-symbol/index.md#contextparameters).
+
+
+</div>
+
+</div>
+### receiverType
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">val </span><a href="../-ka-variable-signature/index.html#receivertype">receiverType</a><span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.types/-ka-type/index.html">KaType</a><span class="o">?</span>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+The use-site-substituted [`extension receiver type`](../../org.jetbrains.kotlin.analysis.api.symbols/-ka-synthetic-java-property-symbol/index.md#receiverparameter).
+
+
+</div>
+
+</div>
+### returnType
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">val </span><a href="../-ka-variable-signature/index.html#returntype">returnType</a><span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.types/-ka-type/index.html">KaType</a>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+The use-site-substituted [`return type`](../../org.jetbrains.kotlin.analysis.api.symbols/-ka-receiver-parameter-symbol/index.md#returntype).
+
+
+</div>
+
+</div>
+### symbol
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">val </span><a href="../-ka-variable-signature/index.html#symbol">symbol</a><span class="o">: </span><a href="index.html">S</a>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+The underlying symbol which the signature carries use-site information about.
+
+
+</div>
+
+</div>
+### [`token`](../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.md#token)
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">val </span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#token">token</a><span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-token/index.html">KaLifetimeToken</a>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+The [`KaLifetimeToken`](../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-token/index.md) which determines the lifetime of the lifetime owner.
+
+
+</div>
+
+</div>
+## Functions
+### [`assertIsValidAndAccessible`](../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.md#assertisvalidandaccessible)
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">inline </span><span class="kd">fun </span><a href="../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-owner/index.html">KaLifetimeOwner</a><span class="p">.</span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#assertisvalidandaccessible"><span class="nf">assertIsValidAndAccessible</span></a><span class="p">(</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+
+</div>
+### equals
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">operator override </span><span class="kd">fun </span><a href="../-ka-variable-signature/index.html#equals"><span class="nf">equals</span></a><span class="p">(</span>other<span class="o">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="o">?</span><span class="p">)</span><span class="o">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a>
+</span></code></pre></div>
+</div>
+
+</div>
+### hashCode
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">override </span><span class="kd">fun </span><a href="../-ka-variable-signature/index.html#hashcode"><span class="nf">hashCode</span></a><span class="p">(</span><span class="p">)</span><span class="o">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a>
+</span></code></pre></div>
+</div>
+
+</div>
+### [`isValid`](../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.md#isvalid)
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">fun </span><a href="../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-owner/index.html">KaLifetimeOwner</a><span class="p">.</span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#isvalid"><span class="nf">isValid</span></a><span class="p">(</span><span class="p">)</span><span class="o">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+Whether the lifetime owner is still valid, i.e. we are still in the scope of the lifetime owner's regular lifetime.
+
+
+</div>
+
+</div>
+### substitute
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">fun </span><a href="index.html#substitute"><span class="nf">substitute</span></a><span class="p">(</span>substitutor<span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.types/-ka-substitutor/index.html">KaSubstitutor</a><span class="p">)</span><span class="o">: </span><a href="index.html">KaCallableSignature</a><span class="o"><</span><a href="index.html">S</a><span class="o">></span>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+Applies the given [`substitutor`](index.md#substitute) to the signature, returning a new signature with substituted types.
+
+**See also**
+
+
+
+ - [`KaSubstitutor.substitute`](../../org.jetbrains.kotlin.analysis.api.types/-ka-substitutor/-empty/index.md#substitute)
+
+
+
+</div>
+
+</div>
+### [`withValidityAssertion`](../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.md#withvalidityassertion)
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">inline </span><span class="kd">fun </span><span class="o"><</span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#withvalidityassertion">R</a><span class="o">> </span><a href="../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-owner/index.html">KaLifetimeOwner</a><span class="p">.</span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#withvalidityassertion"><span class="nf">withValidityAssertion</span></a><span class="p">(</span>action<span class="o">: </span><span class="p">(</span><span class="p">)</span><span class="o"> -> </span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#withvalidityassertion">R</a><span class="p">)</span><span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.html#withvalidityassertion">R</a>
+</span></code></pre></div>
+</div>
+
+
+<div markdown>
+
+Executes [`action`](../../org.jetbrains.kotlin.analysis.api.visibility/-ka-use-site-visibility-checker/index.md#withvalidityassertion) only if the [`KaLifetimeOwner`](../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-owner/index.md) is still [`valid`](../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-token/index.md#isvalid) and [`accessible`](../../org.jetbrains.kotlin.analysis.api.lifetime/-ka-lifetime-token/index.md#isaccessible). Otherwise, throws a validity exception based on the concrete violation.
+
+
+</div>
+
+</div>
