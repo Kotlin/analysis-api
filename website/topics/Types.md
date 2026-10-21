@@ -7,18 +7,18 @@ provides information about the type structure, nullability, and annotations.
 
 The `KaType` interface serves as the base for specific type kinds:
 
-* [`KaClassType`](KaClassType.md): Represents types of classes, objects, and interfaces. This includes both named class
+* [`KaClassType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-class-type/index.md): Represents types of classes, objects, and interfaces. This includes both named class
   types (e.g., `String`, `Int`) and types of anonymous objects. For function types like `(Int) -> String`, there is
-  a [`KaFunctionType`](KaFunctionType.md) subtype.
-* [`KaTypeParameterType`](KaTypeParameterType.md): Represents type parameter types, such as `T` in `class Box<T>()`.
-* [`KaCapturedType`](KaCapturedType.md): Represents [captured types](https://kotlinlang.org/spec/type-system.html#type-capturing).
-* [`KaDefinitelyNotNullType`](KaDefinitelyNotNullType.md): Represents a `T & Any` type.
-* [`KaFlexibleType`](KaFlexibleType.md): Represents types with both a lower and upper bound, such as `String?`
+  a [`KaFunctionType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-function-type/index.md) subtype.
+* [`KaTypeParameterType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-type-parameter-type/index.md): Represents type parameter types, such as `T` in `class Box<T>()`.
+* [`KaCapturedType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-captured-type/index.md): Represents [captured types](https://kotlinlang.org/spec/type-system.html#type-capturing).
+* [`KaDefinitelyNotNullType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-definitely-not-null-type/index.md): Represents a `T & Any` type.
+* [`KaFlexibleType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-flexible-type/index.md): Represents types with both a lower and upper bound, such as `String?`
   or `(Mutable)List<Int>`.
-* [`KaIntersectionType`](KaIntersectionType.md): Represents types that are intersections of other types.
-* [`KaDynamicType`](KaDynamicType.md): Represents dynamic types, used for interoperability with dynamically typed
+* [`KaIntersectionType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-intersection-type/index.md): Represents types that are intersections of other types.
+* [`KaDynamicType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-dynamic-type/index.md): Represents dynamic types, used for interoperability with dynamically typed
   languages (e.g., JavaScript).
-* [`KaErrorType`](KaErrorType.md): Represents unresolved types, providing information about the error.
+* [`KaErrorType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-error-type/index.md): Represents unresolved types, providing information about the error.
 
 ## Example
 
@@ -141,14 +141,14 @@ The entry point for the type building DSL is `typeCreator` accessible directly i
     - `buildStarTypeProjection`
 
     If you are still using them, migrate to the new type creation DSL. The former API lacks a wide set of features and containts some long-standing bugs.
-    See [](TypeCreatorMigrationGuide.md) for the detailed migration guide.
+    See [Type Creator migration guide](Migrating-Type-Creator.md) for the detailed migration guide.
 
 Here's how you can build different types:
 
 ### Building Class Types
 
-To build a [](KaClassType.md), use the `typeCreator.classType` function. 
-You can specify the target class either by its `ClassId` or using a [](KaClassLikeSymbol.md):
+To build a [`KaClassType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-class-type/index.md), use the `typeCreator.classType` function. 
+You can specify the target class either by its `ClassId` or using a [`KaClassLikeSymbol`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.symbols/-ka-class-like-symbol/index.md):
 
 #### By a class ID:
 
@@ -241,7 +241,7 @@ analyze(ktFile) {
 
 ### Building Function Types
 
-[](KaFunctionType.md) can be constructed with `typeCreator.functionType`:
+[`KaFunctionType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-function-type/index.md) can be constructed with `typeCreator.functionType`:
 
 ```kotlin
 analyze(ktFile) { 
@@ -351,8 +351,8 @@ All context parameters passed to the builder are discarded when `isReflectType` 
 
 ### Building Type Parameter Types
 
-To build a [](KaTypeParameterType.md), use the `typeCreator.typeParameterType` function. You need to provide the
-corresponding [](KaTypeParameterSymbol.md):
+To build a [`KaTypeParameterType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-type-parameter-type/index.md), use the `typeCreator.typeParameterType` function. You need to provide the
+corresponding [`KaTypeParameterSymbol`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.symbols/-ka-type-parameter-symbol/index.md):
 
 ```kotlin
 analyze(ktFile) {
@@ -365,7 +365,7 @@ analyze(ktFile) {
 by using `isMarkedNullable` within the builder.
 
 ### Building Definitely Not Null Types
-[](KaDefinitelyNotNullType.md) can be constructed using `typeCreator.definitelyNotNullType`
+[`KaDefinitelyNotNullType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-definitely-not-null-type/index.md) can be constructed using `typeCreator.definitelyNotNullType`
 by providing either a `KaCapturedType` or a `KaTypeParameterType`.
 
 **Note:** If the original type was not nullable, `typeCreator.definitelyNotNullType` returns the original type
@@ -388,7 +388,7 @@ analyze(ktFile) {
 ```
 
 ### Building Intersection Types
-[](KaIntersectionType.md) can be constructed using `typeCreator.intersectionType`
+[`KaIntersectionType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-intersection-type/index.md) can be constructed using `typeCreator.intersectionType`
 by building a list of conjuncts via `conjunct` and `conjuncts`:
 ```kotlin
 analyze(ktFile) {
@@ -409,8 +409,8 @@ analyze(ktFile) {
 However, the resulting type is guaranteed to represent a subtype of all the passed conjuncts.
 
 ### Building Captured Types
-[](KaCapturedType.md) can be constructed using `typeCreator.capturedType`
-by providing either a [](KaTypeProjection.md) or another [](KaCapturedType.md):
+[`KaCapturedType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-captured-type/index.md) can be constructed using `typeCreator.capturedType`
+by providing either a [`KaTypeProjection`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-type-projection/index.md) or another [`KaCapturedType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-captured-type/index.md):
 
 #### By a captured type: {id="captured-type-by-a-captured-type"}
 ```kotlin
@@ -435,7 +435,7 @@ That's because captured types are intended to capture non-invariant projections.
 Otherwise, an exception is thrown.
 
 ### Building Flexible Types
-[](KaFlexibleType.md) can be constructed using `typeCreator.flexibleType` using three different ways.
+[`KaFlexibleType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-flexible-type/index.md) can be constructed using `typeCreator.flexibleType` using three different ways.
 
 If one of the provided bounds is a `KaFlexibleType`, the corresponding bound of this type is taken instead.
 E.g., if the upper bound is a flexible type itself, then its upper bound is taken instead.
@@ -475,7 +475,7 @@ analyze(ktFile) {
 ```
 
 ### Building Dynamic Types
-[](KaDynamicType.md) can be constructed using `typeCreator.dynamicType`:
+[`KaDynamicType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-dynamic-type/index.md) can be constructed using `typeCreator.dynamicType`:
 
 ```kotlin
 analyze(ktFile) {
@@ -484,7 +484,7 @@ analyze(ktFile) {
 ```
 
 ### Building Annotated Types
-Each type except for [](KaIntersectionType.md) can be constructed with additional annotations.
+Each type except for [`KaIntersectionType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-intersection-type/index.md) can be constructed with additional annotations.
 To add annotations to your type, call `annotation` or `annotations` with desired annotation `ClassId`s within the builder.
 ```kotlin
 analyze(ktFile) {

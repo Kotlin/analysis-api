@@ -106,7 +106,7 @@ The migration approach here depends on the desired behavior:
 ## Migrating from Workarounds
 Type creation facilities offered within `typeCreator` also provide endpoints for new types that weren't supported by the former API.
 
-For example, this includes `typeCreator.functionType` that allows constructing [](KaFunctionType.md).
+For example, this includes `typeCreator.functionType` that allows constructing [`KaFunctionType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-function-type/index.md).
 Previously, a common workaround was to build it through `buildClassType` as `KaFunctionType` is a `KaClassType`.
 However, it's unsafe and inconvenient. Such calls should be transformed to `typeCreator.functionType`, see [Building Function Types](Types.md#building-function-types).
 

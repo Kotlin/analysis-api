@@ -40,7 +40,7 @@ val call: KaSimpleOrMultiCall? =
     (element as? KtResolvableCall)?.resolveSuccessfulCall()
 ```
 
-For the rich form, use `tryResolveCall()` and the [](KaCallResolutionAttempt.md) hierarchy.
+For the rich form, use `tryResolveCall()` and the [`KaCallResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-call-resolution-attempt/index.md) hierarchy.
 
 ## Specialized methods
 
@@ -67,10 +67,10 @@ For the rich form, use `tryResolveCall()` and the [](KaCallResolutionAttempt.md)
 
 The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
 
-* [](KaSimpleCall.md) describes a simple call &mdash; a single resolved callable applied at this site. This is what
+* [`KaSimpleCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-simple-call/index.md) describes a simple call &mdash; a single resolved callable applied at this site. This is what
   you get for ordinary function calls, property accesses, callable references, annotation entries, supertype calls,
   and so on.
-* [](KaMultiCall.md) describes a compound or desugared call that involves several sub-calls. This is what
+* [`KaMultiCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-multi-call/index.md) describes a compound or desugared call that involves several sub-calls. This is what
   you get for `for` loops, delegated properties, compound assignments (`+=`, `++`, `--`), and compound array access
   (`a[i] += v`).
 
@@ -78,7 +78,7 @@ The type system tells you which branch you are on. Many specializations narrow t
 `KtForExpression.resolveSuccessfulCall(): KaForLoopCall?` already commits to the multi-call branch.
 
 When you hold the broad `KaSimpleOrMultiCall` and want one particular shape, the `simple` / `function` / `variable` /
-`constructor` properties do the check for you instead of an `as?` cast &mdash; see [](KaSimpleOrMultiCall.md):
+`constructor` properties do the check for you instead of an `as?` cast &mdash; see [`KaSimpleOrMultiCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-simple-or-multi-call/index.md):
 
 ```Kotlin
 val function: KaFunctionCall<*>? =
@@ -118,7 +118,7 @@ val combined    = call.combinedArgumentMapping // values + ctx
 assignment. The boolean `call.isContextSensitive` indicates whether
 [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) was used.
 
-[](KaCallableReferenceCall.md) is the cleanest example of the new shape: it extends
+[`KaCallableReferenceCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-callable-reference-call/index.md) is the cleanest example of the new shape: it extends
 `KaSimpleCall<S, C>` only &mdash; no legacy base. A callable reference does not invoke the callable, so there is no
 `valueArgumentMapping` and no read/write kind &mdash; only the signature, bound receivers, and type arguments.
 
@@ -155,7 +155,7 @@ for (item in list) {
 }
 ```
 
-A `for` loop desugars into `iterator()`, `hasNext()`, and `next()`. The call is a [](KaForLoopCall.md):
+A `for` loop desugars into `iterator()`, `hasNext()`, and `next()`. The call is a [`KaForLoopCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-for-loop-call/index.md):
 
 ```Kotlin
 val loop = forExpression.resolveSuccessfulCall() ?: return
@@ -175,7 +175,7 @@ val name: String by lazy { "John" }
 ```
 
 A delegated property desugars into `getValue()`, optionally `setValue()` (for `var`), and optionally `provideDelegate()`.
-The call is a [](KaDelegatedPropertyCall.md):
+The call is a [`KaDelegatedPropertyCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-delegated-property-call/index.md):
 
 ```Kotlin
 val delegate = propertyDelegate.resolveSuccessfulCall() ?: return
@@ -291,7 +291,7 @@ val flat: List<KaSimpleCall<*, *>> = (call as KaMultiCall).calls
 
 Use `resolveSuccessfulCall()` when you only need a valid result; resolution failure becomes `null`. Use
 `tryResolveCall()` when you want the diagnostic and the candidate calls the compiler considered. The richer form returns
-a `KaCallResolutionAttempt` &mdash; see [](KaCallResolutionAttempt.md) for the full hierarchy and helpers.
+a `KaCallResolutionAttempt` &mdash; see [`KaCallResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-call-resolution-attempt/index.md) for the full hierarchy and helpers.
 
 ```Kotlin
 val attempt = callElement.tryResolveCall() ?: return
