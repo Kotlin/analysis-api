@@ -18,7 +18,7 @@ val candidates: List<KaCallCandidate> =
     callElement.collectCallCandidates()
 ```
 
-Each `KaCallCandidate` wraps a [](KaSimpleOrMultiCall.md) and exposes whether it was selected as a
+Each `KaCallCandidate` wraps a [`KaSimpleOrMultiCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-simple-or-multi-call/index.md) and exposes whether it was selected as a
 final candidate by the compiler:
 
 ```Kotlin
@@ -82,6 +82,6 @@ on a successful call this list is empty by definition.
 ## Compound calls
 
 For compound expressions (for-loops, delegated properties, `+=`, array-compound), the candidate's `candidate` field is
-a [](KaMultiCall.md) rather than a `KaSimpleCall`. The new compound call types provide named sub-call
+a [`KaMultiCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-multi-call/index.md) rather than a `KaSimpleCall`. The new compound call types provide named sub-call
 accessors (`iteratorCall`, `getterCall`, `setterCall`, `operationCall`, and so on), so you can drill into the
 sub-calls of a compound candidate exactly as for the resolved call itself.

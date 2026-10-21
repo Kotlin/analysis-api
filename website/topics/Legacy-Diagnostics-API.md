@@ -11,7 +11,7 @@ was eager and `diagnostics()` was lazy; suppressed diagnostics were reachable fo
 `diagnosticsIgnoringSuppression()`. Each endpoint also took a `KaDiagnosticCheckerFilter`, a closed enum which named
 four of the eight combinations of the three checker kinds.
 
-The [](KaDiagnostics.md) query replaces all of them with a single entry point and composable modifiers.
+The [`KaDiagnostics`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md) query replaces all of them with a single entry point and composable modifiers.
 
 ## Endpoints
 
@@ -25,8 +25,8 @@ The [](KaDiagnostics.md) query replaces all of them with a single entry point an
 
 ## Checker filters
 
-`KaDiagnosticCheckerFilter` becomes a set of [](KaDiagnosticCheckerKind.md) values passed to
-[`withCheckers()`](KaDiagnostics.md#withcheckers). Unlike the enum, the set covers every combination of kinds:
+`KaDiagnosticCheckerFilter` becomes a set of [`KaDiagnosticCheckerKind`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic-checker-kind/index.md) values passed to
+[`withCheckers()`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md#withcheckers). Unlike the enum, the set covers every combination of kinds:
 
 | `KaDiagnosticCheckerFilter`    | `withCheckers()` argument                                          |
 |--------------------------------|--------------------------------------------------------------------|
@@ -59,7 +59,7 @@ element.diagnostics()
 
 Dropping `directOnly(true)` while migrating is often the actual fix: a diagnostic which concerns an element may be
 reported on one of its children, so the direct result was rarely the complete answer. See
-[`directOnly`](KaDiagnostics.md#directonly).
+[`directOnly`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md#directonly).
 
 ## Migration examples
 
@@ -113,7 +113,7 @@ file.diagnostics().ignoreSuppressed(false)
 ```
 
 Suppression is per-diagnostic data now rather than a collection mode: the query yields suppressed diagnostics together
-with the regular ones, and each of them is marked with [`isSuppressed`](KaDiagnostic.md). The endpoint also works for
+with the regular ones, and each of them is marked with [`isSuppressed`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic/index.md#issuppressed). The endpoint also works for
 any element, not only for a file.
 
 ## Stability

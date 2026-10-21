@@ -175,7 +175,7 @@ Every `*PartiallyAppliedSymbol` access becomes a direct field on the call.
 
 For-loops and delegated properties did not have a separate API in the old world; they were either resolved indirectly or
 required custom code. The new API exposes them as first-class multi-calls:
-[](KaForLoopCall.md) and [](KaDelegatedPropertyCall.md), with matching attempt types `KaForLoopCallResolutionAttempt`
+[`KaForLoopCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-for-loop-call/index.md) and [`KaDelegatedPropertyCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-delegated-property-call/index.md), with matching attempt types `KaForLoopCallResolutionAttempt`
 and `KaDelegatedPropertyCallResolutionAttempt`.
 
 ### Symbol resolution
