@@ -107,7 +107,7 @@ Every resolution flavor exists in two forms:
   Use it when you want every piece of information the compiler considered, including failed attempts and partial
   results (typical for navigation, find-usages, and any tooling that wants to do a best-effort match on red code).
 
-See [](KaSymbolResolutionAttempt.md) and [](KaCallResolutionAttempt.md) for the full attempt hierarchy.
+See [`KaSymbolResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-symbol-resolution-attempt/index.md) and [`KaCallResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-call-resolution-attempt/index.md) for the full attempt hierarchy.
 
 ## A complete example
 

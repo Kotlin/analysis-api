@@ -1,7 +1,7 @@
 # Overview
 
 Diagnostics are the errors, warnings, and informational messages that compiler checkers report on Kotlin code. The
-Analysis API exposes them through a single entry point, `diagnostics()`, which returns a [](KaDiagnostics.md) &mdash; a
+Analysis API exposes them through a single entry point, `diagnostics()`, which returns a [`KaDiagnostics`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md) &mdash; a
 *query* over the diagnostics of a `KtElement`.
 
 !!! warning
@@ -46,9 +46,9 @@ subtree. Each aspect of the query has a modifier which overrides that default:
 
 | Aspect                 | Default                                                     | Modifier                                                  |
 |------------------------|-------------------------------------------------------------|-----------------------------------------------------------|
-| Checker kinds          | Only [common](KaDiagnosticCheckerKind.md) compiler checkers | [`withCheckers()`](KaDiagnostics.md#withcheckers)         |
-| Suppressed diagnostics | Not yielded                                                 | [`ignoreSuppressed()`](KaDiagnostics.md#ignoresuppressed) |
-| Scope                  | The element together with its subtree                       | [`directOnly()`](KaDiagnostics.md#directonly)             |
+| Checker kinds          | Only [common](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic-checker-kind/index.md) compiler checkers | [`withCheckers()`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md#withcheckers)         |
+| Suppressed diagnostics | Not yielded                                                 | [`ignoreSuppressed()`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md#ignoresuppressed) |
+| Scope                  | The element together with its subtree                       | [`directOnly()`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md#directonly)             |
 
 Modifiers are chained before the iteration begins:
 
@@ -67,7 +67,7 @@ The query is immutable: each modifier returns a new `KaDiagnostics` instead of m
 kept around and adjusted for several use sites. Modifiers do not accumulate &mdash; applying the same modifier twice
 keeps the last value, and `withCheckers()` *replaces* the requested kinds rather than adding to them.
 
-See [](KaDiagnostics.md) for the exact semantics of every modifier.
+See [`KaDiagnostics`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md) for the exact semantics of every modifier.
 
 ## Laziness
 
@@ -95,7 +95,7 @@ Iterating a query does not consume it: the same instance may be iterated again, 
 
 ## Handling a diagnostic
 
-The query yields [](KaDiagnosticWithPsi.md) instances, which expose the reported message, its severity, and the PSI it
+The query yields [`KaDiagnosticWithPsi`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic-with-psi/index.md) instances, which expose the reported message, its severity, and the PSI it
 is attached to:
 
 ```Kotlin
@@ -123,7 +123,7 @@ diagnostic in it are annotated `@KaUnstableDiagnosticApi`. Diagnostics mirror th
 Analysis API does not control that set &mdash; a diagnostic may be renamed, split, merged, gain or lose parameters, or
 be removed, without a deprecation cycle.
 
-Where the code has to keep working across Analysis API versions, compare the [`factoryName`](KaDiagnostic.md) instead:
+Where the code has to keep working across Analysis API versions, compare the [`factoryName`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic/index.md) instead:
 
 ```Kotlin
 val unresolved = element.diagnostics()
@@ -137,7 +137,7 @@ but has to be migrated; the `factoryName` comparison keeps compiling and silentl
 
 A diagnostic which is suppressed at its use site, for example by a `@Suppress` annotation, is not reported by the
 compiler. Such diagnostics are filtered out by default, and `ignoreSuppressed(false)` yields them as well, each marked
-with [`isSuppressed`](KaDiagnostic.md):
+with [`isSuppressed`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic/index.md#issuppressed):
 
 ```Kotlin
 val suppressed = declaration.diagnostics()
@@ -152,15 +152,15 @@ instance. Collecting them requires no additional analysis.
 ## Performance
 
 * Every requested checker kind runs its checkers, so requesting more kinds means more work. Prefer listing the kinds
-  you need over [`KaDiagnosticCheckerKind.ALL`](KaDiagnosticCheckerKind.md#all).
+  you need over [`KaDiagnosticCheckerKind.ALL`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic-checker-kind/-companion/index.md#all).
 * Ask about the narrowest element that covers your interest. A subtree query only computes the file structure needed for
   that subtree, so it is cheaper than collecting the diagnostics of the whole file and filtering them by PSI afterwards.
 * Prefer short-circuiting sequence operations over materializing the query with `toList()`.
 
 ## Where to go next
 
-* [](KaDiagnostics.md) &mdash; the query interface and the precise semantics of its modifiers.
-* [](KaDiagnosticCheckerKind.md) &mdash; the available checker kinds and what each of them reports.
-* [](KaDiagnostic.md) and [](KaDiagnosticWithPsi.md) &mdash; the diagnostic itself.
+* [`KaDiagnostics`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostics/index.md) &mdash; the query interface and the precise semantics of its modifiers.
+* [`KaDiagnosticCheckerKind`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic-checker-kind/index.md) &mdash; the available checker kinds and what each of them reports.
+* [`KaDiagnostic`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic/index.md) and [`KaDiagnosticWithPsi`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.diagnostics/-ka-diagnostic-with-psi/index.md) &mdash; the diagnostic itself.
 * [Legacy Diagnostics API](Legacy-Diagnostics-API.md) &mdash; mapping from the former `collectDiagnostics` /
   `KaDiagnosticCheckerFilter` API to the query.

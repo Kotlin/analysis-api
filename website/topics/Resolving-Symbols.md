@@ -32,7 +32,7 @@ val symbols: Collection<KaSymbol> =
 `resolveSuccessfulSymbol()` returns the single resolved symbol, or `null` if resolution failed or produced more than one
 candidate. `resolveSuccessfulSymbols()` returns every resolved symbol &mdash; useful when ambiguity is acceptable.
 For the richest form (success / error / diagnostic / candidate symbols), use `tryResolveSymbols()` and the
-[](KaSymbolResolutionAttempt.md) hierarchy.
+[`KaSymbolResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-symbol-resolution-attempt/index.md) hierarchy.
 
 ## Specialized methods
 
@@ -152,7 +152,7 @@ false positives.
 
 Use `tryResolveSymbols()` when you want everything the compiler considered. The result is a
 `KaSymbolResolutionAttempt` carrying success, error, or compound-error variants &mdash; with diagnostics and candidate
-symbols. See [](KaSymbolResolutionAttempt.md) for the full breakdown.
+symbols. See [`KaSymbolResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-symbol-resolution-attempt/index.md) for the full breakdown.
 
 ```Kotlin
 val attempt = element.tryResolveSymbols() ?: return

@@ -8,7 +8,7 @@ library declarations. The API provides a set of utilities for converting between
 
 ## Types
 
-In IntelliJ IDEA, `PsiType` is a representation for Java types. Conceptually, it is similar to [`KaType`](KaType.md).
+In IntelliJ IDEA, `PsiType` is a representation for Java types. Conceptually, it is similar to [`KaType`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.types/-ka-type/index.md).
 The Analysis API provides mapping between the two representations.
 
 `fun PsiType.asKaType(useSitePosition: PsiElement): KaType?`
