@@ -42,6 +42,17 @@ nav = [
       "topics/Migrating-Type-Creator.md",
     ] },
   ] },
+  { "Contribution guide" = [
+    "contribution-guide/index.md",
+    "contribution-guide/api-development.md",
+    "contribution-guide/api-evolution.md",
+    "contribution-guide/endpoint-card.md",
+  ] },
+  { "Design documents" = [
+    "design-documents/index.md",
+    "design-documents/restricted-analysis.md",
+    "design-documents/content-and-resolution-scope-architecture.md",
+  ] },
 ]
 
 # extra_css = ["stylesheets/extra.css"]
