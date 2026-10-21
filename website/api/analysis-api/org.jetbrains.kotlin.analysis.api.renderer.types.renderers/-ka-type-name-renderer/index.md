@@ -1,0 +1,62 @@
+---
+tags:
+ - jvm
+title: "KaTypeNameRenderer"
+---
+
+# KaTypeNameRenderer
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">interface </span><a href="index.html">KaTypeNameRenderer</a>
+</span></code></pre></div>#### Inheritors
+
+
+ - [`QUOTED`](-q-u-o-t-e-d/index.md)
+ - [`UNQUOTED`](-u-n-q-u-o-t-e-d/index.md)
+
+
+
+</div>
+
+## Types
+### [`QUOTED`](-q-u-o-t-e-d/index.md)
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">object </span><a href="-q-u-o-t-e-d/index.html">QUOTED</a> : <a href="index.html">KaTypeNameRenderer</a>
+</span></code></pre></div>
+</div>
+
+</div>
+### [`UNQUOTED`](-u-n-q-u-o-t-e-d/index.md)
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">object </span><a href="-u-n-q-u-o-t-e-d/index.html">UNQUOTED</a> : <a href="index.html">KaTypeNameRenderer</a>
+</span></code></pre></div>
+</div>
+
+</div>
+## Functions
+### renderName
+
+<div class="dokka-symbol-block" style="background: color-mix(in srgb, var(--md-code-bg-color) 30%, transparent); margin-top: 0.5rem; padding: 1px .7rem .2rem .7rem; border-radius: 0.5rem;" markdown>
+
+<div markdown>
+
+<div class="highlight"><pre><code class="md-code__content"><span markdown><span class="kd">abstract </span><span class="kd">fun </span><a href="index.html#rendername"><span class="nf">renderName</span></a><span class="p">(</span>
+    analysisSession<span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api/-ka-session/index.html">KaSession</a><span class="p">, </span>
+    name<span class="o">: </span>Name<span class="p">, </span>
+    owner<span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.types/-ka-type/index.html">KaType</a><span class="p">, </span>
+    typeRenderer<span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.api.renderer.types/-ka-type-renderer/index.html">KaTypeRenderer</a><span class="p">, </span>
+    printer<span class="o">: </span><a href="../../org.jetbrains.kotlin.analysis.utils.printer/-pretty-printer/index.html">PrettyPrinter</a>
+<span class="p">)</span>
+</span></code></pre></div>
+</div>
+
+</div>

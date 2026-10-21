@@ -23,3 +23,11 @@ To adjust the website, edit the pages inside there or customize the config using
 
 To run the website locally, call `./serve.sh` with optional arguments for `zensical serve` command.
 E.g., `./serve.sh -a  localhost:8000 -o`.
+
+### API reference
+
+Currently, we don't have an automated pipeline to generate API reference directly from the compiler.
+So it was decided to use a static snapshot of the Analysis API reference for 2.5.0.
+It was done locally using Dokka and 'Dokka for MkDocs' Markdown renderer.
+This allows manually adjusting the generated pages and fixing some bugs.
+In the future, the API reference will be published automatically through Kotlin compiler infra.
