@@ -1,0 +1,313 @@
+# Resolving Calls
+
+**Call resolution** answers *"how is this expression executed at this site &mdash; which callable, applied to which
+receivers, type arguments, and value arguments?"*. Read [Resolution Fundamentals](Resolution-Fundamentals.md) first if
+you have not.
+
+!!! tip
+    Snippets on this page assume an `analyze { }` block (or `context(_: KaSession)`) is in scope and that
+    `@OptIn(KaExperimentalApi::class)` is applied somewhere up the call chain. Snippets that name the
+    `KtResolvableCall` marker interface additionally require `@OptIn(KtExperimentalApi::class)`.
+
+## Entry points
+
+For a given resolvable PSI element, prefer the **specialized** form &mdash; an extension on the concrete PSI type with
+a precisely typed return value:
+
+```Kotlin
+val callForFunction: KaFunctionCall<*>? =
+    callElement.resolveSuccessfulCall()
+
+val callForAnnotation: KaAnnotationCall? =
+    annotationEntry.resolveSuccessfulCall()
+
+val callForArray: KaFunctionCall<KaNamedFunctionSymbol>? =
+    arrayAccess.resolveSuccessfulCall()
+
+val callForRef: KaCallableReferenceCall<*, *>? =
+    callableReference.resolveSuccessfulCall()
+
+val loop: KaForLoopCall? = forExpression.resolveSuccessfulCall()
+
+val delegate: KaDelegatedPropertyCall? =
+    propertyDelegate.resolveSuccessfulCall()
+```
+
+When the PSI type is unknown, fall back to the generic form on `KtResolvableCall` via a safe cast:
+
+```Kotlin
+val call: KaSimpleOrMultiCall? =
+    (element as? KtResolvableCall)?.resolveSuccessfulCall()
+```
+
+For the rich form, use `tryResolveCall()` and the [`KaCallResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-call-resolution-attempt/index.md) hierarchy.
+
+## Specialized methods
+
+| PSI element                                      | Returns                                          |
+|--------------------------------------------------|--------------------------------------------------|
+| `KtCallElement`                                  | `KaFunctionCall<*>?`                             |
+| `KtAnnotationEntry`                              | `KaAnnotationCall?`                              |
+| `KtSuperTypeCallEntry`                           | `KaFunctionCall<KaConstructorSymbol>?`           |
+| `KtConstructorDelegationCall`                    | `KaDelegatedConstructorCall?`                    |
+| `KtConstructorDelegationReferenceExpression`     | `KaDelegatedConstructorCall?`                    |
+| `KtConstructorCalleeExpression`                  | `KaFunctionCall<KaConstructorSymbol>?`           |
+| `KtEnumEntrySuperclassReferenceExpression`       | `KaDelegatedConstructorCall?`                    |
+| `KtCallableReferenceExpression`                  | `KaCallableReferenceCall<*, *>?`                 |
+| `KtArrayAccessExpression`                        | `KaFunctionCall<KaNamedFunctionSymbol>?`         |
+| `KtCollectionLiteralExpression`                  | `KaFunctionCall<KaNamedFunctionSymbol>?`         |
+| `KtWhenConditionInRange`                         | `KaFunctionCall<KaNamedFunctionSymbol>?`         |
+| `KtNameReferenceExpression`                      | `KaSimpleCall<*, *>?`                            |
+| `KtQualifiedExpression`                          | `KaSimpleCall<*, *>?`                            |
+| `KtDestructuringDeclarationEntry`                | `KaSimpleCall<*, *>?`                            |
+| `KtForExpression`                                | `KaForLoopCall?`                                 |
+| `KtPropertyDelegate`                             | `KaDelegatedPropertyCall?`                       |
+
+## What `resolveSuccessfulCall()` returns
+
+The result is a `KaSimpleOrMultiCall?` &mdash; sealed into two branches:
+
+* [`KaSimpleCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-simple-call/index.md) describes a simple call &mdash; a single resolved callable applied at this site. This is what
+  you get for ordinary function calls, property accesses, callable references, annotation entries, supertype calls,
+  and so on.
+* [`KaMultiCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-multi-call/index.md) describes a compound or desugared call that involves several sub-calls. This is what
+  you get for `for` loops, delegated properties, compound assignments (`+=`, `++`, `--`), and compound array access
+  (`a[i] += v`).
+
+The type system tells you which branch you are on. Many specializations narrow the return further &mdash; for instance
+`KtForExpression.resolveSuccessfulCall(): KaForLoopCall?` already commits to the multi-call branch.
+
+When you hold the broad `KaSimpleOrMultiCall` and want one particular shape, the `simple` / `function` / `variable` /
+`constructor` properties do the check for you instead of an `as?` cast &mdash; see [`KaSimpleOrMultiCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-simple-or-multi-call/index.md):
+
+```Kotlin
+val function: KaFunctionCall<*>? =
+    (element as? KtResolvableCall)?.resolveSuccessfulCall()?.function
+```
+
+!!! tip
+    `KaCall` and `KaCallableMemberCall` are the *legacy* base types of the resolution API. New code should rely on
+    `KaSimpleOrMultiCall` / `KaSimpleCall` / `KaMultiCall`. See [Legacy Resolution API](Legacy-Resolution-API.md).
+
+## Working with a `KaSimpleCall`
+
+Every `KaSimpleCall<S, C>` exposes the call-site context inline &mdash; no `partiallyAppliedSymbol` wrapper to drill
+through:
+
+```Kotlin
+val call: KaSimpleCall<*, *> = TODO()
+val signature = call.signature             // callable signature
+val symbol    = call.symbol                // signature.symbol
+val dispatch  = call.dispatchReceiver      // member receiver
+val extension = call.extensionReceiver     // extension receiver
+val contexts  = call.contextArguments      // KEEP-367 ctx params
+val typeArgs  = call.typeArgumentsMapping  // inferred + explicit
+```
+
+Concrete subtypes add their own fields. `KaFunctionCall<S>` adds the argument mappings:
+
+```Kotlin
+val call: KaFunctionCall<*> = callElement.resolveSuccessfulCall() ?: return
+val valueArgs   = call.valueArgumentMapping    // value arguments
+val contextArgs = call.contextArgumentMapping  // KEEP-0448 ctx args
+val combined    = call.combinedArgumentMapping // values + ctx
+```
+
+`KaVariableAccessCall` adds the access kind: `call.kind` is a `KaVariableAccessCall.Kind.Read` or
+`KaVariableAccessCall.Kind.Write` &mdash; the latter exposes `value: KtExpression?`, the right-hand side of the
+assignment. The boolean `call.isContextSensitive` indicates whether
+[context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) was used.
+
+[`KaCallableReferenceCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-callable-reference-call/index.md) is the cleanest example of the new shape: it extends
+`KaSimpleCall<S, C>` only &mdash; no legacy base. A callable reference does not invoke the callable, so there is no
+`valueArgumentMapping` and no read/write kind &mdash; only the signature, bound receivers, and type arguments.
+
+Use `call is KaImplicitInvokeCall` to detect implicit `f("...")` invocations on values with a functional type. The
+legacy `KaSimpleFunctionCall.isImplicitInvoke` boolean is deprecated.
+
+### `KtNameReferenceExpression` on a constructor reference
+
+The call counterpart of a name reference can return a *different* symbol from the symbol counterpart. For `MyClass()`
+the name `MyClass` literally points to the class (`resolveSuccessfulSymbol()` returns the `KaClassLikeSymbol`), but the
+call wraps the constructor that is actually invoked:
+
+```Kotlin
+class MyClass
+val c = MyClass()
+//      ^^^^^^^  resolveSuccessfulCall()   -> KaFunctionCall<...>
+//      ^^^^^^^  resolveSuccessfulSymbol() -> class `MyClass`
+```
+
+Pick the one that matches your question: *who is invoked here* &rarr; `resolveSuccessfulCall()`; *what does the name
+literally mean* &rarr; `resolveSuccessfulSymbol()`.
+
+## Compound and desugared calls
+
+Some Kotlin constructs desugar into several operator calls. The Analysis API exposes the assembled multi-call and the
+individual sub-calls through dedicated `KaMultiCall` subtypes. The names of the sub-calls match what the language spec
+calls them.
+
+### `for` loops
+
+```Kotlin
+for (item in list) {
+    println(item)
+}
+```
+
+A `for` loop desugars into `iterator()`, `hasNext()`, and `next()`. The call is a [`KaForLoopCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-for-loop-call/index.md):
+
+```Kotlin
+val loop = forExpression.resolveSuccessfulCall() ?: return
+val iter:    KaFunctionCall<KaNamedFunctionSymbol> = loop.iteratorCall
+val hasNext: KaFunctionCall<KaNamedFunctionSymbol> = loop.hasNextCall
+val next:    KaFunctionCall<KaNamedFunctionSymbol> = loop.nextCall
+```
+
+The richer form is `KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt?`, which exposes each sub-call
+attempt separately &mdash; if one of `iterator()` / `hasNext()` / `next()` fails to resolve, the others remain
+available.
+
+### Delegated properties
+
+```Kotlin
+val name: String by lazy { "John" }
+```
+
+A delegated property desugars into `getValue()`, optionally `setValue()` (for `var`), and optionally `provideDelegate()`.
+The call is a [`KaDelegatedPropertyCall`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-delegated-property-call/index.md):
+
+```Kotlin
+val delegate = propertyDelegate.resolveSuccessfulCall() ?: return
+// KaFunctionCall<KaNamedFunctionSymbol>
+val getter  = delegate.valueGetterCall
+// null for `val`
+val setter  = delegate.valueSetterCall
+// null if not applicable
+val provide = delegate.provideDelegateCall
+```
+
+The matching attempt type is `KaDelegatedPropertyCallResolutionAttempt`.
+
+### Compound variable access (`+=`, `++`, `--`)
+
+```Kotlin
+var i = 0
+i += 1
+i++
+```
+
+A compound assignment or unary increment on a variable resolves to a `KaCompoundVariableAccessCall`:
+
+```Kotlin
+val call: KaCompoundVariableAccessCall = TODO()
+// the variable read/write
+val variable: KaVariableAccessCall = call.variableCall
+// the `plus` / `inc` / ...
+val operator: KaFunctionCall<KaNamedFunctionSymbol> =
+    call.operationCall
+
+when (val op = call.compoundOperation) {
+    is KaCompoundAssignOperation -> {
+        // PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN,
+        // DIV_ASSIGN, REM_ASSIGN
+        op.kind
+        op.operand    // right-hand-side expression
+    }
+    is KaCompoundUnaryOperation -> {
+        op.kind          // INC or DEC
+        op.precedence    // PREFIX or POSTFIX
+    }
+}
+```
+
+!!! tip
+    An `<op>Assign` operator like `MutableList.plusAssign` is represented as a plain `KaFunctionCall`, not a
+    `KaCompoundVariableAccessCall`. Only the three-step read-modify-write form (the `plus` + write path) is a compound
+    call.
+
+### Compound array access (`a[i] += v`)
+
+```Kotlin
+m["a"] += "b"
+```
+
+The most elaborate compound is the array form, represented by `KaCompoundArrayAccessCall`. It involves both `get` and
+`set`, plus the operator function:
+
+```Kotlin
+val call: KaCompoundArrayAccessCall = TODO()
+
+val getter: KaFunctionCall<KaNamedFunctionSymbol> =
+    call.getterCall
+
+val setter: KaFunctionCall<KaNamedFunctionSymbol> =
+    call.setterCall
+
+val operator: KaFunctionCall<KaNamedFunctionSymbol> =
+    call.operationCall
+
+val indices: List<KtExpression> = call.indexArguments
+```
+
+The matching attempt is `KaCompoundArrayAccessCallResolutionAttempt` with `getterCallAttempt`, `operationCallAttempt`,
+and `setterCallAttempt`.
+
+!!! tip
+    The `KtOperationReferenceExpression` for `+=` follows a deliberate convention, documented as an
+    *Analysis API Resolver Note* on `KtOperationReferenceExpression`:
+
+    > The resolver targets symbols contributed by the operation reference itself.
+    >
+    > For compound cases, this includes the symbols corresponding to the resulting update, but not the symbols used only
+    > for intermediate reads.
+    >
+    > For instance, in compound array assignments this includes the operator symbol (e.g., `plus`) and the writing accessor
+    > (`set`), but not the reading accessor (`get`).
+    >
+    > If the reading symbol is also needed, the API should be called on the parent expression (e.g., `KtBinaryExpression`
+    > or `KtUnaryExpression`).
+
+    The new compound call types expose `getterCall` / `setterCall` / `operationCall` directly, so you usually do not need
+    to call `resolveSuccessfulSymbol()` on the operation reference at all. Reach for the parent expression only when you
+    specifically want both reading and writing symbols.
+
+    `KtOperationReferenceExpression` is itself a `KtResolvableCall`, so `resolveSuccessfulCall()` / `tryResolveCall()`
+    work on it directly and return the *same* call as resolving the parent expression &mdash; reads included. Mind the
+    asymmetry with the symbol side: `resolveSuccessfulCall()` mirrors the parent (here, the full
+    `KaCompoundArrayAccessCall`, `get` included), while `resolveSuccessfulSymbol()` / `resolveSuccessfulSymbols()` stay
+    narrow and yield only the symbols the operator itself contributes (`plus`, `set`).
+
+### A flat view of the sub-calls
+
+Every `KaMultiCall` also exposes `calls: List<KaSimpleCall<*, *>>`. If you do not care which sub-call is which, this is
+the simplest accessor:
+
+```Kotlin
+val flat: List<KaSimpleCall<*, *>> = (call as KaMultiCall).calls
+```
+
+## Plain form vs try form
+
+Use `resolveSuccessfulCall()` when you only need a valid result; resolution failure becomes `null`. Use
+`tryResolveCall()` when you want the diagnostic and the candidate calls the compiler considered. The richer form returns
+a `KaCallResolutionAttempt` &mdash; see [`KaCallResolutionAttempt`](../api/analysis-api/org.jetbrains.kotlin.analysis.api.resolution/-ka-call-resolution-attempt/index.md) for the full hierarchy and helpers.
+
+```Kotlin
+val attempt = callElement.tryResolveCall() ?: return
+// the resolved call, or null if resolution failed
+val resolved = attempt.successful
+// whether the resolution succeeded, for any attempt kind
+val isOk = attempt.isSuccessful
+// the diagnostics of a failure, for any attempt kind
+val diagnostics = attempt.errors.map { it.diagnostic }
+// also the sole candidate of a failed call
+val candidate = attempt.single
+// success: one call; error: candidate calls
+val everything = attempt.calls
+```
+
+For compound expressions, the multi-attempt types (`KaForLoopCallResolutionAttempt`,
+`KaDelegatedPropertyCallResolutionAttempt`, `KaCompoundVariableAccessCallResolutionAttempt`,
+`KaCompoundArrayAccessCallResolutionAttempt`) keep each sub-call attempt addressable, so you can still inspect the
+sub-calls that did resolve when another sub-call failed.
