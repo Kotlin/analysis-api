@@ -40,20 +40,36 @@ Kotlin types, including number types, `Any`, `Nothing`, and `String`.
 The type of `builtinTypes.string` is a `KaType`. `Ka` is a common prefix for all Analysis API components and
 abstractions which stands for "Kotlin Analysis".
 
-### Using in IntelliJ IDEA
+## Where to Use
+
+The Analysis API works both inside IntelliJ IDEA and as a separate library.  
+The API for analyzing code is the same in both of them.
+
+### In IntelliJ IDEA Plugins
 
 The Analysis API is not just some external API. It serves as the foundation for many features within the Kotlin plugin
 for IntelliJ IDEA, including code completion, navigation across declarations, refactorings, inspections, the debugger,
 and many more. By using the Analysis API, you get the same tools as the developers of the Kotlin plugin itself.
 
-### Using in Command-Line Tools
+The Analysis API is a part of the Kotlin plugin, so your plugin only needs to depend on it.
 
-The Analysis API can also be used in command-line tools that perform Kotlin code analysis, including linters,
-documentation generators, and code-generating utilities. This functionality is provided through the Standalone mode.
+[Using in IntelliJ Plugins](topics/IntelliJ-Plugins.md){ .md-button }
+
+### In Command-Line Tools
+
+The Analysis API can also be used outside the IDE, in any JVM application. This is called the **Standalone mode**.
+It is a good fit for linters, documentation generators, code-generating utilities, and other tools that run from the
+command line or as a part of the build.
+
+In the Standalone mode, there is no IDE that knows the project layout. The tool describes the sources and libraries
+to analyze by itself, and then uses the same `analyze {}` function.
+
+[Standalone Mode](topics/Standalone.md){ .md-button }
+[Quickstart Project](https://github.com/Kotlin/analysis-api-quickstart){ .md-button }
 
 !!! note
-    While developers are welcome to experiment with the Standalone mode, it is currently in active development
-    and subject to incompatible changes.
+    While the core Analysis API is stable in both environments, the API for describing project structure in the
+    Standalone mode is experimental and will change in future releases.
 
 ## Read about Analysis API
 
