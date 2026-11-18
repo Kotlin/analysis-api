@@ -1,0 +1,4 @@
+/* Hide the repository facts (version, stars, forks) in the header repository widget */
+.md-source__facts {
+  display: none;
+}
