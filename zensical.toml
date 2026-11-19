@@ -15,6 +15,11 @@ nav = [
   { "Kotlin Analysis API" = "index.md" },
   { "Documentation" = [
     "topics/Fundamentals.md",
+    { "Setup" = [
+      "topics/IntelliJ-Plugins.md",
+      "topics/Standalone.md",
+      "topics/Standalone-Project-Structure.md",
+    ] },
     "topics/Symbols.md",
     "topics/Types.md",
     "topics/Annotations.md",
